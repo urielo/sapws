@@ -97,10 +97,10 @@ function dataOrganizeProposta($datas)
     $return['segurado']['clicdestadocivil'] = $datas['segurado']["segCdEstCivl"];
     $return['segurado']['clicdprofiramoatividade'] = $datas['segurado']["segProfRamoAtivi"];
     $return['segurado']['cliemail'] = strtolower($datas['segurado']["segEmail"]);
-    $return['segurado']['clidddcel'] = $datas['segurado']["segCelDdd"];
-    $return['segurado']['clinmcel'] = $datas['segurado']["segCelNum"];
-    $return['segurado']['clidddfone'] = $datas['segurado']["segFoneDdd"];
-    $return['segurado']['clinmfone'] = $datas['segurado']["segFoneNum"];
+    ($datas['segurado']["segCelDdd"] != NULL ? $return['segurado']['clidddcel'] = $datas['segurado']["segCelDdd"] : NULL );
+    ($datas['segurado']["segCelNum"] != NULL ? $return['segurado']['clinmcel'] = $datas['segurado']["segCelNum"] : NULL);
+    ($datas['segurado']["segFoneDdd"] != NULL ? $return['segurado']['clidddfone'] = $datas['segurado']["segFoneDdd"] : NULL);
+    ($datas['segurado']["segFoneNum"] != NULL ? $return['segurado']['clinmfone'] = $datas['segurado']["segFoneNum"] : NULL);
     $return['segurado']['clinmend'] = $datas['segurado']["segEnd"];
     $return['segurado']['clinumero'] = $datas['segurado']["segEndNum"];
     $return['segurado']['cliendcomplet'] = $datas['segurado']["segEndCompl"];
