@@ -34,6 +34,8 @@ function dataOrganizeProposta($datas)
         $return['proprietario']['proprnmfone'] = $datas['proprietario']["proprFoneNum"];
         $return['proprietario']['proprnmend'] = $datas['proprietario']["proprEnd"];
         $return['proprietario']['proprnumero'] = $datas['proprietario']["proprEndNum"];
+        $return['proprietario']['cdreldepsegurado'] = (isset($datas['proprietario']["proprCdRelDepSegurado"]) ? $datas['proprietario']["proprCdRelDepSegurado"] : null);
+        $return['proprietario']['descreldepsegurado'] = (isset($datas['proprietario']["proprdescRelDepSegurado"]) ? $datas['proprietario']["proprdescRelDepSegurado"] : null);
         $return['proprietario']['proprendcomplet'] = $datas['proprietario']["proprEndCompl"];
         $return['proprietario']['proprcep'] = $datas['proprietario']["proprEndCep"];
         $return['proprietario']['proprnmcidade'] = $datas['proprietario']["proprEndCidade"];
@@ -69,10 +71,6 @@ function dataOrganizeProposta($datas)
     $return['proposta']['validadecartao'] = $datas["validadeCartao"];
 
 
-
-
-
-
     $return['perfil']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
     $return['perfil']['ceppernoite'] = $datas['perfilSegurado']["cepPernoite"];
     $return['perfil']['garagempernoite'] = $datas['perfilSegurado']["garagemPernoite"];
@@ -97,7 +95,7 @@ function dataOrganizeProposta($datas)
     $return['segurado']['clicdestadocivil'] = $datas['segurado']["segCdEstCivl"];
     $return['segurado']['clicdprofiramoatividade'] = $datas['segurado']["segProfRamoAtivi"];
     $return['segurado']['cliemail'] = strtolower($datas['segurado']["segEmail"]);
-    ($datas['segurado']["segCelDdd"] != NULL ? $return['segurado']['clidddcel'] = $datas['segurado']["segCelDdd"] : NULL );
+    ($datas['segurado']["segCelDdd"] != NULL ? $return['segurado']['clidddcel'] = $datas['segurado']["segCelDdd"] : NULL);
     ($datas['segurado']["segCelNum"] != NULL ? $return['segurado']['clinmcel'] = $datas['segurado']["segCelNum"] : NULL);
     ($datas['segurado']["segFoneDdd"] != NULL ? $return['segurado']['clidddfone'] = $datas['segurado']["segFoneDdd"] : NULL);
     ($datas['segurado']["segFoneNum"] != NULL ? $return['segurado']['clinmfone'] = $datas['segurado']["segFoneNum"] : NULL);
@@ -139,9 +137,6 @@ function dataOrganizeProposta($datas)
     $return['cotacao']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
 
 
-
-
-
     return $return;
 }
 
@@ -175,6 +170,8 @@ function dataOrganizeCotacao($datas)
         $return['proprietario']['propremail'] = strtolower($datas['proprietario']["proprEmail"]);
         $return['proprietario']['proprdddcel'] = $datas['proprietario']["proprCelDdd"];
         $return['proprietario']['proprnmcel'] = $datas['proprietario']["proprCelNum"];
+        $return['proprietario']['cdreldepsegurado'] = (isset($datas['proprietario']["proprCdRelDepSegurado"]) ? $datas['proprietario']["proprCdRelDepSegurado"] : null);
+        $return['proprietario']['descreldepsegurado'] = (isset($datas['proprietario']["proprdescRelDepSegurado"]) ? $datas['proprietario']["proprdescRelDepSegurado"] : null);
         $return['proprietario']['proprdddfone'] = $datas['proprietario']["proprFoneDdd"];
         $return['proprietario']['proprnmfone'] = $datas['proprietario']["proprFoneNum"];
         $return['proprietario']['proprnmend'] = $datas['proprietario']["proprEnd"];
@@ -299,11 +296,6 @@ function dataOrganizeCotacao($datas)
     $return['cotacao']['idparceiro'] = $datas['idParceiro'];
 
 
-
-
-
-
-
     return $return;
 }
 
@@ -314,15 +306,15 @@ function real($numero)
 
 function floatN($numero)
 {
-    return (float) number_format($numero, 2, '.', '');
+    return (float)number_format($numero, 2, '.', '');
 }
 
 function aplicaComissao($valor, $comissao)
 {
     if ($comissao > 0):
         $comissao = 1 - $comissao / 100;
-        return (float) number_format($valor / $comissao, 2, '.', '');
+        return (float)number_format($valor / $comissao, 2, '.', '');
     else:
-        return (float) number_format($valor, 2, '.', '');
+        return (float)number_format($valor, 2, '.', '');
     endif;
 }
