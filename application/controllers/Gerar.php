@@ -479,7 +479,7 @@ class Gerar extends REST_Controller
                 $produtos['formapagamento']['tipo'] = $parcela['descformapgto'];
                 $produtos['formapagamento']['quantidade'] = $proposta['quantparc'];
                 $produtos['formapagamento']['primeira'] = floatN($premio / $proposta['quantparc']);
-                $produtos['formapagamento']['demais'] = floatN($premio / $proposta['quantparc']);
+                $produtos['formapagamento']['demais'] = $proposta['quantparc'] == 1 ? 0 : floatN($premio / $proposta['quantparc']);
                 $produtos['formapagamento']['juros'] = 0;
 
             endif;
