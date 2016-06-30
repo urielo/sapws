@@ -63,15 +63,15 @@ class Gerar extends REST_Controller
              * Tratando dados do proprietario e inserindo no banco.
              */
 
-            if (isset($datas['indProprietVeic']) && !$datas['indProprietVeic']):
+            if (!$datas['indProprietVeic']):
                 $datas['proprietario']['proprCpfCnpj'] = $this->pessoadb($datas, 'Cotacao', 'proprietario');
             endif;
 
             /*
              * Tratando dados do condutor e inserindo no banco
              */
-            $datas['indCondutorVeic'] = (bool) $datas['indCondutorVeic'];
-            if (isset($datas['indCondutorVeic']) && !$datas['indCondutorVeic']):
+            
+            if (!$datas['indCondutorVeic']):
                 $datas['condutor']["condutCpfCnpj"] = $this->pessoadb($datas, 'Cotacao', 'condutor');
             endif;
 
