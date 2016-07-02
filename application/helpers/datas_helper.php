@@ -222,8 +222,8 @@ function dataOrganizeCotacao($datas)
         $return['perfil']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
         $return['veiculo']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
         $return['cotacao']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
-        !$datas['indProprietVeic'] ? $return['veiculo']['condcpfcnpj'] = $datas['segurado']["segCpfCnpj"] : $return['veiculo']['condcpfcnpj'] = $datas['condutor']["condutCpfCnpj"];
-        !$datas['indCondutorVeic'] ? $return['veiculo']['propcpfcnpj'] = $datas['segurado']["segCpfCnpj"] : $return['veiculo']['propcpfcnpj'] = $datas['proprietario']["proprCpfCnpj"];
+        !$datas['indProprietVeic'] ? $return['veiculo']['condcpfcnpj'] = $datas['condutor']["condutCpfCnpj"] : $return['veiculo']['condcpfcnpj'] = $datas['segurado']["segCpfCnpj"];
+        !$datas['indCondutorVeic'] ? $return['veiculo']['propcpfcnpj'] = $datas['proprietario']["proprCpfCnpj"] : $return['veiculo']['propcpfcnpj'] = $datas['segurado']["segCpfCnpj"] ;
 
     else:
         $return['perfil']['clicpfcnpj'] = NULL;
