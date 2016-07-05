@@ -58,7 +58,6 @@ class Gerar extends REST_Controller
             endif;
 
 
-
             /*
              * Tratando dados do proprietario e inserindo no banco.
              */
@@ -70,7 +69,7 @@ class Gerar extends REST_Controller
             /*
              * Tratando dados do condutor e inserindo no banco
              */
-            
+
             if (!$datas['indCondutorVeic']):
                 $datas['condutor']["condutCpfCnpj"] = $this->pessoadb($datas, 'Cotacao', 'condutor');
             endif;
@@ -120,10 +119,10 @@ class Gerar extends REST_Controller
         if ($this->form_validation->run('proposta') == false):
             $this->response(array(
                 'status' => 'Error',
+                'cdretorno' => '023',
                 'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         else:
             $this->form_validation->reset_validation();
-
 
 
             /*
@@ -156,7 +155,6 @@ class Gerar extends REST_Controller
              */
 
 
-
             /*
              * Enviando resposta
              */
@@ -168,7 +166,6 @@ class Gerar extends REST_Controller
                 'status' => '000 - sucesso',
                 'cdretorno' => '000',
                 'retorno' => $result,));
-
 
 
         endif;
@@ -184,6 +181,7 @@ class Gerar extends REST_Controller
         if ($this->form_validation->run('pdf') == false):
             $this->response(array(
                 'status' => 'Error',
+                'cdretorno' => '023',
                 'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         else:
 
@@ -196,8 +194,9 @@ class Gerar extends REST_Controller
 
             if (!$cotacao):
                 $this->response(array(
-                    'status' => 'Error',
-                    'message' => "idParceiro{$datas['idParceiro']} invalido para essa proposta",
+                        'status' => 'Error',
+                        'cdretorno' => '016',
+                        'message' => "idParceiro{$datas['idParceiro']} invalido para essa proposta",
                     )
                     , REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
             endif;
@@ -234,13 +233,10 @@ class Gerar extends REST_Controller
             $data['proposta'] = $proposta;
 
 
-
             $fipe = $this->Model_fipe->get(['codefipe' => $veiculo['veiccodfipe']]);
             $anovalor = $this->Model_fipeanovalor->where(array("codefipe" => $veiculo['veiccodfipe'], "ano" => $veiculo['veicano']))->get();
             $combustivel = $this->Model_tipocombustivel->get($veiculo['veictipocombus']);
             $utilizacao = $this->Model_tipoutilizacaoveiculo->get($veiculo['veiccdutilizacao']);
-
-
 
 
             $veiculo['veictipocombus'] = $combustivel['nmcomb'];
@@ -269,8 +265,6 @@ class Gerar extends REST_Controller
             $parcela['formapagamento'] = $parcelas['formapagamento']['tipo'];
             $parcela['quantidade'] = $parcelas['formapagamento']['quantidade'];
             $parcela['juros'] = $parcelas['formapagamento']['juros'];
-
-
 
 
             $html = gerarpdfb64(gerarhtml($proposta, $cotacao, $segurado, $veiculo, $corretor, $parcela, $produto, $parceiro, $proprietario));
@@ -309,40 +303,43 @@ class Gerar extends REST_Controller
 
         if ($ano != 0 && date('Y') - $ano > 15):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => array(
-                        'veiculo' => 'Não tem aceitação para veiculos com idade acima de 15 anos invalido',
-                    )
-                    ), REST_Controller::HTTP_BAD_REQUEST);
+                'status' => 'Error',
+                'cdretorno' => '010',
+                'message' => array(
+                    'veiculo' => 'Não tem aceitação para veiculos com idade acima de 15 anos invalido',
+                )
+            ), REST_Controller::HTTP_BAD_REQUEST);
         endif;
 
         if (!$valorfipe):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => array(
-                        'veiculo' => 'Fipe/Ano invalido',
-                    )
-                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                'status' => 'Error',
+                'cdretorno' => '010',
+                'message' => array(
+                    'veiculo' => 'Fipe/Ano invalido',
+                )
+            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
         else:
             $valorfipe = $valorfipe['valor'];
         endif;
 
         if ($valorfipe > 120000):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => array(
-                        'veiculo' => 'Esse produto não aceita item com valor fipe superior a R$ 120.000,00',
-                    )
-                    ), REST_Controller::HTTP_BAD_REQUEST);
+                'status' => 'Error',
+                'cdretorno' => '010',
+                'message' => array(
+                    'veiculo' => 'Esse produto não aceita item com valor fipe superior a R$ 120.000,00',
+                )
+            ), REST_Controller::HTTP_BAD_REQUEST);
         elseif ($valorfipe < 10000):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => array(
-                        'veiculo' => 'Esse produto não aceita item com valor fipe inferior a R$ 10.000,00',
-                    )
-                    ), REST_Controller::HTTP_BAD_REQUEST);
+                'status' => 'Error',
+                'cdretorno' => '010',
+                'message' => array(
+                    'veiculo' => 'Esse produto não aceita item com valor fipe inferior a R$ 10.000,00',
+                )
+            ), REST_Controller::HTTP_BAD_REQUEST);
         endif;
-
 
 
         $idade = date('Y') - $veiculo['veicano'];
@@ -362,16 +359,19 @@ class Gerar extends REST_Controller
             if (!$produtodb):
                 $produtos['produto'][$i] = array(
                     'status' => 'Atenção',
+                    'cdretorno' => '009',
                     'message' => "O idProtudo {$idproduto} é inválido",
                 );
             elseif ($produtodb['idtipoveiculo'] != $veiculo['veiccdveitipo']):
                 $produtos['produto'][$i] = array(
                     'status' => 'Atenção',
+                    'cdretorno' => '009',
                     'message' => "O veiCdTipo {$veiculo['veiccdveitipo']} é inválido para idProtudo {$idproduto}",
                 );
             elseif ($produtodb['codstatus'] == '001'):
                 $produtos['produto'][$i] = array(
                     'status' => 'Atenção',
+                    'cdretorno' => '009',
                     'message' => "O Produto {$idproduto} - {$produtodb['nomeproduto']} não está ativo",
                 );
 
@@ -445,15 +445,15 @@ class Gerar extends REST_Controller
             endif;
 
 
-
             $i++;
         endforeach;
 
 
         if (!isset($produtos['premio']) || $produtos['premio'] == 0):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => $produtos,
+                'status' => 'Error',
+                'cdretorno' => '005',
+                'message' => $produtos,
             ));
         endif;
 
@@ -464,7 +464,7 @@ class Gerar extends REST_Controller
 
             $proposta = $datas['proposta'];
             $parcela = $this->Model_parcela->get($proposta['idformapg']);
-            $premio = $proposta['quantparc'] > $parcela['numparcsemjuros'] ? floatN($premio + ($premio * ($parcela['taxamesjuros'] / 100 ))) : $premio;
+            $premio = $proposta['quantparc'] > $parcela['numparcsemjuros'] ? floatN($premio + ($premio * ($parcela['taxamesjuros'] / 100))) : $premio;
             $parcela['taxamesjuros'] = $proposta['quantparc'] > $parcela['numparcsemjuros'] ? $parcela['taxamesjuros'] : 0;
             if ($menorparcela > $premio / $proposta['quantparc']):
                 unset($produtos['premio']);
@@ -554,16 +554,16 @@ class Gerar extends REST_Controller
         $datas['cotacao']['idcorretor'] = $idcorretor;
 
 
-
         $datas['cotacao']['veicid'] = $veicid;
         $datas['cotacao']['premio'] = $produto['premio'];
 
         $cotacaoid = $this->Model_cotacao->insert($datas['cotacao']);
         if (!$cotacaoid):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => array('cotacao' => 'Error ao cadastrar')
-                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                'status' => 'Error',
+                'cdretorno' => '003',
+                'message' => array('cotacao' => 'Error ao cadastrar')
+            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
 
         endif;
 
@@ -594,25 +594,29 @@ class Gerar extends REST_Controller
 
         if ($veiculo['veicchassiremar']):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => array('veiculo' => 'Não há aceitação pra veiculo com chassi remarcado')
-                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                'status' => 'Error',
+                'cdretorno' => '019',
+                'message' => array('veiculo' => 'Não há aceitação pra veiculo com chassi remarcado')
+            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
         elseif ($veiculo['veicleilao']):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => array('veiculo' => 'Não há aceitação pra veiculo oriundo de leilão')
-                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                'status' => 'Error',
+                'cdretorno' => '019',
+                'message' => array('veiculo' => 'Não há aceitação pra veiculo oriundo de leilão')
+            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
         elseif ($veiculo['veicacidentado']):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => array('veiculo' => 'Não há aceitação pra veiculo acidentado')
-                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                'status' => 'Error',
+                'cdretorno' => '019',
+                'message' => array('veiculo' => 'Não há aceitação pra veiculo acidentado')
+            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
         endif;
 
         if ($this->form_validation->run('veiculo' . ucfirst($validacao)) == false):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
+                'status' => 'Error',
+                'cdretorno' => '023',
+                'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         elseif (ucfirst($validacao) == 'Cotacao'):
 
             $wherec = "codstatus = '000' AND veicplaca = '{$veiculo['veicplaca']}' "
@@ -644,18 +648,20 @@ class Gerar extends REST_Controller
                     endforeach;
 
                     return $this->response(array(
-                            'status' => 'Error',
-                            'message' => array('veiculo' => $msg)
-                            ), REST_Controller::HTTP_BAD_REQUEST);
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => array('veiculo' => $msg)
+                    ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
 
             elseif (!$dbveiculo):
                 $idvei = $this->Model_veiculo->insert($veiculo);
                 if (!$idvei):
                     return $this->response(array(
-                            'status' => 'Error',
-                            'message' => array('veiculo' => 'Error ao cadastrar')
-                            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => array('veiculo' => 'Error ao cadastrar')
+                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                 else:
                     return $idvei;
                 endif;
@@ -663,9 +669,10 @@ class Gerar extends REST_Controller
 
                 if (!$this->Model_veiculo->update($veiculo, $dbveiculo[0]['veicid'])):
                     return $this->response(array(
-                            'status' => 'Error',
-                            'message' => array('veiculo' => 'Error ao atualizar')
-                            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => array('veiculo' => 'Error ao atualizar')
+                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                 else:
                     return $dbveiculo[0]['veicid'];
                 endif;
@@ -682,9 +689,10 @@ class Gerar extends REST_Controller
                 endforeach;
 
                 return $this->response(array(
-                        'status' => 'Error',
-                        'message' => array('veiculo' => $msg)
-                        ), REST_Controller::HTTP_BAD_REQUEST);
+                    'status' => 'Error',
+                    'cdretorno' => '013',
+                    'message' => array('veiculo' => $msg)
+                ), REST_Controller::HTTP_BAD_REQUEST);
             endif;
         /* Vieculo Proposta */
         else:
@@ -732,9 +740,10 @@ class Gerar extends REST_Controller
                     endif;
                 endforeach;
                 return $this->response(array(
-                        'status' => 'Error',
-                        'message' => array('veiculo' => 'Proposta: ' . $msg)
-                        ), REST_Controller::HTTP_BAD_REQUEST);
+                    'status' => 'Error',
+                    'cdretorno' => '013',
+                    'message' => array('veiculo' => 'Proposta: ' . $msg)
+                ), REST_Controller::HTTP_BAD_REQUEST);
             else:
                 $idveic = $this->Model_cotacao->get(['idcotacao' => $datas['proposta']['idcotacao']]);
             endif;
@@ -748,24 +757,27 @@ class Gerar extends REST_Controller
 
                 if ($proposta['dtvalidade'] > date('Y-m-d H:i:s')):
                     return $this->response(array(
-                            'status' => 'Error',
-                            'message' => array('veiculo' => 'Existe uma proposta em aberto pra esse veiculo')
-                            ), REST_Controller::HTTP_BAD_REQUEST);
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => array('veiculo' => 'Existe uma proposta em aberto pra esse veiculo')
+                    ), REST_Controller::HTTP_BAD_REQUEST);
                 elseif ($proposta['dtvalidade'] < date('Y-m-d H:i:s') && $proposta['idstatus'] != '012'):
 
                     $this->Model_proposta->update(['idstatus' => '012'], ['idproposta' => $proposta['idproposta']]);
                     if (!$this->Model_veiculo->update($veiculo, $idveic['veicid'])):
                         return $this->response(array(
-                                'status' => 'Error',
-                                'message' => array('veiculo' => 'Error ao atualizar')
-                                ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'message' => array('veiculo' => 'Error ao atualizar')
+                        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                     endif;
                 else:
                     if (!$this->Model_veiculo->update($veiculo, $idveic['veicid'])):
                         return $this->response(array(
-                                'status' => 'Error',
-                                'message' => array('veiculo' => 'Error ao atualizar')
-                                ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'message' => array('veiculo' => 'Error ao atualizar')
+                        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                     endif;
                 endif;
             else:
@@ -786,15 +798,17 @@ class Gerar extends REST_Controller
                         endif;
                     endforeach;
                     return $this->response(array(
-                            'status' => 'Error',
-                            'message' => array('veiculo' => 'Proposta: ' . $msg)
-                            ), REST_Controller::HTTP_BAD_REQUEST);
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => array('veiculo' => 'Proposta: ' . $msg)
+                    ), REST_Controller::HTTP_BAD_REQUEST);
 
                 elseif (!$this->Model_veiculo->update($veiculo, $idveic['veicid'])):
                     return $this->response(array(
-                            'status' => 'Error',
-                            'message' => array('veiculo' => 'Error ao atualizar')
-                            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => array('veiculo' => 'Error ao atualizar')
+                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                 endif;
             endif;
         endif;
@@ -808,19 +822,21 @@ class Gerar extends REST_Controller
 
         if ($datas['idParceiro'] == 99 && !$cotacao):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => "Cotacao Nº: {$datas["cdCotacao"]} Inválido!",
-                    ), REST_Controller::HTTP_BAD_REQUEST);
+                'status' => 'Error',
+                'message' => "Cotacao Nº: {$datas["cdCotacao"]} Inválido!",
+            ), REST_Controller::HTTP_BAD_REQUEST);
         elseif ($datas['idParceiro'] != 99 && !$cotacao && $this->Model_cotacao->get(['idcotacao' => $datas["cdCotacao"]])):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => "Cotacao Nº: {$datas["cdCotacao"]} Inválido para idParceiro {$datas['idParceiro']}!",
-                    ), REST_Controller::HTTP_BAD_REQUEST);
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => "Cotacao Nº: {$datas["cdCotacao"]} Inválido para idParceiro {$datas['idParceiro']}!",
+            ), REST_Controller::HTTP_BAD_REQUEST);
         elseif ($datas['idParceiro'] != 99 && !$cotacao):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => "Cotacao Nº: {$datas["cdCotacao"]} Inválido!",
-                    ), REST_Controller::HTTP_BAD_REQUEST);
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => "Cotacao Nº: {$datas["cdCotacao"]} Inválido!",
+            ), REST_Controller::HTTP_BAD_REQUEST);
         endif;
 
         $this->veiculodb($datas, 'proposta');
@@ -830,50 +846,51 @@ class Gerar extends REST_Controller
 
         if ($this->Model_proposta->where('idcotacao', $datas['proposta']['idcotacao'])->get()):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => 'Ja foi efetuada uma proposta para essa cotacao',
-                    ), REST_Controller::HTTP_BAD_REQUEST);
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => 'Ja foi efetuada uma proposta para essa cotacao',
+            ), REST_Controller::HTTP_BAD_REQUEST);
         endif;
-
-
-
-
 
 
         $forma = $this->Model_parcela->get($datas['proposta']['idformapg']);
         $datas['veiculo'] = $this->Model_veiculo->get($cotacao['veicid']);
 
 
-
         if ($cotacao['dtvalidade'] < date('Y-m-d 00:00:00')):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => 'cotacao vencida',
-                    ), REST_Controller::HTTP_BAD_REQUEST);
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => 'cotacao vencida',
+            ), REST_Controller::HTTP_BAD_REQUEST);
         endif;
         $datas['cotacao']['idstatus'] = 33;
         if (!$this->Model_cotacao->update($datas['cotacao'], $datas['proposta']['idcotacao'])):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => 'cotacao ao atualizar',
-                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => 'cotacao ao atualizar',
+            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
         endif;
 
 
         if (!$cotacao):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => 'cdCotacao Invalido',
-                    ), REST_Controller::HTTP_BAD_REQUEST);
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => 'cdCotacao Invalido',
+            ), REST_Controller::HTTP_BAD_REQUEST);
         elseif (!$forma):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => 'cdFormaPgt Invalido',), REST_Controller::HTTP_BAD_REQUEST);
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => 'cdFormaPgt Invalido',), REST_Controller::HTTP_BAD_REQUEST);
 
         elseif ($datas['qtParcela'] > $forma['nummaxparc']):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => 'qtParcela Invalido',), REST_Controller::HTTP_BAD_REQUEST);
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => 'qtParcela Invalido',), REST_Controller::HTTP_BAD_REQUEST);
         endif;
 
         $datas['cotacao']['comissao'] = $cotacao['comissao'];
@@ -893,9 +910,10 @@ class Gerar extends REST_Controller
         $idproposta = $this->Model_proposta->insert($datas['proposta']);
         if (!$idproposta):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => array('proposta' => 'Error ao cadastrar')
-                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => array('proposta' => 'Error ao cadastrar')
+            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
 
         endif;
 
@@ -916,9 +934,10 @@ class Gerar extends REST_Controller
 
         if (!isset($datas['corretor'])):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => array('corretor' => 'Deve-se passar o objeto corretor.'),
-                    ), REST_Controller::HTTP_BAD_REQUEST);
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => array('corretor' => 'Deve-se passar o objeto corretor.'),
+            ), REST_Controller::HTTP_BAD_REQUEST);
         else:
 
             $corretor = dataOrganizeCotacao($datas);
@@ -930,19 +949,21 @@ class Gerar extends REST_Controller
                 return $corretorid['idcorretor'];
             else:
 
-                $corretor['corrcpfcnpj'] = (string) $corretor['corrcpfcnpj'];
+                $corretor['corrcpfcnpj'] = (string)$corretor['corrcpfcnpj'];
                 $this->form_validation->set_data($datas['corretor']);
                 if ($this->form_validation->run($tipoValidacao) == false):
                     return $this->response(array(
-                            'status' => 'Error',
-                            'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
                 elseif (!$this->Model_corretor->fields('idcorretor')->where(array('corrcpfcnpj' => $corretor['corrcpfcnpj']))->get()):
                     $corretorid = $this->Model_corretor->insert($corretor);
                     if (!$corretorid):
                         return $this->response(array(
-                                'status' => 'Error',
-                                'message' => array('corretor' => 'Error ao cadastrar')
-                                ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'message' => array('corretor' => 'Error ao cadastrar')
+                        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                     else :
                         return $corretorid;
                     endif;
@@ -950,6 +971,7 @@ class Gerar extends REST_Controller
             endif;
         endif;
     }
+
     /*
      * Cliente  insert & Update* 
      */
@@ -962,9 +984,10 @@ class Gerar extends REST_Controller
 
         if (!isset($datas[$tipoCliente])):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => array($tipoCliente => "Deve-se passar o objeto {$tipoCliente}."),
-                    ), REST_Controller::HTTP_BAD_REQUEST);
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => array($tipoCliente => "Deve-se passar o objeto {$tipoCliente}."),
+            ), REST_Controller::HTTP_BAD_REQUEST);
         else:
             $validacao == 'Proposta' ? $pessoa = dataOrganizeProposta($datas) : $pessoa = dataOrganizeCotacao($datas);
             $pessoa = $pessoa[$tipoCliente];
@@ -975,17 +998,19 @@ class Gerar extends REST_Controller
 
             if ($this->form_validation->run($tipoValidacao) == false):
                 return $this->response(array(
-                        'status' => 'Error',
-                        'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
+                    'status' => 'Error',
+                    'cdretorno' => '013',
+                    'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
             elseif (!$verficar):
                 $pessoa['dtcreate'] = date('Y-m-d H:i:s');
                 if ($tipoCliente == 'segurado'):
                     $id = $this->{$model}->insert($pessoa);
                     if (!$id):
                         return $this->response(array(
-                                'status' => 'Error',
-                                'message' => array($pessoa => 'Error ao cadastrar')
-                                ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'message' => array($pessoa => 'Error ao cadastrar')
+                        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                     else:
                         return $id;
                     endif;
@@ -996,9 +1021,10 @@ class Gerar extends REST_Controller
                         $id = $this->{$model}->insert($pessoa);
                         if (!$id):
                             return $this->response(array(
-                                    'status' => 'Error',
-                                    'message' => array($pessoa => 'Error ao cadastrar')
-                                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                                'status' => 'Error',
+                                'cdretorno' => '013',
+                                'message' => array($pessoa => 'Error ao cadastrar')
+                            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                         else:
                             return $id;
                         endif;
@@ -1010,16 +1036,18 @@ class Gerar extends REST_Controller
                 if ($validacao == 'Proposta' && $tipoCliente == 'segurado'):
                     if (!$this->Model_cliente->update($pessoa, $pessoa['clicpfcnpj'])):
                         return $this->response(array(
-                                'status' => 'Error',
-                                'message' => array($tipoCliente => 'Error ao atualizar')
-                                ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'message' => array($tipoCliente => 'Error ao atualizar')
+                        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                     endif;
                 elseif ($validacao == 'Cotacao' && $tipoCliente == 'segurado'):
                     if (!$this->Model_cliente->update($pessoa, $pessoa['clicpfcnpj'])):
                         return $this->response(array(
-                                'status' => 'Error',
-                                'message' => array($tipoCliente => 'Error ao atualizar')
-                                ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'message' => array($tipoCliente => 'Error ao atualizar')
+                        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                     endif;
                 endif;
             endif;
@@ -1032,19 +1060,22 @@ class Gerar extends REST_Controller
         $data = isset($datas['veiculo']) ? $datas['veiculo'] : $datas;
         if (!$this->Model_fipeanovalor->where(array('codefipe' => $data['veiCodFipe']))->get()):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => array('veiculo' => 'Fipe invalido')
-                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => array('veiculo' => 'Fipe invalido')
+            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
         elseif (!$this->Model_fipeanovalor->where(array('codefipe' => $data['veiCodFipe'], 'ano' => $data['veiAno']))->get()):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => array('veiculo' => 'Ano Veiculo invalido')
-                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => array('veiculo' => 'Ano Veiculo invalido')
+            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
         elseif (!$this->Model_fipeanovalor->where(array('codefipe' => $data['veiCodFipe'], 'ano' => $data['veiAno'], 'idcombustivel' => $data['veiCdCombust']))->get()):
             return $this->response(array(
-                    'status' => 'Error',
-                    'message' => array('veiculo' => 'Combustivel invalido para esse Fipe/Ano')
-                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => array('veiculo' => 'Combustivel invalido para esse Fipe/Ano')
+            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
         endif;
 
 
@@ -1053,18 +1084,20 @@ class Gerar extends REST_Controller
             if (isset($datas['segurado']['segCdEstCivl'])):
                 if (!$this->Model_estadocivil->get($datas['segurado']['segCdEstCivl'])):
                     return $this->response(array(
-                            'status' => 'Error',
-                            'segurado' => 'CdEstCivl invalido',
-                            ), REST_Controller::HTTP_BAD_REQUEST);
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'segurado' => 'CdEstCivl invalido',
+                    ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
 
             if (isset($datas['segurado']['segEndCdUf'])):
                 if (!$this->Model_uf->get($datas['segurado']['segEndCdUf'])):
                     return $this->response(array(
-                            'status' => 'Error',
-                            'segurado' => 'segEndCdUf invalido',
-                            ), REST_Controller::HTTP_BAD_REQUEST);
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'segurado' => 'segEndCdUf invalido',
+                    ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
 
@@ -1072,16 +1105,18 @@ class Gerar extends REST_Controller
                 if (strlen($datas['segurado']['segCpfCnpj']) > 11):
                     if (!$this->Model_ramoatividade->get($datas['segurado']['segProfRamoAtivi'])):
                         return $this->response(array(
-                                'status' => 'Error',
-                                'segurado' => 'ProfRamoAtivi invalido',
-                                ), REST_Controller::HTTP_BAD_REQUEST);
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'segurado' => 'ProfRamoAtivi invalido',
+                        ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 else:
                     if (!$this->Model_profissao->get($datas['segurado']['segProfRamoAtivi'])):
                         return $this->response(array(
-                                'status' => 'Error',
-                                'segurado' => 'ProfRamoAtivi invalido',
-                                ), REST_Controller::HTTP_BAD_REQUEST);
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'segurado' => 'ProfRamoAtivi invalido',
+                        ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 endif;
             endif;
@@ -1092,18 +1127,20 @@ class Gerar extends REST_Controller
             if (isset($datas['corretor']['correCdEstCivl'])):
                 if (!$this->Model_estadocivil->get($datas['corretor']['correCdEstCivl'])):
                     return $this->response(array(
-                            'status' => 'Error',
-                            'corretor' => 'CdEstCivl invalido',
-                            ), REST_Controller::HTTP_BAD_REQUEST);
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'corretor' => 'CdEstCivl invalido',
+                    ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
 
             if (isset($datas['corretor']['correEndCdUf'])):
                 if (!$this->Model_uf->get($datas['corretor']['correEndCdUf'])):
                     return $this->response(array(
-                            'status' => 'Error',
-                            'corretor' => 'correEndCdUf invalido',
-                            ), REST_Controller::HTTP_BAD_REQUEST);
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'corretor' => 'correEndCdUf invalido',
+                    ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
 
@@ -1111,16 +1148,18 @@ class Gerar extends REST_Controller
                 if (strlen($datas['corretor']['correCpfCnpj']) > 11):
                     if (!$this->Model_ramoatividade->get($datas['corretor']['correProfRamoAtivi'])):
                         return $this->response(array(
-                                'status' => 'Error',
-                                'corretor' => 'ProfRamoAtivi invalido',
-                                ), REST_Controller::HTTP_BAD_REQUEST);
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'corretor' => 'ProfRamoAtivi invalido',
+                        ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 else:
                     if (!$this->Model_profissao->get($datas['corretor']['correProfRamoAtivi'])):
                         return $this->response(array(
-                                'status' => 'Error',
-                                'corretor' => 'ProfRamoAtivi invalido',
-                                ), REST_Controller::HTTP_BAD_REQUEST);
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'corretor' => 'ProfRamoAtivi invalido',
+                        ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 endif;
             endif;
@@ -1131,18 +1170,20 @@ class Gerar extends REST_Controller
             if (isset($datas['proprietario']['proprCdEstCivl'])):
                 if (!$this->Model_estadocivil->get($datas['proprietario']['proprCdEstCivl'])):
                     return $this->response(array(
-                            'status' => 'Error',
-                            'proprietario' => 'CdEstCivl invalido',
-                            ), REST_Controller::HTTP_BAD_REQUEST);
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'proprietario' => 'CdEstCivl invalido',
+                    ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
 
             if (isset($datas['proprietario']['proprEndCdUf'])):
                 if (!$this->Model_uf->get($datas['proprietario']['proprEndCdUf'])):
                     return $this->response(array(
-                            'status' => 'Error',
-                            'proprietario' => 'proprEndCdUf invalido',
-                            ), REST_Controller::HTTP_BAD_REQUEST);
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'proprietario' => 'proprEndCdUf invalido',
+                    ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
 
@@ -1150,16 +1191,18 @@ class Gerar extends REST_Controller
                 if (strlen($datas['proprietario']['proprCpfCnpj']) > 11):
                     if (!$this->Model_ramoatividade->get($datas['proprietario']['proprProfRamoAtivi'])):
                         return $this->response(array(
-                                'status' => 'Error',
-                                'proprietario' => 'ProfRamoAtivi invalido',
-                                ), REST_Controller::HTTP_BAD_REQUEST);
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'proprietario' => 'ProfRamoAtivi invalido',
+                        ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 else:
                     if (!$this->Model_profissao->get($datas['proprietario']['proprProfRamoAtivi'])):
                         return $this->response(array(
-                                'status' => 'Error',
-                                'proprietario' => 'ProfRamoAtivi invalido',
-                                ), REST_Controller::HTTP_BAD_REQUEST);
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'proprietario' => 'ProfRamoAtivi invalido',
+                        ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 endif;
             endif;
@@ -1170,18 +1213,19 @@ class Gerar extends REST_Controller
             if (isset($datas['condutor']['condutCdEstCivl'])):
                 if (!$this->Model_estadocivil->get($datas['condutor']['condutCdEstCivl'])):
                     return $this->response(array(
-                            'status' => 'Error',
-                            'condutor' => 'CdEstCivl invalido',
-                            ), REST_Controller::HTTP_BAD_REQUEST);
+                        'status' => 'Error','cdretorno' => '013',
+                        'condutor' => 'CdEstCivl invalido',
+                    ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
 
             if (isset($datas['condutor']['condutEndCdUf'])):
                 if (!$this->Model_uf->get($datas['condutor']['condutEndCdUf'])):
                     return $this->response(array(
-                            'status' => 'Error',
-                            'condutor' => 'condutEndCdUf invalido',
-                            ), REST_Controller::HTTP_BAD_REQUEST);
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'condutor' => 'condutEndCdUf invalido',
+                    ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
 
@@ -1189,16 +1233,18 @@ class Gerar extends REST_Controller
                 if (strlen($datas['condutor']['condutCpfCnpj']) > 11):
                     if (!$this->Model_ramoatividade->get($datas['condutor']['condutProfRamoAtivi'])):
                         return $this->response(array(
-                                'status' => 'Error',
-                                'condutor' => 'ProfRamoAtivi invalido',
-                                ), REST_Controller::HTTP_BAD_REQUEST);
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'condutor' => 'ProfRamoAtivi invalido',
+                        ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 else:
                     if (!$this->Model_profissao->get($datas['condutor']['condutProfRamoAtivi'])):
                         return $this->response(array(
-                                'status' => 'Error',
-                                'condutor' => 'ProfRamoAtivi invalido',
-                                ), REST_Controller::HTTP_BAD_REQUEST);
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'condutor' => 'ProfRamoAtivi invalido',
+                        ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 endif;
             endif;
@@ -1208,9 +1254,10 @@ class Gerar extends REST_Controller
         if (isset($datas['veiCdCombust'])):
             if (!$this->Model_tipoveiculo->get($datas['veiCdTipo'])):
                 return $this->response(array(
-                        'status' => 'Error',
-                        'message' => 'veiCdTipo invalido',
-                        ), REST_Controller::HTTP_BAD_REQUEST);
+                    'status' => 'Error',
+                    'cdretorno' => '013',
+                    'message' => 'veiCdTipo invalido',
+                ), REST_Controller::HTTP_BAD_REQUEST);
             endif;
         endif;
     }
