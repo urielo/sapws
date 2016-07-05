@@ -102,6 +102,7 @@ class Gerar extends REST_Controller
 
             $this->response(array(
                 'status' => '000 - sucesso',
+                'cdretorno' => '000',
                 'retorno' => $result,
             ));
 
@@ -165,6 +166,7 @@ class Gerar extends REST_Controller
 
             $this->response(array(
                 'status' => '000 - sucesso',
+                'cdretorno' => '000',
                 'retorno' => $result,));
 
 
@@ -279,6 +281,7 @@ class Gerar extends REST_Controller
 
             $this->response(array(
                 'status' => '000 - sucesso',
+                'cdretorno' => '000',
                 'idproposta' => $proposta['idproposta'],
                 'idparceiro' => $parceiro['idparceiro'],
                 'base64' => $html,
