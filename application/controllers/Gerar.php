@@ -923,6 +923,7 @@ class Gerar extends REST_Controller
 
             $corretorid = $this->Model_corretor->fields('idcorretor')->where('corrcpfcnpj', $corretor['corrcpfcnpj'])->get();
             if ($corretorid):
+                $this->Model_corretor->update($corretor, $corretorid['idcorretor']);
                 return $corretorid['idcorretor'];
             else:
 
