@@ -181,7 +181,11 @@ function dataOrganizeCotacao($datas)
         $return['proprietario']['proprnmcidade'] = $datas['proprietario']["proprEndCidade"];
         $return['proprietario']['proprcduf'] = $datas['proprietario']["proprEndCdUf"];
         $return['proprietario']['idtipocliente'] = 2;
+        $return['veiculo']['propcpfcnpj'] = $datas['proprietario']["proprCpfCnpj"];
+    else:
+        $return['veiculo']['propcpfcnpj'] = $datas['segurado']["segCpfCnpj"];
     endif;
+
 
     if (!$datas['indCondutorVeic']):
         $return['condutor']['condcpfcnpj'] = $datas['condutor']["condutCpfCnpj"];
@@ -193,6 +197,9 @@ function dataOrganizeCotacao($datas)
         $return['condutor']['idtipocliente'] = 3;
 
         $return['veiculo']['condcpfcnpj'] = $datas['condutor']["condutCpfCnpj"];
+    else:
+        $return['veiculo']['condcpfcnpj'] = $datas['segurado']["segCpfCnpj"];
+
     endif;
 
 
@@ -222,9 +229,6 @@ function dataOrganizeCotacao($datas)
         $return['perfil']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
         $return['veiculo']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
         $return['cotacao']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
-        !$datas['indProprietVeic'] ? $return['veiculo']['condcpfcnpj'] = $datas['condutor']["condutCpfCnpj"] : $return['veiculo']['condcpfcnpj'] = $datas['segurado']["segCpfCnpj"];
-        !$datas['indCondutorVeic'] ? $return['veiculo']['propcpfcnpj'] = $datas['proprietario']["proprCpfCnpj"] : $return['veiculo']['propcpfcnpj'] = $datas['segurado']["segCpfCnpj"] ;
-
     else:
         $return['perfil']['clicpfcnpj'] = NULL;
         $return['veiculo']['clicpfcnpj'] = NULL;
