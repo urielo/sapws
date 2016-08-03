@@ -915,6 +915,10 @@ class Gerar extends REST_Controller
 
         $retorno = $this->getProdutoParcPremio($datas, 'proposta');
 
+        $datas['proposta']['premiototal'] = $retorno['premioTotal'] ;
+        $datas['proposta']['primeiraparc'] = $retorno['formapagamento']['primeira'] ;
+        $datas['proposta']['demaisparc'] = $retorno['formapagamento']['demais'] ;
+
         $idproposta = $this->Model_proposta->insert($datas['proposta']);
         if (!$idproposta):
             return $this->response(array(
@@ -929,7 +933,7 @@ class Gerar extends REST_Controller
 
 
         $parceiro = array('idparceiro' => $cotacao['idparceiro']);
-        $premioTotal = array("premioTotal" => $premioTotal);
+
         $return = array_merge($retorno, $proposta, $parceiro);
 
         return $return;
