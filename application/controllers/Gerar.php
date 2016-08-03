@@ -288,7 +288,7 @@ class Gerar extends REST_Controller
         endif;
     }
 
-    protected function getProduetoParcPremio($datas, $tipo)
+    protected function getProdutoParcPremio($datas, $tipo)
     {
 
 
@@ -368,7 +368,7 @@ class Gerar extends REST_Controller
                     'cdretorno' => '009',
                     'message' => "O veiCdTipo {$veiculo['veiccdveitipo']} é inválido para idProtudo {$idproduto}",
                 );
-            elseif ($produtodb['codstatus'] == '001'):
+            elseif ($produtodb['idstatus'] == '001'):
                 $produtos['produto'][$i] = array(
                     'status' => 'Atenção',
                     'cdretorno' => '009',
@@ -385,7 +385,7 @@ class Gerar extends REST_Controller
                 unset($produtodb["indtabprecocategorianobre"]);
                 unset($produtodb["numparcelsemjuros"]);
                 unset($produtodb["jurosmesparcelamento"]);
-                unset($produtodb["codstatus"]);
+                unset($produtodb["idstatus"]);
                 unset($produtodb["idseguradora"]);
                 unset($produtodb["procsusepproduto"]);
                 unset($produtodb["codramoproduto"]);
@@ -619,22 +619,20 @@ class Gerar extends REST_Controller
                 'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         elseif (ucfirst($validacao) == 'Cotacao'):
 
-            $wherec = "codstatus = '000' AND veicplaca = '{$veiculo['veicplaca']}' "
-                . "OR codstatus = '000' AND veicrenavam = '{$veiculo['veicrenavam']}' "
-                . "OR codstatus = '000' AND veicchassi = '{$veiculo['veicchassi']}'";
+            $wherec = "idstatus != '10' AND veicplaca = '{$veiculo['veicplaca']}' "
+                . "OR idstatus != '10' AND veicrenavam = '{$veiculo['veicrenavam']}' "
+                . "OR idstatus != '10' AND veicchassi = '{$veiculo['veicchassi']}'";
             $dbveiculo = $this->Model_veiculo->where($wherec, null, null, FALSE, FALSE, TRUE)->get_all();
-            $wherep = "codstatus = '001' AND veicplaca = '{$veiculo['veicplaca']}' "
-                . "OR codstatus = '001' AND veicrenavam = '{$veiculo['veicrenavam']}' "
-                . "OR codstatus = '001' AND veicchassi = '{$veiculo['veicchassi']}'";
 
+            $wherep = "idstatus = '10' AND veicplaca = '{$veiculo['veicplaca']}' "
+                . "OR idstatus = '10' AND veicrenavam = '{$veiculo['veicrenavam']}' "
+                . "OR idstatus = '10' AND veicchassi = '{$veiculo['veicchassi']}'";
             $dbveiculop = $this->Model_veiculo->where($wherep, null, null, FALSE, FALSE, TRUE)->get_all();
 
             if ($dbveiculop):
 
                 if (count($dbveiculop) == 1):
-
                     return $dbveiculop[0]['veicid'];
-
                 elseif (count($dbveiculop) > 1):
 
                     foreach ($dbveiculop as $veic):
@@ -703,12 +701,14 @@ class Gerar extends REST_Controller
                 . "veicautozero = {$veiculo['veicautozero']} AND "
                 . "veiccdveitipo = {$veiculo['veiccdveitipo']} AND "
                 . "veictipocombus = {$veiculo['veictipocombus']} AND "
+
                 . "veicplaca = '{$veiculo['veicplaca']}' OR "
                 . "veiccodfipe = '{$veiculo['veiccodfipe']}' AND "
                 . "veicano = {$veiculo['veicano']} AND "
                 . "veicautozero = {$veiculo['veicautozero']} AND "
                 . "veiccdveitipo = {$veiculo['veiccdveitipo']} AND "
                 . "veictipocombus = {$veiculo['veictipocombus']} AND "
+
                 . "veicrenavam = '{$veiculo['veicrenavam']}' OR "
                 . "veiccodfipe = '{$veiculo['veiccodfipe']}' AND "
                 . "veicano = {$veiculo['veicano']} AND "
@@ -729,6 +729,7 @@ class Gerar extends REST_Controller
             if ($dbveiculo && count($dbveiculo) == 1):
                 $this->Model_cotacao->update(['veicid' => $dbveiculo[0]['veicid']], $datas['proposta']['idcotacao']);
                 $idveic['veicid'] = $dbveiculo[0]['veicid'];
+
             elseif (count($dbveiculo) > 1):
                 foreach ($dbveiculo as $veic):
                     if (strtoupper($veic['veicplaca']) == strtoupper($veiculo['veicplaca'])):
@@ -745,41 +746,46 @@ class Gerar extends REST_Controller
                     'message' => array('veiculo' => 'Proposta: ' . $msg)
                 ), REST_Controller::HTTP_BAD_REQUEST);
             else:
+
                 $idveic = $this->Model_cotacao->get(['idcotacao' => $datas['proposta']['idcotacao']]);
             endif;
 
-            $veiculo['codstatus'] = '001';
+            $veiculo['idstatus'] = '10';
 
-            $cotacao = $this->Model_cotacao->get(['veicid' => $idveic['veicid'], 'idstatus' => 33]);
+            $cotacao = $this->Model_cotacao->get(['veicid' => $idveic['veicid'], 'idstatus' => 10]);
 
             if ($cotacao):
-                $proposta = $this->Model_proposta->get(['idcotacao' => $cotacao['idcotacao']]);
 
-                if ($proposta['dtvalidade'] > date('Y-m-d H:i:s')):
-                    return $this->response(array(
-                        'status' => 'Error',
-                        'cdretorno' => '013',
-                        'message' => array('veiculo' => 'Existe uma proposta em aberto pra esse veiculo')
-                    ), REST_Controller::HTTP_BAD_REQUEST);
-                elseif ($proposta['dtvalidade'] < date('Y-m-d H:i:s') && $proposta['idstatus'] != '012'):
+                return $this->response(array(
+                    'status' => 'Error',
+                    'cdretorno' => '013',
+                    'message' => array('veiculo' => 'Existe uma proposta em aberto pra esse veiculo')
+                ), REST_Controller::HTTP_BAD_REQUEST);
 
-                    $this->Model_proposta->update(['idstatus' => '012'], ['idproposta' => $proposta['idproposta']]);
-                    if (!$this->Model_veiculo->update($veiculo, $idveic['veicid'])):
-                        return $this->response(array(
-                            'status' => 'Error',
-                            'cdretorno' => '013',
-                            'message' => array('veiculo' => 'Error ao atualizar')
-                        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
-                    endif;
-                else:
-                    if (!$this->Model_veiculo->update($veiculo, $idveic['veicid'])):
-                        return $this->response(array(
-                            'status' => 'Error',
-                            'cdretorno' => '013',
-                            'message' => array('veiculo' => 'Error ao atualizar')
-                        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
-                    endif;
-                endif;
+//                $proposta = $this->Model_proposta->get(['idcotacao' => $cotacao['idcotacao']]);
+//
+//                if ($proposta['dtvalidade'] > date('Y-m-d H:i:s')):
+//
+//                elseif ($proposta['dtvalidade'] < date('Y-m-d H:i:s') && $proposta['idstatus'] != '012'):
+//
+//                    $this->Model_proposta->update(['idstatus' => '012'], ['idproposta' => $proposta['idproposta']]);
+//                    if (!$this->Model_veiculo->update($veiculo, $idveic['veicid'])):
+//                        return $this->response(array(
+//                            'status' => 'Error',
+//                            'cdretorno' => '013',
+//                            'message' => array('veiculo' => 'Error ao atualizar')
+//                        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+//                    endif;
+//                else:
+//                    if (!$this->Model_veiculo->update($veiculo, $idveic['veicid'])):
+//                        return $this->response(array(
+//                            'status' => 'Error',
+//                            'cdretorno' => '013',
+//                            'message' => array('veiculo' => 'Error ao atualizar')
+//                        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+//                    endif;
+//                endif;
+
             else:
 
                 $where = "veicid != {$idveic['veicid']} AND veicplaca = '{$veiculo['veicplaca']}' "
@@ -839,16 +845,18 @@ class Gerar extends REST_Controller
             ), REST_Controller::HTTP_BAD_REQUEST);
         endif;
 
+
+
         $this->veiculodb($datas, 'proposta');
 
 
         $datas = dataOrganizeProposta($datas);
 
-        if ($this->Model_proposta->where('idcotacao', $datas['proposta']['idcotacao'])->get()):
+        if ($cotacao['idstatus'] == 10):
             return $this->response(array(
                 'status' => 'Error',
                 'cdretorno' => '013',
-                'message' => 'Ja foi efetuada uma proposta para essa cotacao',
+                'message' => 'Existe uma proposta ativa para essa cotação',
             ), REST_Controller::HTTP_BAD_REQUEST);
         endif;
 
@@ -864,7 +872,7 @@ class Gerar extends REST_Controller
                 'message' => 'cotacao vencida',
             ), REST_Controller::HTTP_BAD_REQUEST);
         endif;
-        $datas['cotacao']['idstatus'] = 33;
+        $datas['cotacao']['idstatus'] = 10;
         if (!$this->Model_cotacao->update($datas['cotacao'], $datas['proposta']['idcotacao'])):
             return $this->response(array(
                 'status' => 'Error',
