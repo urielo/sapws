@@ -288,7 +288,7 @@ class Gerar extends REST_Controller
         endif;
     }
 
-    protected function getProdutoParcPremio($datas, $tipo)
+    protected function getProduetoParcPremio($datas, $tipo)
     {
 
 
