@@ -129,7 +129,7 @@ $config = array(
         array('field' => 'qtParcela', 'label' => 'qtParcela', 'rules' => 'trim|required|integer|max_length[3]'),
         array('field' => 'cdFormaPgt', 'label' => 'cdFormaPgt', 'rules' => 'trim|required|numeric|max_length[2]'),
         array('field' => 'nmBandeira', 'label' => 'Bandeira do Cartão', 'rules' => 'trim|string|max_length[60]'),
-        array('field' => 'validadeCartao', 'label' => 'Validade do Cartão', 'rules' => 'trim|numeric|max_length[6]|greater_than[date("Ym",strtotime("-1 month"))]'),
+        array('field' => 'validadeCartao', 'label' => 'Validade do Cartão', 'rules' => 'trim|numeric|max_length[6]|greater_than['.date("Ym",strtotime("-1 month")).']'),
         array('field' => 'numCartao', 'label' => 'Numero do Cartão', 'rules' => 'trim|numeric|max_length[16]|min_length[16]'),
     ),
     'veiculoProposta' => array(
