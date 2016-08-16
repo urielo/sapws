@@ -846,7 +846,6 @@ class Gerar extends REST_Controller
         endif;
 
 
-
         $this->veiculodb($datas, 'proposta');
 
 
@@ -915,9 +914,9 @@ class Gerar extends REST_Controller
 
         $retorno = $this->getProdutoParcPremio($datas, 'proposta');
 
-        $datas['proposta']['premiototal'] = $retorno['premioTotal'] ;
-        $datas['proposta']['primeiraparc'] = $retorno['formapagamento']['primeira'] ;
-        $datas['proposta']['demaisparc'] = $retorno['formapagamento']['demais'] ;
+        $datas['proposta']['premiototal'] = $retorno['premioTotal'];
+        $datas['proposta']['primeiraparc'] = $retorno['formapagamento']['primeira'];
+        $datas['proposta']['demaisparc'] = $retorno['formapagamento']['demais'];
 
         $idproposta = $this->Model_proposta->insert($datas['proposta']);
         if (!$idproposta):
@@ -962,6 +961,23 @@ class Gerar extends REST_Controller
             else:
 
                 $corretor['corrcpfcnpj'] = (string)$corretor['corrcpfcnpj'];
+
+                foreach ($datas['corretor'] as $key => $value):
+
+                    if ($key == 'correCelDdd'):
+                        $datas['corretor'][$key] = ( strlen($value) < 2 ? NULL : $value ) ;
+                    elseif ($key == 'correCelNum'):
+                        $datas['corretor'][$key] = (strlen($value) < 8 ? NULL : $value);
+                    elseif ($key == 'correFoneDdd'):
+                        $datas['corretor'][$key] = (strlen($value) < 2 ? NULL : $value);
+                    elseif ($key == 'correFoneNum'):
+                        $datas['corretor'][$key] = (strlen($value) < 8 ? NULL : $value);
+                    elseif ($key == 'correSusep'):
+                        $datas['corretor'][$key] = (strlen($value) < 3 ? NULL : $value);
+
+                    endif;
+                endforeach;
+
                 $this->form_validation->set_data($datas['corretor']);
                 if ($this->form_validation->run($tipoValidacao) == false):
                     return $this->response(array(
@@ -1225,7 +1241,7 @@ class Gerar extends REST_Controller
             if (isset($datas['condutor']['condutCdEstCivl'])):
                 if (!$this->Model_estadocivil->get($datas['condutor']['condutCdEstCivl'])):
                     return $this->response(array(
-                        'status' => 'Error','cdretorno' => '013',
+                        'status' => 'Error', 'cdretorno' => '013',
                         'condutor' => 'CdEstCivl invalido',
                     ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
