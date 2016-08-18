@@ -24,6 +24,7 @@ class Gerar extends REST_Controller
 
         if ($this->form_validation->run('cotacao') == false):
             $this->response(array(
+                'cdretorno' => '023',
                 'status' => 'Error',
                 'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         else:
@@ -39,6 +40,7 @@ class Gerar extends REST_Controller
 
             if ($this->Model_parceiro->get($datas['idParceiro']) == null):
                 $this->response(array(
+                    'cdretorno' => '015',
                     'status' => 'Error',
                     'message' => 'idParceiro Inválido',
                 ));
