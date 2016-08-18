@@ -11,7 +11,7 @@ $config = array(
         array('field' => 'nmParceiro', 'label' => 'nomeParceiro', 'rules' => 'trim|required|max_length[50]'),
         array('field' => 'indProprietVeic', 'label' => 'indProprietVeic', 'rules' => 'trim|required|max_length[1]|less_than[2]'),
         array('field' => 'indCondutorVeic', 'label' => 'indCondutorVeic', 'rules' => 'trim|required|max_length[1]|less_than[2]'),
-        array('field' => 'comissao', 'label' => 'comissao', 'rules' => 'trim|required|integer|max_length[2]|less_than[26]'),
+        array('field' => 'comissao', 'label' => 'comissao', 'rules' => 'trim|required|integer|max_length[2]'),
     ),
     'veiculoCotacao' => array(
         array('field' => 'veiCodFipe', 'label' => 'veiCodFipe', 'rules' => 'trim|required|max_length[10]'),
