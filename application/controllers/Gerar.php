@@ -198,7 +198,7 @@ class Gerar extends REST_Controller
                 $this->response(array(
                         'status' => 'Error',
                         'cdretorno' => '016',
-                        'message' => "idParceiro{$datas['idParceiro']} invalido para essa proposta",
+                        'message' => "ID do parceiro: {$datas['idParceiro']} invalido para essa proposta",
                     )
                     , REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
             endif;
@@ -318,7 +318,7 @@ class Gerar extends REST_Controller
                 'status' => 'Error',
                 'cdretorno' => '010',
                 'message' => array(
-                    'veiculo' => 'Fipe/Ano invalido',
+                    'veiculo' => 'Fipe ou ano do modelo do veiculo invalido',
                 )
             ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
         else:
@@ -887,19 +887,19 @@ class Gerar extends REST_Controller
             return $this->response(array(
                 'status' => 'Error',
                 'cdretorno' => '013',
-                'message' => 'cdCotacao Invalido',
+                'message' => 'Codigo da cotação invalido',
             ), REST_Controller::HTTP_BAD_REQUEST);
         elseif (!$forma):
             return $this->response(array(
                 'status' => 'Error',
                 'cdretorno' => '013',
-                'message' => 'cdFormaPgt Invalido',), REST_Controller::HTTP_BAD_REQUEST);
+                'message' => 'Codigo da forma de pagamento invalido',), REST_Controller::HTTP_BAD_REQUEST);
 
         elseif ($datas['qtParcela'] > $forma['nummaxparc']):
             return $this->response(array(
                 'status' => 'Error',
                 'cdretorno' => '013',
-                'message' => 'qtParcela Invalido',), REST_Controller::HTTP_BAD_REQUEST);
+                'message' => 'Quantidade de parcelaa invalida',), REST_Controller::HTTP_BAD_REQUEST);
         endif;
 
         $datas['cotacao']['comissao'] = $cotacao['comissao'];
@@ -1116,7 +1116,7 @@ class Gerar extends REST_Controller
                     return $this->response(array(
                         'status' => 'Error',
                         'cdretorno' => '013',
-                        'segurado' => 'CdEstCivl invalido',
+                        'segurado' => 'Codigo do estado civil invalido',
                     ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
@@ -1126,7 +1126,7 @@ class Gerar extends REST_Controller
                     return $this->response(array(
                         'status' => 'Error',
                         'cdretorno' => '013',
-                        'segurado' => 'segEndCdUf invalido',
+                        'segurado' => 'Codgio do estado invalido',
                     ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
@@ -1137,7 +1137,7 @@ class Gerar extends REST_Controller
                         return $this->response(array(
                             'status' => 'Error',
                             'cdretorno' => '013',
-                            'segurado' => 'ProfRamoAtivi invalido',
+                            'segurado' => 'Codigo do ramo de atividade invalido',
                         ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 else:
@@ -1145,7 +1145,7 @@ class Gerar extends REST_Controller
                         return $this->response(array(
                             'status' => 'Error',
                             'cdretorno' => '013',
-                            'segurado' => 'ProfRamoAtivi invalido',
+                            'segurado' => 'Codigo da profissão invalido',
                         ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 endif;
@@ -1159,7 +1159,7 @@ class Gerar extends REST_Controller
                     return $this->response(array(
                         'status' => 'Error',
                         'cdretorno' => '013',
-                        'corretor' => 'CdEstCivl invalido',
+                        'corretor' => 'Codigo do estado civil  invalido',
                     ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
@@ -1169,7 +1169,7 @@ class Gerar extends REST_Controller
                     return $this->response(array(
                         'status' => 'Error',
                         'cdretorno' => '013',
-                        'corretor' => 'correEndCdUf invalido',
+                        'corretor' => 'Codgio do estado invalido',
                     ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
@@ -1180,7 +1180,7 @@ class Gerar extends REST_Controller
                         return $this->response(array(
                             'status' => 'Error',
                             'cdretorno' => '013',
-                            'corretor' => 'ProfRamoAtivi invalido',
+                            'corretor' => 'Codigo do ramo de atividade invalido',
                         ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 else:
@@ -1188,7 +1188,7 @@ class Gerar extends REST_Controller
                         return $this->response(array(
                             'status' => 'Error',
                             'cdretorno' => '013',
-                            'corretor' => 'ProfRamoAtivi invalido',
+                            'corretor' => 'Codigo da profissão invalido invalido',
                         ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 endif;
@@ -1202,7 +1202,7 @@ class Gerar extends REST_Controller
                     return $this->response(array(
                         'status' => 'Error',
                         'cdretorno' => '013',
-                        'proprietario' => 'CdEstCivl invalido',
+                        'proprietario' => 'Codigo do estado civil  invalido',
                     ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
@@ -1212,7 +1212,7 @@ class Gerar extends REST_Controller
                     return $this->response(array(
                         'status' => 'Error',
                         'cdretorno' => '013',
-                        'proprietario' => 'proprEndCdUf invalido',
+                        'proprietario' => 'Codgio do estado invalido',
                     ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
@@ -1223,7 +1223,7 @@ class Gerar extends REST_Controller
                         return $this->response(array(
                             'status' => 'Error',
                             'cdretorno' => '013',
-                            'proprietario' => 'ProfRamoAtivi invalido',
+                            'proprietario' => 'Codigo do ramo de atividade invalido',
                         ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 else:
@@ -1231,7 +1231,7 @@ class Gerar extends REST_Controller
                         return $this->response(array(
                             'status' => 'Error',
                             'cdretorno' => '013',
-                            'proprietario' => 'ProfRamoAtivi invalido',
+                            'proprietario' => 'Codigo da profissão invalido invalido',
                         ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 endif;
@@ -1244,7 +1244,7 @@ class Gerar extends REST_Controller
                 if (!$this->Model_estadocivil->get($datas['condutor']['condutCdEstCivl'])):
                     return $this->response(array(
                         'status' => 'Error', 'cdretorno' => '013',
-                        'condutor' => 'CdEstCivl invalido',
+                        'condutor' => 'Codigo do estado civil  invalido',
                     ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
@@ -1254,7 +1254,7 @@ class Gerar extends REST_Controller
                     return $this->response(array(
                         'status' => 'Error',
                         'cdretorno' => '013',
-                        'condutor' => 'condutEndCdUf invalido',
+                        'condutor' => 'Codgio do estado invalido',
                     ), REST_Controller::HTTP_BAD_REQUEST);
                 endif;
             endif;
@@ -1265,7 +1265,7 @@ class Gerar extends REST_Controller
                         return $this->response(array(
                             'status' => 'Error',
                             'cdretorno' => '013',
-                            'condutor' => 'ProfRamoAtivi invalido',
+                            'condutor' => 'Codigo do ramo de atividade invalido',
                         ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 else:
@@ -1273,7 +1273,7 @@ class Gerar extends REST_Controller
                         return $this->response(array(
                             'status' => 'Error',
                             'cdretorno' => '013',
-                            'condutor' => 'ProfRamoAtivi invalido',
+                            'condutor' => 'Codigo da profissão invalido invalido',
                         ), REST_Controller::HTTP_BAD_REQUEST);
                     endif;
                 endif;
@@ -1286,7 +1286,7 @@ class Gerar extends REST_Controller
                 return $this->response(array(
                     'status' => 'Error',
                     'cdretorno' => '013',
-                    'message' => 'veiCdTipo invalido',
+                    'message' => 'Codigo tipo de combustivel invalido',
                 ), REST_Controller::HTTP_BAD_REQUEST);
             endif;
         endif;
