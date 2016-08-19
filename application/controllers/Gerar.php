@@ -109,7 +109,7 @@ class Gerar extends REST_Controller
 
         endif;
     }
-
+    
     function proposta_post()
     {
 
@@ -297,11 +297,15 @@ class Gerar extends REST_Controller
         $datas = $tipo == 'cotacao' ? dataOrganizeCotacao($datas) : $datas;
 
         $veiculo = $datas['veiculo'];
+
+
         $produto = $datas['produto'];
         #return array_search(1, array_column($produto, 'idProduto'));
 
         $ano = $veiculo['veicautozero'] == 1 ? 0 : $veiculo['veicano'];
         $valorfipe = $this->Model_fipeanovalor->fields('valor')->where(array('codefipe' => $veiculo['veiccodfipe'], 'ano' => $ano))->get();
+        $fipe = $this->Model_fipe->where('codefipe', $veiculo['veiccodfipe'])->get();
+
 
         if ($ano != 0 && date('Y') - $ano > 15):
             return $this->response(array(
@@ -339,6 +343,14 @@ class Gerar extends REST_Controller
                 'cdretorno' => '010',
                 'message' => array(
                     'veiculo' => 'Esse produto não aceita item com valor fipe inferior a R$ 10.000,00',
+                )
+            ), REST_Controller::HTTP_BAD_REQUEST);
+        elseif ($fipe['idstatus'] == 22):
+            return $this->response(array(
+                'status' => 'Error',
+                'cdretorno' => '022',
+                'message' => array(
+                    'veiculo' => 'Veiculo sem aceitação no momento!!',
                 )
             ), REST_Controller::HTTP_BAD_REQUEST);
         endif;
@@ -398,6 +410,14 @@ class Gerar extends REST_Controller
                     if ($roubo):
                         if ($valorfipe >= $preco['vlrfipeminimo'] && $valorfipe <= $preco['vlrfipemaximo'] && $idade <= $preco['idadeaceitamax']):
                             $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao);
+
+                            if ($fipe['idstatus'] == 23) {
+                                $vlcontig = $this->Model_contingencia->where('idseguradora', $produtodb['idseguradora'])->get();
+                                if ($vlcontig) {
+                                    $preco['premioliquidoproduto'] = $preco['premioliquidoproduto'] + $vlcontig['valor'];
+                                }
+                            }
+
                             $produtos['produto'][$i] = $produtodb;
                             $produtos['produto'][$i]['caractproduto'] = $preco['caractproduto'];
                             $produtos['produto'][$i]['nomeproduto'] = $preco['nomeproduto'];
@@ -967,7 +987,7 @@ class Gerar extends REST_Controller
                 foreach ($datas['corretor'] as $key => $value):
 
                     if ($key == 'correCelDdd'):
-                        $datas['corretor'][$key] = ( strlen($value) < 2 ? NULL : $value ) ;
+                        $datas['corretor'][$key] = (strlen($value) < 2 ? NULL : $value);
                     elseif ($key == 'correCelNum'):
                         $datas['corretor'][$key] = (strlen($value) < 8 ? NULL : $value);
                     elseif ($key == 'correFoneDdd'):

@@ -150,4 +150,6 @@ $autoload['model'] = array(
     'Model_fipe',
     'Model_tipoutilizacaoveiculo',
     'Model_fipecategoria',
+    'Model_fipecategoria',
+    'Model_contingencia',
     );
