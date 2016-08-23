@@ -976,7 +976,7 @@ class Gerar extends REST_Controller
             $corretor = dataOrganizeCotacao($datas);
             $corretor = $corretor['corretor'];
 
-            $corretorid = $this->Model_corretor->fields('idcorretor')->where('corrcpfcnpj', $corretor['corrcpfcnpj'])->get();
+           $corretorid = $this->Model_corretor->fields('idcorretor')->where('corrcpfcnpj', (empty($corretor['corrcpfcnpj']) ? '' : $corretor['corrcpfcnpj']))->get();
             if ($corretorid):
                 $this->Model_corretor->update($corretor, $corretorid['idcorretor']);
                 return $corretorid['idcorretor'];
