@@ -69,6 +69,7 @@ function dataOrganizeProposta($datas)
     $return['proposta']['nmbandeira'] = $datas["nmBandeira"];
     $return['proposta']['numcartao'] = $datas["numCartao"];
     $return['proposta']['validadecartao'] = $datas["validadeCartao"];
+    $return['proposta']['titularcartao'] = strtoupper($datas["titularCartao"]);
 
 
     $return['perfil']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];

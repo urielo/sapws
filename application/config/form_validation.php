@@ -51,6 +51,10 @@ $config = array(
         array('field' => 'segEndCep', 'label' => 'Segurado: CEP', 'rules' => 'trim|max_length[8]|min_length[8]|numeric'),
         array('field' => 'segEndCidade', 'label' => 'Segurado: Cidade', 'rules' => 'trim|max_length[100]'),
         array('field' => 'segEndCdUf', 'label' => 'Segurado: Estado', 'rules' => 'trim|integer|max_length[5]'),
+        array('field' => 'segNumRg', 'label' => 'Segurado: Numero do RG', 'rules' => 'trim|numeric'),
+        array('field' => 'segDtEmissaoRg', 'label' => 'Segurado: Data emissão do RG', 'rules' => 'trim|numeric|min_length[8]'),
+        array('field' => 'segEmissorRg', 'label' => 'Segurado: Orgão emissor do RG', 'rules' => 'trim|alpha'),
+        array('field' => 'segCdUfRg', 'label' => 'Segurado: Estado de emissão do RG', 'rules' => 'trim|integer'),
     ),
     'seguradoCotacaoPJ' => array(
         array('field' => 'segNomeRazao', 'label' => 'Segurado: Nome ou razão social', 'rules' => 'trim|max_length[50]'),
@@ -74,7 +78,7 @@ $config = array(
     'corretor' => array(
         array('field' => 'correCodPlataforma', 'label' => 'Corretor: Codigo da corretora na plataforma', 'rules' => 'trim|max_length[20]|integer'),
         array('field' => 'correSusep', 'label' => 'Corretor: Numero da SUSEP', 'rules' => 'trim|max_length[20]|numeric'),
-        array('field' => 'correNomeRazao', 'label' => 'Corretor: Nome ou razão social', 'rules' => 'trim|required|max_length[50]'),
+        array('field' => 'correNomeRazao', 'label' => 'Corretor: Nome ou razão social', 'rules' => 'trim|required'),
         array('field' => 'correCpfCnpj', 'label' => 'Corretor: CPF ou CNPJ', 'rules' => 'trim|required|min_length[11]|max_length[14]|numeric'),
         array('field' => 'correDtNasci', 'label' => 'Corretor: Data de nascimento', 'rules' => 'trim|max_length[8]|min_length[8]|integer|greater_than[19000000]|less_than[' . $anomin . ']'),
         array('field' => 'correCdSexo', 'label' => 'Corretor: Sexo', 'rules' => 'trim|max_length[1]|numeric|less_than[3]'),
@@ -84,7 +88,7 @@ $config = array(
         array('field' => 'correCelDdd', 'label' => 'Corretor: DDD do celular', 'rules' => 'trim|max_length[2]|integer|greater_than[10]|less_than[100]'),
         array('field' => 'correCelNum', 'label' => 'Corretor: Numero do celular', 'rules' => 'trim|max_length[9]|min_length[8]|integer|greater_than[40000000]'),
         array('field' => 'correFoneDdd', 'label' => 'Corretor: DDD do telefone', 'rules' => 'trim|max_length[2]|integer|greater_than[10]|less_than[100]'),
-        array('field' => 'correFoneNum', 'label' => 'Corretor: Numero do telefone', 'rules' => 'trim|max_length[8]|integer'),
+        array('field' => 'correFoneNum', 'label' => 'Corretor: Numero do telefone', 'rules' => 'trim|max_length[9]|min_length[8]|integer'),
         array('field' => 'correEnd', 'label' => 'Corretor: Logradouro', 'rules' => 'trim'),
         array('field' => 'correEndNum', 'label' => 'Corretor: Numero do endereço', 'rules' => 'trim|max_length[10]'),
         array('field' => 'correEndCompl', 'label' => 'Corretor: Complement', 'rules' => 'trim|max_length[50]'),
@@ -131,6 +135,7 @@ $config = array(
         array('field' => 'qtParcela', 'label' => 'Quantidade de parcelas', 'rules' => 'trim|required|integer|max_length[3]'),
         array('field' => 'cdFormaPgt', 'label' => 'Codigo da forma de pagamento', 'rules' => 'trim|required|numeric|max_length[2]'),
         array('field' => 'nmBandeira', 'label' => 'Bandeira do Cartão', 'rules' => 'trim|max_length[60]'),
+        array('field' => 'titularCartao', 'label' => 'Nome do titular do cartão', 'rules' => 'trim'),
         array('field' => 'validadeCartao', 'label' => 'Validade do Cartão', 'rules' => 'trim|numeric|max_length[6]|greater_than[' . date("Ym", strtotime("-1 month")) . ']'),
         array('field' => 'numCartao', 'label' => 'Numero do Cartão', 'rules' => 'trim|numeric|max_length[16]|min_length[16]'),
     ),
@@ -172,6 +177,10 @@ $config = array(
         array('field' => 'segEndCep', 'label' => 'Segurado: CEP', 'rules' => 'trim|required|max_length[8]|min_length[8]|numeric'),
         array('field' => 'segEndCidade', 'label' => 'Segurado: Cidade', 'rules' => 'trim|required|max_length[20]'),
         array('field' => 'segEndCdUf', 'label' => 'Segurado: Estado', 'rules' => 'trim|integer|required|max_length[5]'),
+        array('field' => 'segNumRg', 'label' => 'Segurado: Numero do RG', 'rules' => 'trim|numeric'),
+        array('field' => 'segDtEmissaoRg', 'label' => 'Segurado: Data emissão do RG', 'rules' => 'trim|numeric|min_length[8]'),
+        array('field' => 'segEmissorRg', 'label' => 'Segurado: Orgão emissor do RG', 'rules' => 'trim|alpha'),
+        array('field' => 'segCdUfRg', 'label' => 'Segurado: Estado de emissão do RG', 'rules' => 'trim|integer'),
     ),
     'condutorProposta' => array(
         array('field' => 'condutNomeRazao', 'label' => 'Condutor: Nome ou razão social', 'rules' => 'trim|max_length[50]'),
@@ -205,6 +214,10 @@ $config = array(
         array('field' => 'nmParceiro', 'label' => 'Nome do Parceiro', 'rules' => 'trim|required|max_length[50]'),
         array('field' => 'idProposta', 'label' => 'Numero da Proposta', 'rules' => 'trim|required|integer'),
     ),
+    
+    'email' => [
+        ['emails', 'label' => 'emails', 'rules' => 'trim|valid_email']
+    ]
 );
 
 

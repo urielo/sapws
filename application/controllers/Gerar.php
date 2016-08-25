@@ -488,7 +488,7 @@ class Gerar extends REST_Controller
             $parcela = $this->Model_parcela->get($proposta['idformapg']);
             $premio = $proposta['quantparc'] > $parcela['numparcsemjuros'] ? floatN($premio + ($premio * ($parcela['taxamesjuros'] / 100))) : $premio;
             $parcela['taxamesjuros'] = $proposta['quantparc'] > $parcela['numparcsemjuros'] ? $parcela['taxamesjuros'] : 0;
-            if ($menorparcela > $premio / $proposta['quantparc']):
+            if ($menorparcela > $premio / $proposta['quantparc'] && $proposta['idformapg'] == 2):
                 unset($produtos['premio']);
                 $produtos['premioTotal'] = $premio;
                 $produtos['formapagamento']['tipo'] = $parcela['descformapgto'];
@@ -517,7 +517,9 @@ class Gerar extends REST_Controller
             foreach ($parcela as $k => $v):
 
                 foreach ($v as $key => $val) :
+
                     $tipo = $parcela[$k]['descformapgto'];
+                    $idforma = $parcela[$k]['idformapgto'];
                     $juros = $parcela[$k]['taxamesjuros'];
                     $parc = $parcela[$k]['numparcsemjuros'] + 1;
 
@@ -541,7 +543,7 @@ class Gerar extends REST_Controller
                             $valjuros = floatN($premio + ($premio * ($juros / 100)));
                             $produtos['parcelamento']['formapagamento'][$c]['parcela']['tipo'] = $tipo;
                             $produtos['parcelamento']['formapagamento'][$c]['parcela']['quantidade'] = $i;
-                            if ($valjuros / $i < $menorparcela):
+                            if ($valjuros / $i < $menorparcela && $idforma == 2):
                                 $valjuros = $valjuros - $menorparcela;
                                 $produtos['parcelamento']['formapagamento'][$c]['parcela']['primeira'] = floatN($menorparcela);
                                 $produtos['parcelamento']['formapagamento'][$c]['parcela']['demais'] = floatN($valjuros / ($i - 1));
