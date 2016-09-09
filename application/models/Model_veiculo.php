@@ -10,6 +10,8 @@ class Model_veiculo extends MY_Model
         $this->primary_key = 'veicid';
         $this->return_as = 'array';
         $this->timestamps = FALSE;
+        $this->has_one['segurado'] = ['Model_cliente','clicpfcnpj','clicpfcnpj'];
+
         parent::__construct();
     }
  

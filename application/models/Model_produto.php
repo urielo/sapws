@@ -9,6 +9,19 @@ class Model_produto extends MY_Model
         $this->table = 'produto';
         $this->primary_key = 'idproduto';
         $this->return_as = 'array';
+        $this->has_many['precos'] = ['Model_precoproduto','idproduto','idproduto'];
+
+
+        $this->has_many_pivot['produtos'] = [
+
+            'foreign_model'=>'Model_cotacao',
+            'pivot_table'=>'cotacaoproduto',
+            'local_key'=>'idproduto',
+            'pivot_local_key'=>'idproduto',
+            'pivot_foreign_key'=>'idcotacao',
+            'foreign_key'=>'idcotacao',
+            'get_relate'=>FALSE
+        ];
      #   $this->after_get = array('prep_data');
         parent::__construct();
     }

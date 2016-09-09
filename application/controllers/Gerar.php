@@ -16,6 +16,23 @@ class Gerar extends REST_Controller
         date_default_timezone_set('America/Sao_Paulo');
     }
 
+    function debuga_post()
+    {
+        $datas = $this->post();
+
+
+        $produto = $this->getProdutoParcPremio($datas, 'cotacao');
+
+
+        $this->response(array(
+            'status' => '000 - sucesso',
+            'cdretorno' => '000',
+            'retorno' => $produto,
+        ));
+
+
+    }
+
     function cotacao_post()
     {
         $datas = $this->post();
@@ -109,7 +126,7 @@ class Gerar extends REST_Controller
 
         endif;
     }
-    
+
     function proposta_post()
     {
 
@@ -355,7 +372,7 @@ class Gerar extends REST_Controller
             ), REST_Controller::HTTP_BAD_REQUEST);
         endif;
 
-
+        $tipoveiculo = $veiculo['veiccdveitipo'];
         $idade = date('Y') - $veiculo['veicano'];
         $comissao = $datas['cotacao']['comissao'];
         $categoria = $this->Model_fipecategoria->get(['codefipe' => $veiculo['veiccodfipe'], 'idseguradora' => 2]);
@@ -365,8 +382,8 @@ class Gerar extends REST_Controller
 
         foreach ($produto as $k => $v):
             $idproduto = $produto[$k]['idProduto'];
-            $precos = $this->Model_precoproduto->where('idproduto', $idproduto)->get_all();
-            $produtodb = $this->Model_produto->get($idproduto);
+            $produtodb = $this->Model_produto->with_precos()->get($idproduto);
+            $precos = $produtodb['precos'];
             $roubo = $idproduto == 1 ? TRUE : $idproduto == 2 ? TRUE : FALSE;
             $rcf = $idproduto == 3 ? TRUE : $idproduto == 13 ? TRUE : $idproduto == 14 ? TRUE : FALSE;
 
@@ -941,6 +958,7 @@ class Gerar extends REST_Controller
         $datas['proposta']['premiototal'] = $retorno['premioTotal'];
         $datas['proposta']['primeiraparc'] = $retorno['formapagamento']['primeira'];
         $datas['proposta']['demaisparc'] = $retorno['formapagamento']['demais'];
+        
 
         $idproposta = $this->Model_proposta->insert($datas['proposta']);
         if (!$idproposta):
@@ -978,7 +996,7 @@ class Gerar extends REST_Controller
             $corretor = dataOrganizeCotacao($datas);
             $corretor = $corretor['corretor'];
 
-           $corretorid = $this->Model_corretor->fields('idcorretor')->where('corrcpfcnpj', (empty($corretor['corrcpfcnpj']) ? '' : $corretor['corrcpfcnpj']))->get();
+            $corretorid = $this->Model_corretor->fields('idcorretor')->where('corrcpfcnpj', (empty($corretor['corrcpfcnpj']) ? '' : $corretor['corrcpfcnpj']))->get();
             if ($corretorid):
                 $this->Model_corretor->update($corretor, $corretorid['idcorretor']);
                 return $corretorid['idcorretor'];
