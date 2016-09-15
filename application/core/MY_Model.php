@@ -1180,6 +1180,7 @@ class MY_Model extends CI_Model
                 $this->_database->join($this->table, $pivot_table.'.'.$pivot_local_key.' = '.$this->table.'.'.$local_key,'left');
                 $this->_database->select($foreign_table.'.'.$foreign_key);
                 $this->_database->select($pivot_table.'.'.$pivot_local_key);
+                $this->_database->select($pivot_table.'.'.'*');
                 if(!empty($request['parameters']))
                 {
                     if(array_key_exists('fields',$request['parameters']))
@@ -1236,11 +1237,12 @@ class MY_Model extends CI_Model
                         $the_local_key = $result_array[$pivot_local_key];
                         if(isset($get_relate) and $get_relate === TRUE)
                         {
-                            $subs[$the_local_key][$the_foreign_key] = $this->{$relation['foreign_model']}->where($local_key, $result[$local_key])->get();
+                           $result =  $this->{$relation['foreign_model']}->where($foreign_key, $result[$foreign_key])->get();
+                            $subs[$the_local_key][] = $result;
                         }
                         else
                         {
-                            $subs[$the_local_key][$the_foreign_key] = $result;
+                            $subs[$the_local_key][] = $result;
                         }
                     }
                     else

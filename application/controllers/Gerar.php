@@ -16,22 +16,7 @@ class Gerar extends REST_Controller
         date_default_timezone_set('America/Sao_Paulo');
     }
 
-    function debuga_post()
-    {
-        $datas = $this->post();
-
-
-        $produto = $this->getProdutoParcPremio($datas, 'cotacao');
-
-
-        $this->response(array(
-            'status' => '000 - sucesso',
-            'cdretorno' => '000',
-            'retorno' => $produto,
-        ));
-
-
-    }
+   
 
     function cotacao_post()
     {
@@ -317,19 +302,60 @@ class Gerar extends REST_Controller
 
 
         $produto = $datas['produto'];
-        #return array_search(1, array_column($produto, 'idProduto'));
+        $prodcheck = $produto;
+        $master = false;
+
+        foreach ($prodcheck as $key => $pro) {
+            $pro['idProduto'];
+            $check = $this->Model_produto->with_opcionais()->get($pro['idProduto']);
+            if ($check['tipoproduto'] == 'master' && $master == false) {
+                unset($prodcheck[$key]);
+                $master = true;
+                $produto[$key]['master']=true;
+//                return $check['opcionais'];
+                foreach ($check['opcionais'] as $opcional) {
+                    $opcionais[] = $opcional['idprodutoopcional'];
+                }
+
+            } elseif ($check['tipoproduto'] == 'master' && $master == true) {
+                unset($produto[$key]);
+//                unset($prodcheck[$key]);
+            }
+        }
+
+        $prodcheck = $produto;
+
+        if($master){
+            foreach ($prodcheck as $key => $pro){
+                if(!in_array($pro['idProduto'],$opcionais)&& !$pro['master']){
+                    unset($produto[$key]);
+                }
+            }
+        } else {
+            return $this->response(array(
+                'status' => 'Error',
+                'cdretorno' => '040',
+                'message' => array(
+                    'produtos' => 'Cotacao exige contratação do produto Seguro AUTOPRATICO Roubo e Furto',
+                )
+            ), REST_Controller::HTTP_BAD_REQUEST);
+        }
 
         $ano = $veiculo['veicautozero'] == 1 ? 0 : $veiculo['veicano'];
         $valorfipe = $this->Model_fipeanovalor->fields('valor')->where(array('codefipe' => $veiculo['veiccodfipe'], 'ano' => $ano))->get();
         $fipe = $this->Model_fipe->where('codefipe', $veiculo['veiccodfipe'])->get();
 
+        $maxidade = max($this->Model_produto_seguradora->fields('idade_aceitacao_max')->get_all());
+        $maxvalor = max($this->Model_produto_seguradora->fields('valor_aceitacao_max')->get_all());
+        $minvalor = min($this->Model_produto_seguradora->fields('valor_aceitacao_min')->get_all());
 
-        if ($ano != 0 && date('Y') - $ano > 15):
+
+        if ($ano != 0 && date('Y') - $ano > max($maxidade)):
             return $this->response(array(
                 'status' => 'Error',
                 'cdretorno' => '010',
                 'message' => array(
-                    'veiculo' => 'Não tem aceitação para veiculos com idade acima de 15 anos invalido',
+                    'veiculo' => 'Não tem aceitação para veiculos com idade acima de ' . $maxidade . ' anos invalido',
                 )
             ), REST_Controller::HTTP_BAD_REQUEST);
         endif;
@@ -346,28 +372,20 @@ class Gerar extends REST_Controller
             $valorfipe = $valorfipe['valor'];
         endif;
 
-        if ($valorfipe > 120000):
+        if ($valorfipe > max($maxvalor)):
             return $this->response(array(
                 'status' => 'Error',
                 'cdretorno' => '010',
                 'message' => array(
-                    'veiculo' => 'Esse produto não aceita item com valor fipe superior a R$ 120.000,00',
+                    'veiculo' => 'Esse produto não aceita item com valor fipe superior a R$ ' . real(max($maxvalor)),
                 )
             ), REST_Controller::HTTP_BAD_REQUEST);
-        elseif ($valorfipe < 10000):
+        elseif ($valorfipe < min($minvalor)):
             return $this->response(array(
                 'status' => 'Error',
                 'cdretorno' => '010',
                 'message' => array(
-                    'veiculo' => 'Esse produto não aceita item com valor fipe inferior a R$ 10.000,00',
-                )
-            ), REST_Controller::HTTP_BAD_REQUEST);
-        elseif ($fipe['idstatus'] == 22):
-            return $this->response(array(
-                'status' => 'Error',
-                'cdretorno' => '022',
-                'message' => array(
-                    'veiculo' => 'Veiculo sem aceitação no momento!!',
+                    'veiculo' => 'Esse produto não aceita item com valor fipe inferior a R$ ' . real(min($minvalor)),
                 )
             ), REST_Controller::HTTP_BAD_REQUEST);
         endif;
@@ -379,7 +397,7 @@ class Gerar extends REST_Controller
         $i = 0;
 
         /* Iniciando calculo e separando os produtos */
-
+//return $valorfipe;
         foreach ($produto as $k => $v):
             $idproduto = $produto[$k]['idProduto'];
             $produtodb = $this->Model_produto->with_precos()->get($idproduto);
@@ -422,61 +440,59 @@ class Gerar extends REST_Controller
                 unset($produtodb["codramoproduto"]);
                 unset($produtodb["cobertura"]);
                 unset($produtodb["descproduto"]);
+                unset($produtodb["precos"]);
 
                 foreach ($precos as $preco):
-                    if ($roubo):
-                        if ($valorfipe >= $preco['vlrfipeminimo'] && $valorfipe <= $preco['vlrfipemaximo'] && $idade <= $preco['idadeaceitamax']):
-                            $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao);
 
-                            if ($fipe['idstatus'] == 23) {
-                                $vlcontig = $this->Model_contingencia->where('idseguradora', $produtodb['idseguradora'])->get();
-                                if ($vlcontig) {
-                                    $preco['premioliquidoproduto'] = $preco['premioliquidoproduto'] + $vlcontig['valor'];
-                                }
+                    if ($valorfipe >= $preco['vlrfipeminimo'] && $valorfipe <= $preco['vlrfipemaximo'] && $preco['idcategoria'] == ($preco['idcategoria'] == $categoria['idcategoria'] ? $categoria['idcategoria'] : null) && $idade <= max($maxidade) && $preco['idtipoveiculo'] == $tipoveiculo):
+                        $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao);
+
+                        if ($fipe['idstatus'] == 23) {
+                            $vlcontig = $this->Model_contingencia->where('idseguradora', $produtodb['idseguradora'])->get();
+                            if ($vlcontig) {
+                                $preco['premioliquidoproduto'] = $preco['premioliquidoproduto'] + $vlcontig['valor'];
                             }
+                        }
 
-                            $produtos['produto'][$i] = $produtodb;
-                            $produtos['produto'][$i]['caractproduto'] = $preco['caractproduto'];
-                            $produtos['produto'][$i]['nomeproduto'] = $preco['nomeproduto'];
-                            $produtos['produto'][$i]['indobrigrastreador'] = $preco['indobrigrastreador'];
+                        $produtos['produto'][$i] = $produtodb;
+                        $produtos['produto'][$i]['caractproduto'] = $preco['caractproduto'];
+                        $produtos['produto'][$i]['nomeproduto'] = $preco['nomeproduto'];
+                        $produtos['produto'][$i]['indobrigrastreador'] = $preco['indobrigrastreador'];
 
-                            $produtos['produto'][$i]['premioliquidoproduto'] = floatN($preco['premioliquidoproduto']);
+                        $produtos['produto'][$i]['premioliquidoproduto'] = floatN($preco['premioliquidoproduto']);
 
-                            $produtos['premio'] = floatN($produtos['premio'] + $preco['premioliquidoproduto']);
+                        $produtos['premio'] = floatN($produtos['premio'] + $preco['premioliquidoproduto']);
 
-                            $produtos['cotacaoproduto'][$i]['idprecoproduto'] = $preco['idprecoproduto'];
-                            $produtos['cotacaoproduto'][$i]['idproduto'] = $idproduto;
+                        $produtos['cotacaoproduto'][$i]['idprecoproduto'] = $preco['idprecoproduto'];
+                        $produtos['cotacaoproduto'][$i]['idproduto'] = $idproduto;
 
-                            $menorparcela = $menorparcela + $preco['vlrminprimparc'];
+                        $menorparcela = $menorparcela + $preco['vlrminprimparc'];
 
-                            if ($tipo != 'cotacao'):
-                                unset($produtos['produto'][$i]['premioliquidoproduto']);
-                                unset($produtos['cotacaoproduto']);
-                            endif;
-
+                        if ($tipo != 'cotacao'):
+                            unset($produtos['produto'][$i]['premioliquidoproduto']);
+                            unset($produtos['cotacaoproduto']);
                         endif;
-                    elseif ($rcf):
-                        if ($preco['idcategoria'] == $categoria['idcategoria']):
-                            $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao);
-                            $produtos['produto'][$i] = $produtodb;
-                            $produtos['produto'][$i]['caractproduto'] = $preco['caractproduto'];
-                            $produtos['produto'][$i]['nomeproduto'] = $preco['nomeproduto'];
-                            $produtos['produto'][$i]['indobrigrastreador'] = $preco['indobrigrastreador'];
 
-                            $produtos['produto'][$i]['premioliquidoproduto'] = floatN($preco['premioliquidoproduto']);
 
-                            $produtos['premio'] = floatN($produtos['premio'] + $preco['premioliquidoproduto']);
+                    elseif ($preco['idtipoveiculo'] == $tipoveiculo && $preco['vlrfipeminimo'] == null && $preco['vlrfipemaximo'] == null && $idade <= $preco['idadeaceitamax']):
+                        $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao);
+                        $produtos['produto'][$i] = $produtodb;
+                        $produtos['produto'][$i]['caractproduto'] = $preco['caractproduto'];
+                        $produtos['produto'][$i]['nomeproduto'] = $preco['nomeproduto'];
+                        $produtos['produto'][$i]['indobrigrastreador'] = $preco['indobrigrastreador'];
 
-                            $produtos['cotacaoproduto'][$i]['idprecoproduto'] = $preco['idprecoproduto'];
-                            $produtos['cotacaoproduto'][$i]['idproduto'] = $idproduto;
+                        $produtos['produto'][$i]['premioliquidoproduto'] = floatN($preco['premioliquidoproduto']);
 
-                            $menorparcela = $menorparcela + $preco['vlrminprimparc'];
+                        $produtos['premio'] = floatN($produtos['premio'] + $preco['premioliquidoproduto']);
 
-                            if ($tipo != 'cotacao'):
-                                unset($produtos['produto'][$i]['premioliquidoproduto']);
-                                unset($produtos['cotacaoproduto']);
-                            endif;
+                        $produtos['cotacaoproduto'][$i]['idprecoproduto'] = $preco['idprecoproduto'];
+                        $produtos['cotacaoproduto'][$i]['idproduto'] = $idproduto;
 
+                        $menorparcela = $menorparcela + $preco['vlrminprimparc'];
+
+                        if ($tipo != 'cotacao'):
+                            unset($produtos['produto'][$i]['premioliquidoproduto']);
+                            unset($produtos['cotacaoproduto']);
 
                         endif;
                     endif;
@@ -486,7 +502,7 @@ class Gerar extends REST_Controller
 
             $i++;
         endforeach;
-
+//        return $produtos;
 
         if (!isset($produtos['premio']) || $produtos['premio'] == 0):
             return $this->response(array(
@@ -513,7 +529,6 @@ class Gerar extends REST_Controller
                 $produtos['formapagamento']['primeira'] = floatN($menorparcela);
                 $produtos['formapagamento']['demais'] = floatN(($premio - $menorparcela) / ($proposta['quantparc'] - 1));
                 $produtos['formapagamento']['juros'] = $parcela['taxamesjuros'];
-
 
             else:
                 unset($produtos['premio']);
@@ -958,7 +973,7 @@ class Gerar extends REST_Controller
         $datas['proposta']['premiototal'] = $retorno['premioTotal'];
         $datas['proposta']['primeiraparc'] = $retorno['formapagamento']['primeira'];
         $datas['proposta']['demaisparc'] = $retorno['formapagamento']['demais'];
-        
+
 
         $idproposta = $this->Model_proposta->insert($datas['proposta']);
         if (!$idproposta):
