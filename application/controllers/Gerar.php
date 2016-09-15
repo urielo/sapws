@@ -16,7 +16,72 @@ class Gerar extends REST_Controller
         date_default_timezone_set('America/Sao_Paulo');
     }
 
-   
+
+    /**
+     * @return array
+     */
+    public function debuga_post()
+    {
+        $datas = $this->post();
+
+        $this->load->library('form_validation');
+        $this->form_validation->set_data($datas);
+
+        if ($this->form_validation->run('pdf') == false):
+            $this->response(array(
+                'status' => 'Error',
+                'cdretorno' => '023',
+                'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
+        else:
+
+            $proposta = $this->Model_proposta->with_cotacao([
+                'with' => [
+                    ['relation' => 'segurado', 
+                        'with'=> [
+                            ['relation'=>'uf'],
+                            ['relation'=>'rg_uf'],
+                            ['relation'=>'profissao'],
+                            ['relation'=>'ramoatividade'],
+                            ['relation'=>'estadocivl'],
+                        ]
+                    ],
+                    ['relation' => 'parceiro'],
+                    ['relation' => 'veiculo', 
+                        'with'=> ['relation'=>'fipe',
+                            'with'=>['relation'=>'valores']
+                        ]
+                    ],
+                    ['relation' => 'produtos',
+                        'with' =>
+                            ['relation' => 'produto',
+                                'with' => [
+                                    ['relation' => 'precos'],
+                                    ['relation' => 'seguradoras'],
+                                ]
+                            ],
+                    ],
+                    ['relation' => 'corretor'],
+                ]
+
+            ])->get($datas['idProposta']);
+            $valores = $proposta['cotacao']['veiculo']['fipe']['valores'];
+            
+            
+
+            $search = array_search($proposta['cotacao']['veiculo']['veicano'],array_column($valores,'ano'));
+            $proposta['cotacao']['veiculo']['fipe']['valores'] = $valores[$search];
+            $this->response(array(
+
+                'dados' => $proposta,
+                'array_search' => $this->Model_cliente->with_profissao()->get('09266087467'),
+            ));
+
+//            $this->response(array(
+//                $veiculo, $combustivel, $utilizacao
+//            ));
+
+        endif;
+    }
 
     function cotacao_post()
     {
@@ -311,7 +376,7 @@ class Gerar extends REST_Controller
             if ($check['tipoproduto'] == 'master' && $master == false) {
                 unset($prodcheck[$key]);
                 $master = true;
-                $produto[$key]['master']=true;
+                $produto[$key]['master'] = true;
 //                return $check['opcionais'];
                 foreach ($check['opcionais'] as $opcional) {
                     $opcionais[] = $opcional['idprodutoopcional'];
@@ -325,9 +390,9 @@ class Gerar extends REST_Controller
 
         $prodcheck = $produto;
 
-        if($master){
-            foreach ($prodcheck as $key => $pro){
-                if(!in_array($pro['idProduto'],$opcionais)&& !$pro['master']){
+        if ($master) {
+            foreach ($prodcheck as $key => $pro) {
+                if (!in_array($pro['idProduto'], $opcionais) && !$pro['master']) {
                     unset($produto[$key]);
                 }
             }
@@ -508,7 +573,7 @@ class Gerar extends REST_Controller
             return $this->response(array(
                 'status' => 'Error',
                 'cdretorno' => '005',
-                'message' => $produtos,
+                'message' => (count($produtos) > 0 ? $produtos : 'Produtos não encontrado' ),
             ));
         endif;
 

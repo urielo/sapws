@@ -10,6 +10,12 @@ class Model_cliente extends MY_Model
         $this->primary_key = 'clicpfcnpj';
         $this->return_as = 'array';
         $this->timestamps = FALSE;
+//        $this->after_get[] = 'set_sexo';
+        $this->has_one['uf']=['Model_uf','cd_uf','clicduf'];
+        $this->has_one['rg_uf']=['Model_uf','cd_uf','clicdufemissaorg'];
+        $this->has_one['ramoatividade']=['Model_ramoatividade','id_ramo_atividade','clicdprofiramoatividade'];
+        $this->has_one['profissao']=['Model_profissao','id_ocupacao','clicdprofiramoatividade'];
+        $this->has_one['estadocivl']=['Model_estadocivil','idestadocivil','clicdestadocivil'];
         parent::__construct();
     }
 
@@ -28,5 +34,13 @@ class Model_cliente extends MY_Model
         else:
             return FALSE;
         endif;
+    }
+    public function uf(){
+        return $this->has_one['uf']=['Model_uf','cd_uf','clicduf'];
+    }
+    
+    protected function set_sexo($data){
+         $data['clicdsexo'] = ($data['clicdsexo'] == 1 ? 'Masculino' : 'Feminio');
+        return $data;
     }
 }

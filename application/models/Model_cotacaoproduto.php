@@ -17,6 +17,9 @@ class Model_cotacaoproduto extends MY_Model
         $this->timestamps = FALSE;
         $this->has_one['produto'] = ['Model_produto','idproduto','idproduto'];
         $this->has_one['preco_produto'] = ['Model_precoproduto','idprecoproduto','idprecoproduto'];
+
+        
+        
         parent::__construct();
     }
 

@@ -9,6 +9,7 @@ class Model_fipe extends MY_Model
         $this->primary_key = 'codefipe';
         $this->return_as = 'array';
         parent::__construct();
+        $this->has_many['valores']= ['Model_fipeanovalor','codefipe','codefipe'];
     }
 
     
