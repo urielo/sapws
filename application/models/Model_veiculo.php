@@ -12,6 +12,8 @@ class Model_veiculo extends MY_Model
         $this->timestamps = FALSE;
         $this->has_one['segurado'] = ['Model_cliente','clicpfcnpj','clicpfcnpj'];
         $this->has_one['fipe'] = ['Model_fipe','codefipe','veiccodfipe'];
+        $this->has_one['combustivel'] = ['Model_tipocombustivel','idcomb','veictipocombus'];
+        $this->has_one['utilizacao'] = ['Model_tipoutilizacaoveiculo','idutilveiculo','veiccdutilizaco'];
 
         parent::__construct();
     }

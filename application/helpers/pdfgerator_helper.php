@@ -1,5 +1,6 @@
 <?php
-include_once 'mpdf/mpdf.php';
+include_once 'mpdf/mpdf.php';   
+include_once 'my_ajust_helper.php';
 
 function gerarpdfb64($html)
 {
@@ -228,7 +229,7 @@ function gerarhtml($proposta, $cotacao, $segurado, $veiculo, $corretor, $parcela
 			<td style=\"border-bottom-width: 1px; border-bottom-color: black; border-collapse: collapse;\">
 				<table width=\"100%\" style=\"border: 1px solid black; border-collapse: collapse;\">
                         ";
-    
+
 
     foreach ($produto as $k => $v):
         $produto[$k]['precoproduto']['indobrigrastreador'] ? $produto[$k]['precoproduto']['indobrigrastreador'] = "SIM" : $produto[$k]['precoproduto']['indobrigrastreador'] = "NÃO";
@@ -508,37 +509,4 @@ O Segurado obriga−se a comunicar imediatamente a SKYPROTECTION, por escrito, p
     return $html;
 }
 
-function format($tipo, $string)
-{
-    if (empty($string) || strlen($string) < 1):
-        return $string;
-    else:
-        switch ($tipo):
-            case 'cpfcnpj':
-                if (strlen($string) > 11):
-                    $mask = "%s%s.%s%s%s.%s%s%s/%s%s%s%s-%s%s";
-                #91.805.050/0001-50
-                #85.031.334/0001-85
-                else:
-                    $mask = "%s%s%s.%s%s%s.%s%s%s-%s%s";
-                endif;
-                break;
-            case 'fone':
-                if (strlen($string) <= 8):
-                    $mask = "%s%s%s%s-%s%s%s%s";
-                else:
-                    $mask = "%s%s%s%s%s-%s%s%s%s";
-                endif;
-                break;
-            case 'cep':
-                $mask = "%s%s%s%s%s-%s%s%s";
-                break;
-            case 'placa':
-                $string = strtoupper($string);
-                $mask = "%s%s%s-%s%s%s%s";
-                break;
-        endswitch;
-        
-        return vsprintf($mask, str_split($string));
-    endif;
-}
+

@@ -324,3 +324,7 @@ function aplicaComissao($valor, $comissao)
         return (float)number_format($valor, 2, '.', '');
     endif;
 }
+
+function reorganizeProposta($porposta){
+    
+}

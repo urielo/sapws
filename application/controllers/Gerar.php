@@ -13,6 +13,7 @@ class Gerar extends REST_Controller
         $this->load->helper('pdfgerator');
         $this->load->helper('datas');
         $this->load->helper('message_error');
+        $this->load->library('m_pdf');
         date_default_timezone_set('America/Sao_Paulo');
     }
 
@@ -33,23 +34,28 @@ class Gerar extends REST_Controller
                 'cdretorno' => '023',
                 'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         else:
-
+            $where = ['dtcreate >=' => '2016-08-17 00:00:00', 'dtcreate <=' => '2016-08-17 23:59:59'];
             $proposta = $this->Model_proposta->with_cotacao([
                 'with' => [
-                    ['relation' => 'segurado', 
-                        'with'=> [
-                            ['relation'=>'uf'],
-                            ['relation'=>'rg_uf'],
-                            ['relation'=>'profissao'],
-                            ['relation'=>'ramoatividade'],
-                            ['relation'=>'estadocivl'],
+                    ['relation' => 'segurado',
+                        'with' => [
+                            ['relation' => 'uf'],
+                            ['relation' => 'rg_uf'],
+                            ['relation' => 'profissao'],
+                            ['relation' => 'ramoatividade'],
+                            ['relation' => 'estadocivl'],
                         ]
                     ],
                     ['relation' => 'parceiro'],
-                    ['relation' => 'veiculo', 
-                        'with'=> ['relation'=>'fipe',
-                            'with'=>['relation'=>'valores']
+                    ['relation' => 'veiculo',
+                        'with' => [
+                            ['relation' => 'fipe',
+                                'with' => ['relation' => 'valores']
+                            ],
+                            ['relation' => 'combustivel'],
+                            ['relation' => 'utilizacao'],
                         ]
+
                     ],
                     ['relation' => 'produtos',
                         'with' =>
@@ -65,15 +71,14 @@ class Gerar extends REST_Controller
 
             ])->get($datas['idProposta']);
             $valores = $proposta['cotacao']['veiculo']['fipe']['valores'];
-            
-            
 
-            $search = array_search($proposta['cotacao']['veiculo']['veicano'],array_column($valores,'ano'));
+
+            $search = array_search($proposta['cotacao']['veiculo']['veicano'], array_column($valores, 'ano'));
             $proposta['cotacao']['veiculo']['fipe']['valores'] = $valores[$search];
             $this->response(array(
 
-                'dados' => $proposta,
-                'array_search' => $this->Model_cliente->with_profissao()->get('09266087467'),
+                'dados' => aplicaComissao(2329+299,10),
+//                'array_search' => $this->Model_cliente->with_profissao()->get('09266087467'),
             ));
 
 //            $this->response(array(
@@ -465,6 +470,7 @@ class Gerar extends REST_Controller
 //return $valorfipe;
         foreach ($produto as $k => $v):
             $idproduto = $produto[$k]['idProduto'];
+            $prolmi = $produto[$k]['valorLmiProduto'];
             $produtodb = $this->Model_produto->with_precos()->get($idproduto);
             $precos = $produtodb['precos'];
             $roubo = $idproduto == 1 ? TRUE : $idproduto == 2 ? TRUE : FALSE;
@@ -488,6 +494,12 @@ class Gerar extends REST_Controller
                     'cdretorno' => '009',
                     'message' => "O Produto {$idproduto} - {$produtodb['nomeproduto']} não está ativo",
                 );
+            elseif ($produtodb['tipodeseguro'] == 'RCF' && $prolmi != 50000 && $prolmi != 100000  && $prolmi != 200000):
+                $produtos['produto'][$i] = array(
+                    'status' => 'Atenção',
+                    'cdretorno' => '009',
+                    'message' => "O Produto {$idproduto} - {$produtodb['nomeproduto']} só aceita lmi 50000, 100000 ou 200000",
+                );
 
             else:
 
@@ -509,8 +521,7 @@ class Gerar extends REST_Controller
 
                 foreach ($precos as $preco):
 
-                    if ($valorfipe >= $preco['vlrfipeminimo'] && $valorfipe <= $preco['vlrfipemaximo'] && $preco['idcategoria'] == ($preco['idcategoria'] == $categoria['idcategoria'] ? $categoria['idcategoria'] : null) && $idade <= max($maxidade) && $preco['idtipoveiculo'] == $tipoveiculo):
-                        $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao);
+                    if ($valorfipe >= $preco['vlrfipeminimo'] && $valorfipe <= $preco['vlrfipemaximo'] && $preco['idcategoria'] == ($preco['idcategoria'] == $categoria['idcategoria'] ? $categoria['idcategoria'] && $preco['lmiproduto'] == $prolmi : null) && $idade <= max($maxidade) && $preco['idtipoveiculo'] == $tipoveiculo):
 
                         if ($fipe['idstatus'] == 23) {
                             $vlcontig = $this->Model_contingencia->where('idseguradora', $produtodb['idseguradora'])->get();
@@ -518,6 +529,7 @@ class Gerar extends REST_Controller
                                 $preco['premioliquidoproduto'] = $preco['premioliquidoproduto'] + $vlcontig['valor'];
                             }
                         }
+                        $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao);
 
                         $produtos['produto'][$i] = $produtodb;
                         $produtos['produto'][$i]['caractproduto'] = $preco['caractproduto'];
@@ -573,7 +585,7 @@ class Gerar extends REST_Controller
             return $this->response(array(
                 'status' => 'Error',
                 'cdretorno' => '005',
-                'message' => (count($produtos) > 0 ? $produtos : 'Produtos não encontrado' ),
+                'message' => (count($produtos) > 0 ? $produtos : 'Produtos não encontrado'),
             ));
         endif;
 
