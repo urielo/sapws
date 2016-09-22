@@ -45,7 +45,10 @@ class Home extends CI_Controller
                 ['relation' => 'veiculo',
                     'with' => [
                         ['relation' => 'fipe',
-                            'with' => ['relation' => 'valores']
+                            'with' => [
+                                ['relation' => 'valores'],
+                                ['relation' => 'contigencia'],
+                            ]
                         ],
                         ['relation' => 'combustivel'],
                         ['relation' => 'utilizacao'],
@@ -57,7 +60,9 @@ class Home extends CI_Controller
                         ['relation' => 'produto',
                             'with' => [
                                 ['relation' => 'precos'],
-                                ['relation' => 'seguradoras'],
+                                ['relation' => 'seguradoras' ,
+                                    'with'=> ['relation'=>'seguradora']
+                                ],
                             ]
                         ],
                 ],
@@ -65,7 +70,7 @@ class Home extends CI_Controller
             ]
 
         ])->get(382);
-        $html = $this->load->view('pdf/proposta_view',$proposta,true);
+       $html = $this->load->view('pdf/proposta_view',$proposta,true);
 
         $this->m_pdf->pdf->SetHTMLHeader($this->load->view('pdf/header_view',$proposta,true));
         $this->m_pdf->pdf->SetHTMLFooter($this->load->view('pdf/footer_view',$proposta,true));
@@ -88,5 +93,48 @@ class Home extends CI_Controller
 //        echo base64_decode($b64encode);
 
 //        echo $this->load->view('pdf/header_view',$proposta,true);
+    }
+
+    /**
+     * @return object
+     */
+    public function pdfweb()
+    {
+        $proposta['proposta'] = $this->Model_proposta->with_cotacao([
+            'with' => [
+                ['relation' => 'segurado',
+                    'with' => [
+                        ['relation' => 'uf'],
+                        ['relation' => 'rg_uf'],
+                        ['relation' => 'profissao'],
+                        ['relation' => 'ramoatividade'],
+                        ['relation' => 'estadocivl'],
+                    ]
+                ],
+                ['relation' => 'parceiro'],
+                ['relation' => 'veiculo',
+                    'with' => [
+                        ['relation' => 'fipe',
+                            'with' => ['relation' => 'valores']
+                        ],
+                        ['relation' => 'combustivel'],
+                        ['relation' => 'utilizacao'],
+                    ]
+
+                ],
+                ['relation' => 'produtos',
+                    'with' =>
+                        ['relation' => 'produto',
+                            'with' => [
+                                ['relation' => 'precos'],
+                                ['relation' => 'seguradoras'],
+                            ]
+                        ],
+                ],
+                ['relation' => 'corretor'],
+            ]
+
+        ])->get(382);
+        $this->load->view('pdf/proposta_view',$proposta);
     }
 }

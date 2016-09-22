@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 require APPPATH . './libraries/REST_Controller.php';
 
-class Gerar extends REST_Controller
+class Debuga extends REST_Controller
 {
 
     function __construct()
@@ -21,7 +21,89 @@ class Gerar extends REST_Controller
     /**
      * @return array
      */
-   
+    public function debuga_post()
+    {
+        $datas = $this->post();
+
+        $this->load->library('form_validation');
+        $this->form_validation->set_data($datas);
+
+        if ($this->form_validation->run('pdf') == false):
+            $this->response(array(
+                'status' => 'Error',
+                'cdretorno' => '023',
+                'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
+        else:
+            $where = ['dtcreate >=' => '2016-08-17 00:00:00', 'dtcreate <=' => '2016-08-17 23:59:59'];
+            $proposta = $this->Model_proposta->with_cotacao([
+                'with' => [
+                    ['relation' => 'segurado',
+                        'with' => [
+                            ['relation' => 'uf'],
+                            ['relation' => 'rg_uf'],
+                            ['relation' => 'profissao'],
+                            ['relation' => 'ramoatividade'],
+                            ['relation' => 'estadocivl'],
+                        ]
+                    ],
+                    ['relation' => 'parceiro'],
+                    ['relation' => 'veiculo',
+                        'with' => [
+                            ['relation' => 'fipe',
+                                'with' =>[
+                                    ['relation' => 'valores'],
+                                    ['relation' => 'contigencia']
+                                ]
+                            ],
+                            ['relation' => 'combustivel'],
+                            ['relation' => 'utilizacao'],
+                        ]
+
+                    ],
+                    ['relation' => 'produtos',
+                        'with' =>
+                            ['relation' => 'produto',
+                                'with' => [
+                                    ['relation' => 'precos'],
+                                    ['relation' => 'seguradoras' ,
+                                        'with'=> ['relation'=>'seguradora']
+                                    ],
+                                ]
+                            ],
+                    ],
+                    ['relation' => 'corretor'],
+                ]
+
+            ])->get($datas['idProposta']);
+            $valores = $proposta['cotacao']['veiculo']['fipe']['valores'];
+
+
+//            $search = array_search($proposta['cotacao']['veiculo']['veicano'], array_column($valores, 'ano'));
+
+            foreach ($valores as $valor){
+                if($proposta['cotacao']['veiculo']['veicano'] == $valor['ano'] && $proposta['cotacao']['veiculo']['veictipocombus'] == $valor['idcombustivel'] ){
+                    $proposta['cotacao']['veiculo']['fipe']['valores'] = $valor;
+                }
+            }
+
+            foreach ($proposta['cotacao']['produtos'] as $pkey => $produto){
+
+                $key = array_search($produto['idprecoproduto'], array_column($produto['produto']['precos'], 'idprecoproduto'));
+                $proposta['cotacao']['produtos'][$pkey]['produto']['precos']= $produto['produto']['precos'][$key];
+            }
+
+            $this->response(array(
+
+                'dados' => $proposta,
+//                'array_search' => $this->Model_cliente->with_profissao()->get('09266087467'),
+            ));
+
+//            $this->response(array(
+//                $veiculo, $combustivel, $utilizacao
+//            ));
+
+        endif;
+    }
 
     function cotacao_post()
     {
@@ -183,12 +265,6 @@ class Gerar extends REST_Controller
     function pdf_post()
     {
         $datas = $this->post();
-
-        $this->response(array(
-            'status' => '009 - Atenção',
-            'cdretorno' => '009',
-            'message' => 'Estamos em manutenção por favor tente novamente mais tarde!!!'
-        ));
 
         $this->load->library('form_validation');
         $this->form_validation->set_data($datas);

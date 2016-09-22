@@ -1,33 +1,34 @@
 b {
     font-weight: bold;
 }
-table{
-    border: none;
-}
 
 
 
 .pdf-table {
-
     border-collapse: collapse;
     width: 100%;
-
+    vertical-align: middle;
 }
 
-.pdf-table table td {
-    border: none;
-}
 
 .pdf-table-td {
-    border: none;
-    border-bottom-width: 0px;
-    border-bottom-color: #5e5e5e;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: none;
+    border-top: none;
     border-collapse: collapse;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    vertical-align: middle;
+
+}
+.pdf-table-td-produtos {
+    border: none;
+    border-collapse: collapse;
+    padding-top: 15px;
+    vertical-align: middle;
 }
 
-.pdf-table-td table td {
-    border: none;
-}
 
 .pdf-table-td-table {
     border: 0px solid #5e5e5e;
@@ -43,28 +44,49 @@ table{
     width: 1px;
     white-space: nowrap;
     font-weight: bold;
+    padding-left: 1%;
+    vertical-align: middle;
+
 }
 
 .pdf-table-td-content {
     padding-left: 1%;
+    text-align: justify;
+
 }
+
 
 .pdf-table-td-table table {
     width: 100%;
 }
 
-.pdf-table-tr-title {
-    margin-top: 20px;
-    padding-top: 20px;
-}
 
 .pdf-table-tr-title td {
-    /*margin-top: 100px;*/
-    padding-top: 1%;
-    border-bottom-width: 2px;
-    border-bottom-color: #ddd;
+    border: 1px solid #8c8c8c;
+    padding-top: 2%;
+    border-left: none;
+    border-right: none;
+    border-top: none;
     text-align: right;
     font-style: oblique;
-    font-size: 16px;
     font-weight: bold;
+
 }
+
+.pdf-table-tr-produto td{
+    border: 1px dashed #265a88;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    padding-top: 2%;
+
+}
+
+.pdf-table-td-subtitle td{
+    text-align: center;
+    font-weight: bold;
+    padding: 1%;
+    /*font-size: 16px;*/
+
+}
+

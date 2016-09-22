@@ -9,6 +9,8 @@ class Model_fipeanovalor extends MY_Model
         $this->primary_key = 'codefipe';
         $this->return_as = 'array';
         $this->before_create = array('prep_data');
+        $this->has_one['fipe']= ['Model_fipe','codefipe','codefipe'];
+
         parent::__construct();
     }
 

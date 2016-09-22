@@ -11,18 +11,10 @@ class Model_produto extends MY_Model
         $this->return_as = 'array';
         $this->has_many['precos'] = ['Model_precoproduto', 'idproduto', 'idproduto'];
         $this->has_many['opcionais'] = ['Model_combos', 'idprodutomaster', 'idproduto'];
-        $this->has_many['seguradora'] = ['Model_produto_seguradora','idproduto','idproduto'];
-        $this->has_many_pivot['seguradoras'] = [
-
-            'foreign_model' => 'Model_seguradora',
-            'pivot_table' => 'seguradora_produto',
-            'local_key' => 'idproduto',
-            'pivot_local_key' => 'idproduto',
-            'pivot_foreign_key' => 'idseguradora',
-            'foreign_key' => 'idseguradora',
-            'get_relate' => true,
-        ];
-     #   $this->after_get = array('prep_data');
+        $this->has_many['seguradoras'] = ['Model_produto_seguradora','idproduto','idproduto'];
+        
+        
+     
         parent::__construct();
     }
 
