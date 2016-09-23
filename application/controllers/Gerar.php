@@ -198,11 +198,11 @@ class Gerar extends REST_Controller
     {
         $datas = $this->post();
 
-        $this->response(array(
-            'status' => '009 - Atenção',
-            'cdretorno' => '009',
-            'message' => 'Estamos em manutenção por favor tente novamente mais tarde!!!'
-        ));
+//        $this->response(array(
+//            'status' => '009 - Atenção',
+//            'cdretorno' => '009',
+//            'message' => 'Estamos em manutenção por favor tente novamente mais tarde!!!'
+//        ));
 
         $this->load->library('form_validation');
         $this->form_validation->set_data($datas);
@@ -221,100 +221,78 @@ class Gerar extends REST_Controller
                     'message' => 'API KEY invalido para o parceiro, nome: '.$datas['nmParceiro'].' id: '.$datas['idParceiro']), REST_Controller::HTTP_FORBIDDEN);
             }
 
-            $proposta = $this->Model_proposta->get($datas['idProposta']);
-            if ($datas['idParceiro'] == 99):
-                $cotacao = $this->Model_cotacao->get($proposta['idcotacao']);
-            else:
-                $cotacao = $this->Model_cotacao->where(array('idcotacao' => $proposta['idcotacao'], 'idparceiro' => $datas['idParceiro']))->get();
-            endif;
+            $proposta['proposta'] = $this->Model_proposta->with_cotacao([
+                'with' => [
+                    ['relation' => 'segurado',
+                        'with' => [
+                            ['relation' => 'uf'],
+                            ['relation' => 'rg_uf'],
+                            ['relation' => 'profissao'],
+                            ['relation' => 'ramoatividade'],
+                            ['relation' => 'estadocivl'],
+                        ]
+                    ],
+                    ['relation' => 'parceiro'],
+                    ['relation' => 'veiculo',
+                        'with' => [
+                            ['relation' => 'fipe',
+                                'with' => [
+                                    ['relation' => 'valores'],
+                                    ['relation' => 'contigencia'],
+                                ]
+                            ],
+                            ['relation' => 'combustivel'],
+                            ['relation' => 'utilizacao'],
+                            ['relation' => 'proprietario'],
+                        ]
 
-            if (!$cotacao):
-                $this->response(array(
-                        'status' => 'Error',
-                        'cdretorno' => '016',
-                        'message' => "ID do parceiro: {$datas['idParceiro']} invalido para essa proposta",
-                    )
-                    , REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
-            endif;
+                    ],
+                    ['relation' => 'produtos',
+                        'with' =>
+                            ['relation' => 'produto',
+                                'with' => [
+                                    ['relation' => 'precos'],
+                                    ['relation' => 'seguradoras' ,
+                                        'with'=> ['relation'=>'seguradora']
+                                    ],
+                                ]
+                            ],
+                    ],
+                    ['relation' => 'corretor'],
+                ]
 
-            $segurado = $this->Model_cliente->get($cotacao['clicpfcnpj']);
-            $uf = $this->Model_uf->get(['cd_uf' => $segurado['clicduf']]);
-            $segurado['clicduf'] = $uf['nm_uf'];
+            ])->with_forma_pagamento()->get($datas['idProposta']);
 
-
-            $parceiro = $this->Model_parceiro->get($cotacao['idparceiro']);
-            $estadoCivil = $this->Model_estadocivil->get($segurado['clicdestadocivil']);
-            $segurado['clicdestadocivil'] = $estadoCivil['nmestadocivil'];
-
-            if (strlen($segurado['clicpfcnpj']) > 11):
-                $ramo = $this->Model_ramoatividade->get($segurado['clicdprofiramoatividade']);
-                $segurado['clicdprofiramoatividade'] = $ramo['nome_atividade'];
-            else:
-                $ramo = $this->Model_profissao->get($segurado['clicdprofiramoatividade']);
-                $segurado['clicdprofiramoatividade'] = $ramo['nm_ocupacao'];
-            endif;
-
-
-            $veiculo = $this->Model_veiculo->get($cotacao['veicid']);
-
-            if ($veiculo['propcpfcnpj'] == $segurado['clicpfcnpj']):
-                $proprietario = $segurado;
-            else:
-                $proprietario = $this->Model_proprietario->get(['id' => $veiculo['propcpfcnpj']]);
-                $proprietario['clinomerazao'] = $proprietario['proprnomerazao'];
-            endif;
-
-            $data['veiculo'] = $veiculo;
-            $data['cotacao'] = $cotacao;
-            $data['proposta'] = $proposta;
+            $html = $this->load->view('pdf/proposta_view',$proposta,true);
 
 
-            $fipe = $this->Model_fipe->get(['codefipe' => $veiculo['veiccodfipe']]);
-            $anovalor = $this->Model_fipeanovalor->where(array("codefipe" => $veiculo['veiccodfipe'], "ano" => $veiculo['veicano']))->get();
-            $combustivel = $this->Model_tipocombustivel->get($veiculo['veictipocombus']);
-            $utilizacao = $this->Model_tipoutilizacaoveiculo->get($veiculo['veiccdutilizacao']);
+            $this->m_pdf->pdf->SetHTMLHeader($this->load->view('pdf/header_view',$proposta,true));
+            $this->m_pdf->pdf->SetHTMLFooter($this->load->view('pdf/footer_view',$proposta,true));
+            $this->m_pdf->pdf->AddPage('', // L - landscape, P - portrait
+                '', '', '', '', 10, // margin_left
+                10, // margin right
+                25, // margin top
+                15, // margin bottom
+                5, // margin header
+                6); // margin footer
 
+            $this->m_pdf->pdf->SetProtection(['copy', 'print'], '', '@SAPpdf#2770');
+            $this->m_pdf->pdf->WriteHTML($html);
+            $this->m_pdf->pdf->Output('pdfteste.pdf','S');
 
-            $veiculo['veictipocombus'] = $combustivel['nmcomb'];
-            $veiculo['veiccdutilizaco'] = $utilizacao['descutilveiculo'];
-            $veiculo['modelo'] = $fipe['modelo'];
-            $veiculo['marca'] = $fipe['marca'];
-            $veiculo['lmi'] = $anovalor['valor'];
-
-
-            $corretor = $this->Model_corretor->get($cotacao['idcorretor']);
-
-            $cotcaoproduto = $this->Model_cotacaoproduto->get_all(array('idcotacao' => $proposta['idcotacao']));
-
-            foreach ($cotcaoproduto as $k => $v):
-                $produto[$k]['produto'] = $this->Model_produto->get($cotcaoproduto[$k]['idproduto']);
-                $produto[$k]['seguradora'] = $this->Model_seguradora->get($produto[$k]['produto']['idseguradora']);
-                $produto[$k]['precoproduto'] = $this->Model_precoproduto->where(array('idprecoproduto' => $cotcaoproduto[$k]['idprecoproduto'], 'idproduto' => $cotcaoproduto[$k]['idproduto']))->get();
-                $data['produto'][]['idProduto'] = $cotcaoproduto[$k]['idproduto'];
-                $produto[$k]['precoproduto']['premioliquidoproduto'] = aplicaComissao($produto[$k]['precoproduto']['premioliquidoproduto'], $cotacao['comissao']);
-            endforeach;
-
-            $parcelas = $this->getProdutoParcPremio($data, 'proposta');
-            $parcela['premio'] = $parcelas['premioTotal'];
-            $parcela['primeira'] = $parcelas['formapagamento']['primeira'];
-            $parcela['demais'] = $parcelas['formapagamento']['demais'];
-            $parcela['formapagamento'] = $parcelas['formapagamento']['tipo'];
-            $parcela['quantidade'] = $parcelas['formapagamento']['quantidade'];
-            $parcela['juros'] = $parcelas['formapagamento']['juros'];
-
-
-            $html = gerarpdfb64(gerarhtml($proposta, $cotacao, $segurado, $veiculo, $corretor, $parcela, $produto, $parceiro, $proprietario));
-
-//            header("Content-type: application/pdf");
-//            echo base64_decode($html);
+            $b64encode = chunk_split(base64_encode($this->m_pdf->pdf->Output('pdfteste.pdf','S')));
+//            $html = gerarpdfb64(gerarhtml($proposta, $cotacao, $segurado, $veiculo, $corretor, $parcela, $produto, $parceiro, $proprietario));
+//
+////            header("Content-type: application/pdf");
+////            echo base64_decode($html);
 
 
             $this->response(array(
                 'status' => '000 - sucesso',
                 'cdretorno' => '000',
-                'idproposta' => $proposta['idproposta'],
-                'idparceiro' => $parceiro['idparceiro'],
-                'base64' => $html,
+                'idproposta' => $proposta['proposta']['idproposta'],
+//                'idparceiro' => $parceiro['idparceiro'],
+                'base64' => $b64encode,
             ));
 
 //            $this->response(array(

@@ -18,7 +18,7 @@
     <tbody>
     <!--    Inicio dados Corretor e Parceiro -->
     <tr>
-        <td class="pdf-table-td">
+        <td class="pdf-table-td-top">
             <table class="pdf-table-td-table">
                 <tr>
                     <td>
@@ -163,7 +163,7 @@
                                     <td class="pdf-table-td-title"><b>RG:</b></td>
                                     <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['clinumrg'] ?></td>
                                     <td class="pdf-table-td-title"><b>ORGÂO EMISSOR:</b></td>
-                                    <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['cliemissorrg'] ?>
+                                    <td class="pdf-table-td-content"><?= strtoupper($proposta['cotacao']['segurado']['cliemissorrg'])?>
                                         -<?= $proposta['cotacao']['segurado']['rg_uf']['nm_uf'] ?></td>
                                     <td class="pdf-table-td-title"><b>DATA EMISSAO:</b></td>
                                     <td class="pdf-table-td-content"><?= date("d/m/Y",
@@ -384,14 +384,11 @@
                         </td>
                     </tr>
 
-                    <tr class="pdf-table-td-subtitle"><td></td></tr>
                     <tr>
-                        <td class="pdf-table-td-content"><?=$produto['produto']['caractproduto'] ?></td>
+                        <td class="pdf-table-td-content-p"><li><?=$produto['produto']['caractproduto'] ?></li></td>
                     </tr>
-                    <tr class="pdf-table-td-subtitle"><td></td></tr>
-
                     <tr>
-                        <td class="pdf-table-td-content"><p><?= $produto['produto']['cobertura'] ?></p></td>
+                        <td class="pdf-table-td-content-p"><li><?= $produto['produto']['cobertura'] ?></li></td>
                     </tr>
 
                     <tr class="pdf-table-td-subtitle">
@@ -413,15 +410,6 @@
                                             %
                                         </td>
                                     <?php endif; ?>
-
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <table>
-                                <tr>
                                     <td class="pdf-table-td-title"><b>PREMIO:</b></td>
                                     <td class="pdf-table-td-content">R$ <?php
                                         $valor = aplicaComissao(
@@ -436,20 +424,16 @@
                             </table>
                         </td>
                     </tr>
+                    
 
-                    <tr class="pdf-table-td-subtitle">
-                        <td>
-                            EXIGÊNCIAS
-                        </td>
-                    </tr>
+
                     <tr>
                         <td>
                             <table>
                                 <tr>
-                                    <td class="pdf-table-td-title"><b>VISTORIA PRÉVIA?</b></td>
-                                    <td class="pdf-table-td-content"><?= ($produto['produto']['ind_exige_vistoria'] ? 'Sim' : 'Não') ?></td>
-                                    <td class="pdf-table-td-title"><b>DISPOSITIVO ANTI-FURTO?</b></td>
-                                    <td class="pdf-table-td-content"><?= ($produto['produto']['ind_exige_rastreador'] ? 'Sim' : 'Não') ?></td>
+                                    <td class="pdf-table-td-title"><b>EXIGÊNCIAS:</b></td>
+                                    <td class="pdf-table-td-content">VISTORIA PRÉVIA? <?= ($produto['produto']['ind_exige_vistoria'] ? 'Sim' : 'Não') ?> / DISPOSITIVO ANTI-FURTO? <?= ($produto['produto']['ind_exige_rastreador'] ? 'Sim' : 'Não') ?> </td>
+                                    <td class="pdf-table-td-content"></td>
                                 </tr>
                             </table>
                         </td>
@@ -492,7 +476,7 @@
                         <td>
                             <table>
                                 <tr>
-                                    <td class="pdf-table-td-content"><?= $seg['segnome'] ?></td>
+                                    <td class="pdf-table-td-content"><li><?= $seg['segnome'] ?></li></td>
                                     <td class="pdf-table-td-title"><b>CNPJ:</b></td>
                                     <td class="pdf-table-td-content"><?= format('cpfcnpj', $seg['segcnpj']) ?></td>
                                     <td class="pdf-table-td-title"><b>SUSEP:</b></td>

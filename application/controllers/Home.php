@@ -71,7 +71,8 @@ class Home extends CI_Controller
             ]
 
         ])->with_forma_pagamento()->get(398);
-       $html = $this->load->view('pdf/proposta_view',$proposta,true);
+       
+        $html = $this->load->view('pdf/proposta_view',$proposta,true);
 
 
         $this->m_pdf->pdf->SetHTMLHeader($this->load->view('pdf/header_view',$proposta,true));
