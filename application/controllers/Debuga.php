@@ -28,12 +28,12 @@ class Debuga extends REST_Controller
         $datas = $this->post();
         $server = $_SERVER;
         $http = getallheaders();
-//        if(!$this->Model_key->get(['user_id'=>$datas['idParceiro'],'key'=>$http['X-API-KEY']])){
-//            $this->response(array(
-//                'status' => 'Acesso negado',
-//                'cdretorno' => '098',
-//                'message' => 'API KEY invalido para o parceiro, nome: '.$datas['nmParceiro'].' id: '.$datas['idParceiro']), REST_Controller::HTTP_FORBIDDEN);
-//        }
+        if(!$this->Model_key->get(['user_id'=>$datas['idParceiro'],'key'=>$_SERVER['HTTP_X_API_KEY']])){
+            $this->response(array(
+                'status' => 'Acesso negado',
+                'cdretorno' => '098',
+                'message' => 'API KEY invalido para o parceiro, nome: '.$datas['nmParceiro'].' id: '.$datas['idParceiro']), REST_Controller::HTTP_FORBIDDEN);
+        }
 
 
         $this->load->library('form_validation');
