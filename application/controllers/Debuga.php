@@ -27,7 +27,7 @@ class Debuga extends REST_Controller
 
         $datas = $this->post();
         $server = $_SERVER;
-//        $http = getallheaders();
+        $http = getallheaders();
 //        if(!$this->Model_key->get(['user_id'=>$datas['idParceiro'],'key'=>$http['X-API-KEY']])){
 //            $this->response(array(
 //                'status' => 'Acesso negado',
@@ -124,7 +124,7 @@ class Debuga extends REST_Controller
             $this->response(array(
 
                 'dados' => $proposta,
-//                'http' => $http,
+                'http' => $http,
                 'server' => $_SERVER,
 //                'array_search' => $this->Model_cliente->with_profissao()->get('09266087467'),
             ));
