@@ -99,18 +99,17 @@ class Debuga extends REST_Controller
 
 //            $search = array_search($proposta['cotacao']['veiculo']['veicano'], array_column($valores, 'ano'));
 
-            foreach ($valores as $valor) {
+            foreach ($proposta['cotacao']['veiculo']['fipe']['valores'] as $valor) {
                 if ($proposta['cotacao']['veiculo']['veicano'] == $valor['ano'] && $proposta['cotacao']['veiculo']['veictipocombus'] == $valor['idcombustivel']) {
                     $proposta['cotacao']['veiculo']['fipe']['valores'] = $valor;
                 }
             }
-            $datas = [];
+            
             foreach ($cotacao['produtos'] as $pkey => $produto) {
 
                 $key = array_search($produto['idprecoproduto'], array_column($produto['produto']['precos'], 'idprecoproduto'));
                 $cotacao['produtos'][$pkey]['produto']['precos'] = $produto['produto']['precos'][$key];
-
-                $datas;
+                
 
             }
 

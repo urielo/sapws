@@ -109,3 +109,23 @@ function nomeCase($string, $delimiters = array(" ", "-", ".", "'", "O'", "Mc"), 
     }//foreach
     return $string;
 }
+
+function jurosSimples($valor, $taxa, $parcelas) {
+    $taxa = $taxa / 100;
+
+    $m = $valor * (1 + $taxa * $parcelas);
+    $valParcela = number_format($m / $parcelas, 2, ",", ".");
+
+    return $valParcela;
+}
+
+function jurosComposto($valor, $taxa, $parcelas) {
+    $taxa = $taxa / 100;
+   return $valParcela = $valor * pow((1 + $taxa), $parcelas);
+
+    return $juros = $valParcela - $valor;
+    return $parcela = ($valor / $parcelas) + $juros ;
+    $valParcela = number_format($valParcela / $parcelas, 2, ",", ".");
+
+    return $valParcela;
+}

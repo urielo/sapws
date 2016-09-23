@@ -89,4 +89,21 @@ b {
     /*font-size: 16px;*/
 
 }
+.texto-legal{}
+
+.texto-legal p {
+    font-size:10px;
+    text-align: justify;
+    letter-spacing: 0;
+}
+.texto-legal h4 {
+    font-size:12px;
+    font-weight: bold;
+}
+
+.texto-legal li{
+    font-size:10px;
+    text-decoration: underline;
+    font-weight: bold;
+}
 

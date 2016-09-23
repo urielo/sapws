@@ -139,6 +139,10 @@ class Home extends CI_Controller
         ])->get(382);
         $this->load->view('pdf/proposta_view',$proposta);
     }
+
+    public function juros(){
+        echo jurosComposto(1196,2.50,12);
+    }
 }
 
     

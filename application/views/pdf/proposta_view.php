@@ -268,6 +268,98 @@
     </tr>
     <!--    Fim dados Proponente -->
 
+    <!--    Inicio dados veiculos -->
+
+    <tr class="pdf-table-tr-title">
+        <td><h4>DADOS DO VEÍCULO</h4></td>
+    </tr>
+    <?php foreach ($proposta['cotacao']['veiculo']['fipe']['valores'] as $valor) {
+        if ($proposta['cotacao']['veiculo']['veicano'] == $valor['ano'] && $proposta['cotacao']['veiculo']['veictipocombus'] == $valor['idcombustivel']) {
+            $proposta['cotacao']['veiculo']['fipe']['valores'] = $valor;
+        }
+    } ?>
+    <tr>
+        <td class="pdf-table-td">
+            <table class="pdf-table-td-table">
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td class="pdf-table-td-title"><b>VEICULO:</b></td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['fipe']['marca'] ?>
+                                    / <?= $proposta['cotacao']['veiculo']['fipe']['modelo'] ?></td>
+                                <td class="pdf-table-td-title"><b>FIPE:</b></td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['fipe']['codefipe'] ?></td>
+
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td class="pdf-table-td-title"><b>VALOR:</b></td>
+                                <td class="pdf-table-td-content">
+                                    R$ <?= real($proposta['cotacao']['veiculo']['fipe']['valores']['valor']) ?></td>
+                                <td class="pdf-table-td-title"><b>ANO MODELO:</b></td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['fipe']['valores']['ano'] ?></td>
+                                <td class="pdf-table-td-title"><b>ANO FABRICAÇÃO:</b></td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['veianofab'] ?></td>
+                                <td class="pdf-table-td-title"><b>ZERO KM?</b></td>
+                                <td class="pdf-table-td-content"><?= ($proposta['cotacao']['veiculo']['veicautozero'] == 1 ? 'Sim' : 'Não') ?></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td class="pdf-table-td-title"><b>CHASSI:</b></td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['veicchassi'] ?></td>
+                                <td class="pdf-table-td-title"><b>PLACA:</b></td>
+                                <td class="pdf-table-td-content"><?= format("placa", $proposta['cotacao']['veiculo']['veicplaca']) ?></td>
+                                <td class="pdf-table-td-title"><b>RENAVAM:</b></td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['veicrenavam'] ?></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td class="pdf-table-td-title"><b>COMBUSTIVEL:</b></td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['combustivel']['nmcomb'] ?></td>
+                                <td class="pdf-table-td-title"><b>UTILIZAÇÃO:</b></td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['utilizacao']['descutilveiculo'] ?></td>
+                                <td class="pdf-table-td-title"><b>COR:</b></td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['veicor'] ?></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td class="pdf-table-td-title"><b>PROPRIETARIO:</b></td>
+                                <td class="pdf-table-td-content"><?= ($proposta['cotacao']['veiculo']['propcpfcnpj'] == $proposta['cotacao']['segurado']['clicpfcnpj'] ? nomeCase($proposta['cotacao']['segurado']['clinomerazao']) : nomeCase($proposta['cotacao']['veiculo']['proprietario']['proprnomerazao'])) ?></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+    </tr>
+
+
+    <!--    Fim dados veiculos -->
+
+
     <!--    Inicio dados Coberturas e serviços -->
 
     <tr class="pdf-table-tr-title">
@@ -286,24 +378,17 @@
                             <table>
                                 <tr>
                                     <td class="pdf-table-td-title"><b>PRODUTO:</b></td>
-                                    <td class="pdf-table-td-content"><?= $produto['produto']['idproduto'] . ' / ' . $produto['produto']['nomeproduto'] ?></td>
-                                    <td class="pdf-table-td-title"><b>DESCRIÇÃO:</b></td>
-                                    <td class="pdf-table-td-content"><?= $produto['produto']['descproduto'] ?></td>
+                                    <td class="pdf-table-td-content"><?= $produto['produto']['nomeproduto'] ?> (<?= $produto['produto']['descproduto'] ?>)</td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
 
-                    <tr class="pdf-table-td-subtitle">
-                        <td>COBERTURA</td>
-                    </tr>
+                    <tr class="pdf-table-td-subtitle"><td></td></tr>
                     <tr>
-                        <td class="pdf-table-td-content"><?= $produto['produto']['caractproduto'] ?></td>
+                        <td class="pdf-table-td-content"><?=$produto['produto']['caractproduto'] ?></td>
                     </tr>
-
-                    <tr class="pdf-table-td-subtitle">
-                        <td>ELEGIBILIDADE</td>
-                    </tr>
+                    <tr class="pdf-table-td-subtitle"><td></td></tr>
 
                     <tr>
                         <td class="pdf-table-td-content"><p><?= $produto['produto']['cobertura'] ?></p></td>
@@ -347,8 +432,6 @@
 
                                         $premio = $valor + $premio;
                                         echo real($valor) ?></td>
-                                    <td class="pdf-table-td-title"><b>CUSTO DISP. ANTI-FURTO:</b></td>
-                                    <td class="pdf-table-td-content">N/A</td>
                                 </tr>
                             </table>
                         </td>
@@ -372,29 +455,12 @@
                         </td>
                     </tr>
 
-                    <?php if (isset($produto['produto']['seguradoras'])): ?>
-                        <tr class="pdf-table-td-subtitle">
-                            <td>
-                                SEGURADORA(S) CONTRATADA(S) PARA ESTE PRODUTO
-                            </td>
-                        </tr>
+
 
                         <!--                    INICIO LOOP-->
                         <?php foreach ($produto['produto']['seguradoras'] as $seguradora): ?>
-                            <tr>
-                                <td>
-                                    <table>
-                                        <tr>
-                                            <td class="pdf-table-td-title"><b>SEGURADORA:</b></td>
-                                            <td class="pdf-table-td-content"><?= $seguradora['seguradora']['segnome'] ?></td>
-                                            <td class="pdf-table-td-title"><b>REGISTRO DO PRODUTO NA SUSEP:</b></td>
-                                            <td class="pdf-table-td-content"><?= $seguradora['prdotudo_susep'] ?></td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
                             <?php $seguradoras[$seguradora['idseguradora']] = $seguradora['seguradora'] ?>
-                        <?php endforeach; endif; ?>
+                        <?php endforeach; ?>
                     <!--                    FIM LOOP-->
 
 
@@ -426,7 +492,6 @@
                         <td>
                             <table>
                                 <tr>
-                                    <td class="pdf-table-td-title"><b>SEGURADORA:</b></td>
                                     <td class="pdf-table-td-content"><?= $seg['segnome'] ?></td>
                                     <td class="pdf-table-td-title"><b>CNPJ:</b></td>
                                     <td class="pdf-table-td-content"><?= format('cpfcnpj', $seg['segcnpj']) ?></td>
@@ -437,23 +502,14 @@
                         </td>
                     </tr>
                 <?php endforeach; ?>
-                <tr>
-                    <td>
-                        <table>
-                            <tr>
-                                <td class="pdf-table-td-title"><b>FONE DE ACIONAMENTO EM CASO DE SINISTRO:</b></td>
-                                <td class="pdf-table-td-content">0800 7725 099</td>
 
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
             </table>
         </td>
     </tr>
 
     <!--    FIm seguradoras -->
 
+    <!--    Inicio condições de pagamento -->
     <tr class="pdf-table-tr-title">
         <td><h4>CONDIÇÕES DE PAGAMENTO</h4></td>
     </tr>
@@ -514,9 +570,153 @@
             </table>
         </td>
     </tr>
+    <!--    Fim condições de pagamento -->
+
 
     </tbody>
 </table>
+
+<div class="texto-legal">
+    <h4>CONSIDERAÇÕES IMPORTANTES</h4>
+
+    <p><b>COBERTURA:</b> O “Seguro AUTOPRATICO” (Seguro contra roubo e furto) tem como base um fator de ajuste aplicado
+        sobre o
+        valor do veículo referência que constava na tabela FIPE na data de contratação do seguro, do site
+        <a href="">www.fipe.org.br</a> . Este produto Seguro AUTOPRATICO é a união de uma apólice de Seguro contra Roubo
+        e Furto a ser
+        emitida por uma das Seguradoras parceiras (conforme acima especificado para cada produto) que exigem o
+        monitoramento continuo por sistema anti-furto (rastreador GSM/GPS) da empresa SKYPROTECTION Tec. Inf. Veic.
+        Ltda. A SKYPROTECTION é empresa homologada a prestar esse monitoramento, a comercialilzar o combo (monitoramento
+        mais seguro) e a cobrar este combo diretamente dos clientes finais, sempre considerando a comercialização por
+        intermédio de um corretor de Seguros conforme norma do setor. As indenizações, caso ocorram serão sempre
+        exclusivamente arcadas por parte da Seguradora que emitir a Apólice e que consta na presente proposta. Estão
+        cobertos por este produto, os prejuízos, previstos nos termos de suas condições gerais das respectivas
+        seguradoras, devidamente comprovados e respeitados os riscos excluídos, decorrentes de Roubo ou Furto Total,
+        seguidos da não localização do veículo devidamente atestada pela SKYPROTECTION Tec. Inf. Veic. Ltda., no período
+        estipulado na apólice/certificado. Serão elegíveis à contratação do seguro apenas os veículos que, no momento da
+        adesão, adquirirem sistema de rastreamento/monitoramento veicular SKYPROTECTION, sendo que o início da cobertura
+        do seguro se dará após a devida instalação e ativação do sistema, desde que a instalação seja feita no prazo
+        máximo de até 15 dias a contar da data de entrega desta proposta.</p>
+    <p>
+        A cobrança tanto do equipamento anti furto como do serviço de monitoramento continuo e recorrente por todo
+        período de cobertura e necessário para a emissão das apólice de custo reduzida das respectivas seguradoras
+        (conforme previsto nos registros de referidos seguros junto a SUSEP), assim como o próprio premio do seguro será
+        unificada e de responsabilidade da SKYPROTECTION Tec. Inf. Veic. Ltda, que poderá parcelar a cobrança da forma
+        acertada com o Segurado e que poderá diferir da forma de parcelamento e do valor do premio isolado apenas da
+        parcela do Seguro que poderá constar das respectivas apólices. Passado este período, esta proposta estará
+        recusada.
+    </p>
+
+    <p>A inadimplência da primeira parcela do seguro implica na recusa desta Proposta de Adesão.</p>
+
+    <p>O não cumprimento das ações declaradas nesta proposta poderá acarretar a perda de direito à indenização do
+        seguro. </p>
+
+    <p><b>DECLARAÇÕES IMPORTANTES E OBSERVAÇÕES:</b> As condições dos serviços e produtos aqui contratados assim como as
+        Condições Gerais completas de seu Seguro encontram-se disponíveis para consulta nos respectivos sites das
+        seguradoras definidas no campo especifico acima e também por facilidade replicadas no site
+        <a href="">www.seguroautopratico.com.br/contratos</a>, motivo pelo qual informo ser desnecessário o envio das
+        Condições Gerais
+        impressas e que estou ciente de que, caso as necessite, poderei requisitá-las em sua Central de Atendimento ou
+        descarrega-las no site/endereço acima. - O Segurado, declara ainda ciência e concorda que tanto o contrato de
+        prestação de serviços de monitoramento como a(s) Apólice(s) de Seguro será(ão) disponibilizada(s) por meio
+        eletrônico, por email ou no(s) site(s) da(s) Seguradora(s), no prazo legal. - As informações acima foram
+        fornecidas pelo Proponente (mesmo que não preenchidas de próprio punho) e são levadas em consideração pela
+        Seguradora para o cálculo do prêmio de seguro para possível aceitação do risco. Em razão disso, o Proponente
+        declara que todas as informações previstas na presente proposta são verdadeiras e foram prestadas de boa-fé,
+        assumindo total responsabilidade pela sua exatidão, sob pena de prejudicar sua eventual indenização. - Antes da
+        assinatura da presente proposta de seguro, o Proponente declara já ter tomado conhecimento prévio das
+        particularidades dos serviços de monitoramento indissociáveis e necessários para a presente condição comercial
+        assim como das Condições Gerais que regem os Seguros incluidos, especialmente das cláusulas restritivas e/ou
+        limitativas de direitos, autorizando a Seguradora a emitir Apólice/Certificado em caso de aceitação do risco. -
+        A aceitação do seguro está sujeita à análise do risco, dentro do prazo legal. - A presente proposta, juntamente
+        com o contrato de prestação de serviço de monitoramento e as Condições Gerais, Apólice/Certificado de Seguro,
+        são partes integrante do contrato de Seguro, sendo as informações ora prestadas, fundamentais para a
+        precificação e subscrição do risco. O adiantamento do prêmio do sistema anti furto e das mensalidades de
+        monitoramento e de seguro não vincula a presente proposta, sendo facultado às Seguradoras, dentro do prazo de 15
+        (quinze) dias, recusá-la ou aceitá-la. Em caso de recusa, o prêmio pago, a título de adiantamento, será
+        devolvido, através de crébito em conta corrente do Proponente, a ser oportunamente fornecida.</p>
+
+    <p>Na ocorrência de sinistro, o Segurado que estiver em mora no momento da ocorrência, ficará sujeito às penalidades
+        impostas pelas Condições Gerais.<b> O Segurado declara estar ciente que o inadimplemento de qualquer parcela por
+            mais de 5 (cinco) dias do seu vencimento implica no cancelamento da apólice</b>, sendo facultado a
+        Seguradora o
+        exercício de referida prerrogativa, que quando exercido será formalmente comunicado ao Segurado.
+        É facultado ao Segurado o direito de arrependimento no prazo de 07 (sete) dias corridos, contados da contratação
+        do seguro, de acordo com o Código de Defesa do Consumidor, devendo manifestá-lo através do telefone (11)
+        27701601 ou por email para : <a href="">sac@seguroautopratico.com.br</a>.
+    <p>As condições contratuais/regulamento deste produto protocolizadas pelas Sociedades Seguradoras Parceiras junto à
+        SUSEP poderão ser consultadas no endereço eletrônico <a href=""><b>www.susep.gov.br</b></a>, de acordo com o
+        número de processo
+        constante da apólice/proposta. O registro desses planos na Susep, não implica por parte da Autarquia, incentivo
+        ou recomendação à sua comercialização. - O Proponente poderá consultar a situação cadastral da Seguradora, do
+        Produto contratado e do seu corretor, no site da Susep (<a href="">www.susep.gov.br</a>), por meio do número de
+        seu registro na
+        Susep, nome completo, CNPJ ou CPF. “As condições contratuais / regulamento deste produto encontram-se
+        registradas na SUSEP de acordo com o número de processo constante da apólice/proposta e poderão ser consultadas
+        no endereço eletrônico <a href="">www.susep.gov.br</a>.” “Em atendimento à Lei 12.741/12 informamos que incidem
+        as alíquotas de
+        0,65% de PIS/Pasep e de 4% de COFINS sobre os prêmios de seguros. “A FRAUDE CONTRA SEGUROS É CRIME DENUNCIE,
+        (21) 2253-1177 OU 181 - <a href="">www.fenaseg.org.br</a>.”</p>
+    <p>
+        Todos os valores constantes nesta proposta são expressos em reais (R$). Qualquer importância oferecida pelo
+        proponente junto com a proposta tem natureza de adiantamento, a ser devolvida no caso de não aceitação do risco.
+    </p>
+
+    <p>
+        Para a desinstalação do rastreador haverá um custo no valor de R$ 100,00 (cem reais). O Segurado está ciente e
+        autoriza a inclusão de todos os dados e informações relacionadas ao presente seguro, assim como de todos os
+        eventuais sinistros e ocorrências referentes ao mesmo, em banco de dados, aos quais a seguradora poderá recorrer
+        para análise de riscos atuais e futuros e na liquidação de processos de sinistros.
+    </p>
+    <h4>Importante Canais de Comunicação</h4>
+
+    <ul>
+        <li>
+            Aviso de Sinistro em Caso de Roubo e Furto:
+        </li>
+        <p> Em caso de Roubo ou Furto do veículo o segurado deve comunicar o sinistro imediatamente para a central de
+            rastreamento no Fone 0800 77 25099 e/ou no fone (11) 27701601; que irá tentar localizar o veículo. Caso o
+            veículo não seja recuperado, o Segurado ou um de seus representantes deverá encaminhar para a Seguradora,
+            conforme informações constantes na respectiva apólice, os documentos relacionados nas Condições Gerais do
+            produto.</p>
+        <li>
+            Aviso de Sinistro em casos de sinistro com Terceiros (para os Proponentes que optarem por esta cobertura):
+        </li>
+        <p> Opção online NOBRE SEGUROS: Acesse o site <a href="">www.nobre.com.br</a> e clique na opção “COMUNICAR UM
+            SINISTRO” e
+            proceda conforme instruções detalhadas nas telas.<br>
+            - Atendimento Sinistro NOBRE: Ligue para 4007-1115 capitais, regiões metropolitanas e grandes cidades ou
+            0800 16 3020 demais localidades de segunda à sexta-feira das 8:30h às 20:00h e aos sábados das 8:30h às
+            17:30h.<br>
+            - Central de Atendimento : Tel: 55 (11) 5069-1177 E-mail: <a href="">cacc@nobre.com.br</a></p>
+
+        <li>
+            Aviso de Sinistro em casos de sinistro de Perda Total por colisão (para os Proponentes que optarem por esta
+            cobertura):
+        </li>
+        <p> Em caso de PT por colisão do veículo do segurado, este deve comunicar o sinistro para a QBE Seguradora, e
+            enviar através da Caixa Postal nº (29217) CEP: 04561-970 – São Paulo/SP, os documentos relacionados nas
+            Condições Gerais, disponíveis através do site <a href="">www.qbe.com.br</a></p>
+        <li>
+            Assistência Veicular:
+        </li>
+        <p> Caso a sua apólice tenha sido emitida pela QBE Seguros, as Informações sobre exclusões, limites de serviços
+            e intervenções dos planos de Assistência Veicular contratado, conforme expresso na Apólice de Seguro, podem
+            ser consultadas a qualquer tempo nas Condições Gerais disponíveis no site <a href="">www.qbe.com.br</a>.
+            Prestador
+            Assistência Auto: USS Soluções Gerenciadas LTDA - CNPJ: 01.979.936/0001-79 - Central de Atendimento: 0800
+            723 2886 </p>
+    </ul>
+
+    <p><b>Observação</b> As coberturas contratadas tanto na apólice de PT por colisão, como de RCF-V (ambas opcionalmente
+        contratadas de forma acessória ao Seguro contra roubo e furto), como na apólice mestre de Seguro contra roubo e
+        furto (Seguro AUTOPRATICO) não compreendem e tampouco se confundem, com a cobertura total, bem como a
+        indenização integral do veículo, cujo conceito faz parte do glossário constante das Condições Gerais. As
+        coberturas de Danos Corporais e Danos Materiais cujos conceitos distintos fazem parte do glossário constante das
+        inclusas Condições Gerais, não compreendem e tampouco se confundem com a cobertura de Danos Morais.</p>
+</div>
+
 <div class="container">
 
 
