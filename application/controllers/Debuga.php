@@ -23,7 +23,10 @@ class Debuga extends REST_Controller
      */
     public function debuga_post()
     {
+
+
         $datas = $this->post();
+
 
         $this->load->library('form_validation');
         $this->form_validation->set_data($datas);
@@ -34,7 +37,9 @@ class Debuga extends REST_Controller
                 'cdretorno' => '023',
                 'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         else:
-            $where = ['dtcreate >=' => '2016-08-17 00:00:00', 'dtcreate <=' => '2016-08-17 23:59:59'];
+                $v = false;
+            $where = ($v ? ['idcotacao'=>7029,'idparceiro'=>1] : ['idcotacao'=>7029]) ;
+
             $proposta = $this->Model_proposta->with_cotacao([
                 'with' => [
                     ['relation' => 'segurado',
@@ -50,13 +55,15 @@ class Debuga extends REST_Controller
                     ['relation' => 'veiculo',
                         'with' => [
                             ['relation' => 'fipe',
-                                'with' =>[
+                                'with' => [
                                     ['relation' => 'valores'],
                                     ['relation' => 'contigencia']
                                 ]
                             ],
                             ['relation' => 'combustivel'],
                             ['relation' => 'utilizacao'],
+                            ['relation' => 'proprietario'],
+
                         ]
 
                     ],
@@ -65,8 +72,8 @@ class Debuga extends REST_Controller
                             ['relation' => 'produto',
                                 'with' => [
                                     ['relation' => 'precos'],
-                                    ['relation' => 'seguradoras' ,
-                                        'with'=> ['relation'=>'seguradora']
+                                    ['relation' => 'seguradoras',
+                                        'with' => ['relation' => 'seguradora']
                                     ],
                                 ]
                             ],
@@ -74,22 +81,37 @@ class Debuga extends REST_Controller
                     ['relation' => 'corretor'],
                 ]
 
-            ])->get($datas['idProposta']);
+            ])->with_forma_pagamento()->get($datas['idProposta']);
             $valores = $proposta['cotacao']['veiculo']['fipe']['valores'];
+
+            $cotacao = $this->Model_cotacao->with_produtos(['with' =>
+                ['relation' => 'produto',
+                    'with' => [
+                        ['relation' => 'precos'],
+
+                        ['relation' => 'seguradoras',
+                            'with' => ['relation' => 'seguradora']
+                        ],
+                    ]
+                ],
+            ])->with_veiculo()->get($where);
 
 
 //            $search = array_search($proposta['cotacao']['veiculo']['veicano'], array_column($valores, 'ano'));
 
-            foreach ($valores as $valor){
-                if($proposta['cotacao']['veiculo']['veicano'] == $valor['ano'] && $proposta['cotacao']['veiculo']['veictipocombus'] == $valor['idcombustivel'] ){
+            foreach ($valores as $valor) {
+                if ($proposta['cotacao']['veiculo']['veicano'] == $valor['ano'] && $proposta['cotacao']['veiculo']['veictipocombus'] == $valor['idcombustivel']) {
                     $proposta['cotacao']['veiculo']['fipe']['valores'] = $valor;
                 }
             }
-
-            foreach ($proposta['cotacao']['produtos'] as $pkey => $produto){
+            $datas = [];
+            foreach ($cotacao['produtos'] as $pkey => $produto) {
 
                 $key = array_search($produto['idprecoproduto'], array_column($produto['produto']['precos'], 'idprecoproduto'));
-                $proposta['cotacao']['produtos'][$pkey]['produto']['precos']= $produto['produto']['precos'][$key];
+                $cotacao['produtos'][$pkey]['produto']['precos'] = $produto['produto']['precos'][$key];
+
+                $datas;
+
             }
 
             $this->response(array(
@@ -409,7 +431,7 @@ class Debuga extends REST_Controller
 //                unset($prodcheck[$key]);
             }
         }
-        $menorparcela =0;
+        $menorparcela = 0;
         $prodcheck = $produto;
 
         if ($master) {
@@ -432,8 +454,8 @@ class Debuga extends REST_Controller
         $valorfipe = $this->Model_fipeanovalor
             ->fields('valor')
             ->where(array('codefipe' => $veiculo['veiccodfipe'], 'ano' => $ano))
-            ->with_fipe(['with'=>['relation'=>'contigencia']])->get();
-       $contigencia = $valorfipe['fipe']['contigencia']['valor'];
+            ->with_fipe(['with' => ['relation' => 'contigencia']])->get();
+        $contigencia = $valorfipe['fipe']['contigencia']['valor'];
 
         $maxidade = max($this->Model_produto_seguradora->fields('idade_aceitacao_max')->get_all());
         $maxvalor = max($this->Model_produto_seguradora->fields('valor_aceitacao_max')->get_all());
@@ -513,7 +535,7 @@ class Debuga extends REST_Controller
                     'cdretorno' => '009',
                     'message' => "O Produto {$idproduto} - {$produtodb['nomeproduto']} não está ativo",
                 );
-            elseif ($produtodb['tipodeseguro'] == 'RCF' && $prolmi != 50000 && $prolmi != 100000  && $prolmi != 200000):
+            elseif ($produtodb['tipodeseguro'] == 'RCF' && $prolmi != 50000 && $prolmi != 100000 && $prolmi != 200000):
                 $produtos['produto'][$i] = array(
                     'status' => 'Atenção',
                     'cdretorno' => '009',
@@ -544,7 +566,7 @@ class Debuga extends REST_Controller
 
                         if ($idproduto == 1) {
 
-                                $preco['premioliquidoproduto'] = $preco['premioliquidoproduto'] + $contigencia;
+                            $preco['premioliquidoproduto'] = $preco['premioliquidoproduto'] + $contigencia;
 
                         }
                         $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao);

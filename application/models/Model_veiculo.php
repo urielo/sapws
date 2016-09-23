@@ -14,6 +14,7 @@ class Model_veiculo extends MY_Model
         $this->has_one['fipe'] = ['Model_fipe','codefipe','veiccodfipe'];
         $this->has_one['combustivel'] = ['Model_tipocombustivel','idcomb','veictipocombus'];
         $this->has_one['utilizacao'] = ['Model_tipoutilizacaoveiculo','idutilveiculo','veiccdutilizaco'];
+        $this->has_one['proprietario'] = ['Model_proprietario','id','propcpfcnpj'];
 
         parent::__construct();
     }

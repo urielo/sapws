@@ -52,6 +52,7 @@ class Home extends CI_Controller
                         ],
                         ['relation' => 'combustivel'],
                         ['relation' => 'utilizacao'],
+                        ['relation' => 'proprietario'],
                     ]
 
                 ],
@@ -69,8 +70,9 @@ class Home extends CI_Controller
                 ['relation' => 'corretor'],
             ]
 
-        ])->get(382);
+        ])->with_forma_pagamento()->get(398);
        $html = $this->load->view('pdf/proposta_view',$proposta,true);
+
 
         $this->m_pdf->pdf->SetHTMLHeader($this->load->view('pdf/header_view',$proposta,true));
         $this->m_pdf->pdf->SetHTMLFooter($this->load->view('pdf/footer_view',$proposta,true));
@@ -138,3 +140,5 @@ class Home extends CI_Controller
         $this->load->view('pdf/proposta_view',$proposta);
     }
 }
+
+    

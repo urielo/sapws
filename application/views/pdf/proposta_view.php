@@ -66,14 +66,14 @@
                         <table>
                             <tr>
                                 <td class="pdf-table-td-title"><b>PROPOSTA Nº:</b></td>
-                                <td class="pdf-table-td-content">{$proposta['idproposta']}</td>
+                                <td class="pdf-table-td-content"><?= $proposta['idproposta'] ?></td>
                                 <td class="pdf-table-td-title"><b>PROPOSTA EMISSÃO:</b></td>
-                                <td class="pdf-table-td-content">" . date("d/m/Y H:i:s",
-                                    strtotime($proposta['dtcreate'])) . "
+                                <td class="pdf-table-td-content"><?= date("d/m/Y H:i:s",
+                                        strtotime($proposta['dtcreate'])) ?>
                                 </td>
                                 <td class="pdf-table-td-title"><b>VALIDADE:</b></td>
-                                <td class="pdf-table-td-content">" . date("d/m/Y H:i:s",
-                                    strtotime($proposta['dtvalidade'])) . "
+                                <td class="pdf-table-td-content"><?= date("d/m/Y H:i:s",
+                                        strtotime($proposta['dtvalidade'])) ?>
                                 </td>
                             </tr>
                         </table>
@@ -86,10 +86,10 @@
                                 <td class="pdf-table-td-title"><b>TIPO DE VIGÊNCIA:</b></td>
                                 <td class="pdf-table-td-content">ANUAL</td>
                                 <td class="pdf-table-td-title"><b>REF. COTAÇÃO Nº:</b></td>
-                                <td class="pdf-table-td-content">{$cotacao['idcotacao']}</td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['idcotacao'] ?></td>
                                 <td class="pdf-table-td-title"><b>COTAÇÃO EMISSÃO:</b></td>
-                                <td class="pdf-table-td-content">" . date("d/m/Y G:i:s",
-                                    strtotime($cotacao['dtcreate'])) . "
+                                <td class="pdf-table-td-content"><?= date("d/m/Y H:i:s",
+                                        strtotime($proposta['cotacao']['dtcreate'])) ?>
                                 </td>
                             </tr>
                         </table>
@@ -116,10 +116,9 @@
                             <table>
                                 <tr>
                                     <td class="pdf-table-td-title"><b>RAZÃO SOCIAL:</b></td>
-                                    <td class="pdf-table-td-content">{$segurado['clinomerazao']}</td>
+                                    <td class="pdf-table-td-content"><?= nomeCase($proposta['cotacao']['segurado']['clinomerazao']) ?></td>
                                     <td class="pdf-table-td-title"><b>CNPJ:</b></td>
-                                    <td class="pdf-table-td-content">" . format('cpfcnpj', $segurado['clicpfcnpj']) .
-                                        "
+                                    <td class="pdf-table-td-content"><?= format('cpfcnpj', $proposta['cotacao']['segurado']['clicpfcnpj']) ?>
                                     </td>
                                 </tr>
                             </table>
@@ -130,11 +129,11 @@
                             <table>
                                 <tr>
                                     <td class="pdf-table-td-title"><b>DATA ABERTURA:</b></td>
-                                    <td class="pdf-table-td-content">" . date("d/m/Y",
-                                        strtotime($segurado['clidtnasc'])) . "
+                                    <td class="pdf-table-td-content"><?= date("d/m/Y",
+                                            strtotime($proposta['cotacao']['segurado']['clidtnasc'])) ?>
                                     </td>
                                     <td class="pdf-table-td-title"><b>RAMO DE ATIVIDADE:</b></td>
-                                    <td class="pdf-table-td-content">{$segurado['clicdprofiramoatividade']}</td>
+                                    <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['ramoatividade']['nome_atividade'] ?></td>
                                 </tr>
                             </table>
                         </td>
@@ -147,27 +146,46 @@
                             <table>
                                 <tr>
                                     <td class="pdf-table-td-title"><b>NOME:</b></td>
-                                    <td class="pdf-table-td-content">{$segurado['clinomerazao']}</td>
+                                    <td class="pdf-table-td-content"><?= nomeCase($proposta['cotacao']['segurado']['clinomerazao']) ?></td>
                                     <td class="pdf-table-td-title"><b>CPF:</b></td>
-                                    <td class="pdf-table-td-content">" . format('cpfcnpj', $segurado['clicpfcnpj']) .
-                                        "
+                                    <td class="pdf-table-td-content"><?= format('cpfcnpj', $proposta['cotacao']['segurado']['clicpfcnpj']) ?>
+                                    </td>
+
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td class="pdf-table-td-title"><b>RG:</b></td>
+                                    <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['clinumrg'] ?></td>
+                                    <td class="pdf-table-td-title"><b>ORGÂO EMISSOR:</b></td>
+                                    <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['cliemissorrg'] ?>
+                                        -<?= $proposta['cotacao']['segurado']['rg_uf']['nm_uf'] ?></td>
+                                    <td class="pdf-table-td-title"><b>DATA EMISSAO:</b></td>
+                                    <td class="pdf-table-td-content"><?= date("d/m/Y",
+                                            strtotime($proposta['cotacao']['segurado']['clidtemissaorg'])) ?>
                                     </td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
+
                     <tr>
                         <td>
                             <table>
                                 <tr>
                                     <td class="pdf-table-td-title"><b>DATA NASCIMENTO:</b></td>
-                                    <td class="pdf-table-td-content">" . date("d/m/Y",
-                                        strtotime($segurado['clidtnasc'])) . "
+                                    <td class="pdf-table-td-content"><?= date("d/m/Y",
+                                            strtotime($proposta['cotacao']['segurado']['clidtnasc'])) ?>
                                     </td>
                                     <td class="pdf-table-td-title"><b>ESTADO CIVIL:</b></td>
-                                    <td class="pdf-table-td-content">{$segurado['clicdestadocivil']}</td>
+                                    <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['estadocivl']['nmestadocivil'] ?></td>
                                     <td class="pdf-table-td-title"><b>SEXO:</b></td>
-                                    <td class="pdf-table-td-content">{$segurado['clicdsexo']}</td>
+                                    <td class="pdf-table-td-content"><?= ($proposta['cotacao']['segurado']['clicdsexo'] == 1 ? 'Masculino' : 'Feminino') ?></td>
                                 </tr>
                             </table>
                         </td>
@@ -177,7 +195,7 @@
                             <table>
                                 <tr>
                                     <td class="pdf-table-td-title"><b>PROFISSÃO:</b></td>
-                                    <td class="pdf-table-td-content">{$segurado['clicdprofiramoatividade']}</td>
+                                    <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['profissao']['nm_ocupacao'] ?></td>
                                 </tr>
                             </table>
                         </td>
@@ -191,11 +209,11 @@
                         <table>
                             <tr>
                                 <td class="pdf-table-td-title"><b>ENDEREÇO:</b></td>
-                                <td class="pdf-table-td-content">{$segurado['clinmend']}</td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['clinmend'] ?></td>
                                 <td class="pdf-table-td-title"><b>CIDADE:</b></td>
-                                <td class="pdf-table-td-content">{$segurado['clinmcidade']}</td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['clinmcidade'] ?></td>
                                 <td class="pdf-table-td-title"><b>UF:</b></td>
-                                <td class="pdf-table-td-content">{$segurado['clicduf']}</td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['uf']['nm_uf'] ?></td>
 
                             </tr>
                         </table>
@@ -206,11 +224,14 @@
                         <table>
                             <tr>
                                 <td class="pdf-table-td-title"><b>NUMERO:</b></td>
-                                <td class="pdf-table-td-content" width="50px">{$segurado['clinumero']}</td>
-                                <td class="pdf-table-td-title"><b>COMPLEMENTO:</b></td>
-                                <td class="pdf-table-td-content">{$segurado['cliendcomplet']}</td>
+                                <td class="pdf-table-td-content"
+                                    width="50px"><?= $proposta['cotacao']['segurado']['clinumero'] ?></td>
+                                <?php if (!empty($proposta['cotacao']['segurado']['cliendcomplet'])): ?>
+                                    <td class="pdf-table-td-title"><b>COMPLEMENTO:</b></td>
+                                    <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['cliendcomplet'] ?></td>
+                                <?php endif; ?>
                                 <td class="pdf-table-td-title"><b>CEP:</b></td>
-                                <td class="pdf-table-td-content">" . format('cep', $segurado['clicep']) . "</td>
+                                <td class="pdf-table-td-content"><?= format('cep', $proposta['cotacao']['segurado']['clicep']) ?></td>
                             </tr>
                         </table>
                     </td>
@@ -219,20 +240,24 @@
                     <td>
                         <table>
                             <tr>
+                                <?php if (strlen($proposta['cotacao']['segurado']['clidddfone']) < 8): ?>
+                                    <td class="pdf-table-td-title"><b>TELEFONE:</b></td>
+                                    <td class="pdf-table-td-content">
+                                        (<?= $proposta['cotacao']['segurado']['clidddfone'] ?>) <?= format('fone',
+                                            $proposta['cotacao']['segurado']['clinmfone']) ?>
+                                    </td>
+                                <?php endif; ?>
 
-                                <td class="pdf-table-td-title"><b>TELEFONE:</b></td>
-                                <td class="pdf-table-td-content">({$segurado['clidddfone']})" . format('fone',
-                                    $segurado['clinmfone']) . "
-                                </td>
-
-
-                                <td class="pdf-table-td-title"><b>CELULAR:</b></td>
-                                <td class="pdf-table-td-content">({$segurado['clidddcel']}) " . format('fone',
-                                    $segurado['clinmcel']) . "
-                                </td>
+                                <?php if (strlen($proposta['cotacao']['segurado']['clinmcel']) < 8): ?>
+                                    <td class="pdf-table-td-title"><b>CELULAR:</b></td>
+                                    <td class="pdf-table-td-content">
+                                        (<?= $proposta['cotacao']['segurado']['clidddcel'] ?>) <?= format('fone',
+                                            $proposta['cotacao']['segurado']['clinmcel']) ?>
+                                    </td>
+                                <?php endif; ?>
 
                                 <td class="pdf-table-td-title"><b>EMAIL:</b></td>
-                                <td class="pdf-table-td-content">{$segurado['cliemail']}</td>
+                                <td class="pdf-table-td-content"> <?= $proposta['cotacao']['segurado']['cliemail'] ?></td>
                             </tr>
                         </table>
                     </td>
@@ -249,12 +274,12 @@
         <td><h4>COBERTURAS E SERVIÇOS CONTRATADOS</h4></td>
     </tr>
     <?php $pt = count($proposta['cotacao']['produtos']) ?>
-
+    <?php $premio = 0; ?>
     <?php foreach ($proposta['cotacao']['produtos'] as $produto) :
         $key = array_search($produto['idprecoproduto'], array_column($produto['produto']['precos'], 'idprecoproduto'));
         $produto['produto']['precos'] = $produto['produto']['precos'][$key]; ?>
         <tr>
-            <td class="pdf-table-td<?= ($pt != 1 ? '-produtos' : '')?>">
+            <td class="pdf-table-td<?= ($pt != 1 ? '-produtos' : '') ?>">
                 <table class="pdf-table-td-table">
                     <tr>
                         <td>
@@ -313,11 +338,15 @@
                             <table>
                                 <tr>
                                     <td class="pdf-table-td-title"><b>PREMIO:</b></td>
-                                    <td class="pdf-table-td-content">R$ <?= real(aplicaComissao(
+                                    <td class="pdf-table-td-content">R$ <?php
+                                        $valor = aplicaComissao(
                                             ($produto['produto']['idproduto'] == 1 ?
                                                 $produto['produto']['precos']['premioliquidoproduto'] + $proposta['cotacao']['veiculo']['fipe']['contigencia']['valor'] :
                                                 $produto['produto']['precos']['premioliquidoproduto'])
-                                            , $proposta['cotacao']['comissao'])) ?></td>
+                                            , $proposta['cotacao']['comissao']);
+
+                                        $premio = $valor + $premio;
+                                        echo real($valor) ?></td>
                                     <td class="pdf-table-td-title"><b>CUSTO DISP. ANTI-FURTO:</b></td>
                                     <td class="pdf-table-td-content">N/A</td>
                                 </tr>
@@ -398,23 +427,93 @@
                             <table>
                                 <tr>
                                     <td class="pdf-table-td-title"><b>SEGURADORA:</b></td>
-                                    <td class="pdf-table-td-content"><?=$seg['segnome']?></td>
+                                    <td class="pdf-table-td-content"><?= $seg['segnome'] ?></td>
                                     <td class="pdf-table-td-title"><b>CNPJ:</b></td>
-                                    <td class="pdf-table-td-content"><?= format('cpfcnpj',$seg['segcnpj'])?></td>
+                                    <td class="pdf-table-td-content"><?= format('cpfcnpj', $seg['segcnpj']) ?></td>
                                     <td class="pdf-table-td-title"><b>SUSEP:</b></td>
-                                    <td class="pdf-table-td-content"><?= $seg['segcodsusep']?></td>
+                                    <td class="pdf-table-td-content"><?= $seg['segcodsusep'] ?></td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
                 <?php endforeach; ?>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td class="pdf-table-td-title"><b>FONE DE ACIONAMENTO EM CASO DE SINISTRO:</b></td>
+                                <td class="pdf-table-td-content">0800 7725 099</td>
 
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
             </table>
         </td>
     </tr>
 
     <!--    FIm seguradoras -->
 
+    <tr class="pdf-table-tr-title">
+        <td><h4>CONDIÇÕES DE PAGAMENTO</h4></td>
+    </tr>
+    <?php $proposta['forma_pagamento']['taxamesjuros'] = str_replace('.', ',', $proposta['forma_pagamento']['taxamesjuros']) ?>
+    <tr>
+        <td class="pdf-table-td">
+            <table class="pdf-table-td-table">
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td class="pdf-table-td-title"><b>PREMIO AVISTA:</b></td>
+                                <td class="pdf-table-td-content"> R$ <?= real($premio) ?></td>
+                                <td class="pdf-table-td-title"><b>PREMIO EM <?= $proposta['quantparc'] ?>X:</b></td>
+                                <td class="pdf-table-td-content"> R$ <?= real($proposta['premiototal']) ?></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td class="pdf-table-td-title"><b>FORMA DE PAGAMENTO:</b></td>
+                                <td class="pdf-table-td-content">
+                                    <?php if ($proposta['forma_pagamento']['idformapgto'] == 1): ?>
+                                        <?= $proposta['quantparc'] ?>X de
+                                        R$ <?= real($proposta['primeiraparc']) ?> <?= ($proposta['quantparc'] > $proposta['forma_pagamento']['descformapgto'] ? "com {$proposta['forma_pagamento']['taxamesjuros']}%  de juros " : '') ?>
+                                        no <?= $proposta['forma_pagamento']['descformapgto'] ?>
+                                    <?php else: ?>
+
+                                        <?php if ($proposta['quantparc'] == 1): ?>
+                                            <?= $proposta['quantparc'] ?> X de R$
+                                            <?= real($proposta['primeiraparc']) ?> no <?= $proposta['forma_pagamento']['descformapgto'] ?>
+                                        <?php else: ?>
+
+                                            <?php if ($proposta['primeiraparc'] == $proposta['demaisparc']): ?>
+                                                <?= $proposta['quantparc'] ?>X de R$ <?= real($proposta['primeiraparc']) ?>
+                                            <?php else: $proposta['quantparc'] = $proposta['quantparc'] - 1 ?>
+                                                1ª de R$ <?= real($proposta['primeiraparc']) ?> e mais <?= $proposta['quantparc'] ?> de R$ <?= real($proposta['demaisparc']) ?>
+                                            <?php endif; ?>
+
+                                            <?= ($proposta['quantparc'] > $proposta['forma_pagamento']['descformapgto'] ? "com {$proposta['forma_pagamento']['taxamesjuros']}%  de juros " : '') ?>
+                                            no <?= $proposta['forma_pagamento']['descformapgto'] ?>
+                                        <?php endif; ?>
+
+
+                                    <?php endif; ?>
+                                </td>
+
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+
+            </table>
+        </td>
+    </tr>
 
     </tbody>
 </table>
