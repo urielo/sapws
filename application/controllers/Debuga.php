@@ -26,6 +26,14 @@ class Debuga extends REST_Controller
 
 
         $datas = $this->post();
+        $server = $_SERVER;
+        $http = getallheaders();
+//        if(!$this->Model_key->get(['user_id'=>$datas['idParceiro'],'key'=>$http['X-API-KEY']])){
+//            $this->response(array(
+//                'status' => 'Acesso negado',
+//                'cdretorno' => '098',
+//                'message' => 'API KEY invalido para o parceiro, nome: '.$datas['nmParceiro'].' id: '.$datas['idParceiro']), REST_Controller::HTTP_FORBIDDEN);
+//        }
 
 
         $this->load->library('form_validation');
@@ -116,6 +124,8 @@ class Debuga extends REST_Controller
             $this->response(array(
 
                 'dados' => $proposta,
+                'http' => $http,
+                'server' => $_SERVER,
 //                'array_search' => $this->Model_cliente->with_profissao()->get('09266087467'),
             ));
 
