@@ -70,7 +70,7 @@ class Home extends CI_Controller
                 ['relation' => 'corretor'],
             ]
 
-        ])->with_forma_pagamento()->get(398);
+        ])->with_forma_pagamento()->get(407);
        
         $html = $this->load->view('pdf/proposta_view',$proposta,true);
 
