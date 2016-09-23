@@ -35,8 +35,7 @@ class Gerar extends REST_Controller
                 'status' => 'Error',
                 'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         else:
-            $http = getallheaders();
-            if(!$this->Model_key->get(['user_id'=>$datas['idParceiro'],'key'=>$http['X-API-KEY']])){
+            if(!$this->Model_key->get(['user_id'=>$datas['idParceiro'],'key'=>$_SERVER['HTTP_X_API_KEY']])){
                 $this->response(array(
                     'status' => 'Acesso negado',
                     'cdretorno' => '098',
@@ -139,8 +138,7 @@ class Gerar extends REST_Controller
                 'cdretorno' => '023',
                 'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         else:
-            $http = getallheaders();
-            if(!$this->Model_key->get(['user_id'=>$datas['idParceiro'],'key'=>$http['X-API-KEY']])){
+            if(!$this->Model_key->get(['user_id'=>$datas['idParceiro'],'key'=>$_SERVER['HTTP_X_API_KEY']])){
                 $this->response(array(
                     'status' => 'Acesso negado',
                     'cdretorno' => '098',
@@ -216,8 +214,7 @@ class Gerar extends REST_Controller
                 'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         else:
 
-            $http = getallheaders();
-            if(!$this->Model_key->get(['user_id'=>$datas['idParceiro'],'key'=>$http['X-API-KEY']])){
+            if(!$this->Model_key->get(['user_id'=>$datas['idParceiro'],'key'=>$_SERVER['HTTP_X_API_KEY']])){
                 $this->response(array(
                     'status' => 'Acesso negado',
                     'cdretorno' => '098',
