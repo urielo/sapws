@@ -65,9 +65,9 @@
                     <td>
                         <table>
                             <tr>
-                                <td class="pdf-table-td-title"><b>PROPOSTA Nº:</b></td>
-                                <td class="pdf-table-td-content"><?= $proposta['idproposta'] ?></td>
-                                <td class="pdf-table-td-title"><b>PROPOSTA EMISSÃO:</b></td>
+                                <td class="pdf-table-td-title"><b>REF. COTAÇÃO Nº:</b></td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['idcotacao'] ?></td>
+                                <td class="pdf-table-td-title"><b>DATA EMISSÃO:</b></td>
                                 <td class="pdf-table-td-content"><?= date("d/m/Y H:i:s",
                                         strtotime($proposta['dtcreate'])) ?>
                                 </td>
@@ -75,26 +75,13 @@
                                 <td class="pdf-table-td-content"><?= date("d/m/Y H:i:s",
                                         strtotime($proposta['dtvalidade'])) ?>
                                 </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <table>
-                            <tr>
-                                <td class="pdf-table-td-title"><b>TIPO DE VIGÊNCIA:</b></td>
+                                <td class="pdf-table-td-title"><b>VIGÊNCIA:</b></td>
                                 <td class="pdf-table-td-content">ANUAL</td>
-                                <td class="pdf-table-td-title"><b>REF. COTAÇÃO Nº:</b></td>
-                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['idcotacao'] ?></td>
-                                <td class="pdf-table-td-title"><b>COTAÇÃO EMISSÃO:</b></td>
-                                <td class="pdf-table-td-content"><?= date("d/m/Y H:i:s",
-                                        strtotime($proposta['cotacao']['dtcreate'])) ?>
-                                </td>
                             </tr>
                         </table>
                     </td>
                 </tr>
+
             </table>
         </td>
     </tr>
@@ -163,7 +150,7 @@
                                     <td class="pdf-table-td-title"><b>RG:</b></td>
                                     <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['clinumrg'] ?></td>
                                     <td class="pdf-table-td-title"><b>ORGÂO EMISSOR:</b></td>
-                                    <td class="pdf-table-td-content"><?= strtoupper($proposta['cotacao']['segurado']['cliemissorrg'])?>
+                                    <td class="pdf-table-td-content"><?= strtoupper($proposta['cotacao']['segurado']['cliemissorrg']) ?>
                                         -<?= $proposta['cotacao']['segurado']['rg_uf']['nm_uf'] ?></td>
                                     <td class="pdf-table-td-title"><b>DATA EMISSAO:</b></td>
                                     <td class="pdf-table-td-content"><?= date("d/m/Y",
@@ -378,17 +365,23 @@
                             <table>
                                 <tr>
                                     <td class="pdf-table-td-title"><b>PRODUTO:</b></td>
-                                    <td class="pdf-table-td-content"><?= $produto['produto']['nomeproduto'] ?> (<?= $produto['produto']['descproduto'] ?>)</td>
+                                    <td class="pdf-table-td-content"><?= $produto['produto']['nomeproduto'] ?>
+                                        (<?= $produto['produto']['descproduto'] ?>)
+                                    </td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
 
                     <tr>
-                        <td class="pdf-table-td-content-p"><li><?=$produto['produto']['caractproduto'] ?></li></td>
+                        <td class="pdf-table-td-content-p">
+                            <li><?= $produto['produto']['caractproduto'] ?></li>
+                        </td>
                     </tr>
                     <tr>
-                        <td class="pdf-table-td-content-p"><li><?= $produto['produto']['cobertura'] ?></li></td>
+                        <td class="pdf-table-td-content-p">
+                            <li><?= $produto['produto']['cobertura'] ?></li>
+                        </td>
                     </tr>
 
                     <tr class="pdf-table-td-subtitle">
@@ -426,13 +419,15 @@
                     </tr>
 
 
-
                     <tr>
                         <td>
                             <table>
                                 <tr>
                                     <td class="pdf-table-td-title"><b>EXIGÊNCIAS:</b></td>
-                                    <td class="pdf-table-td-content">VISTORIA PRÉVIA? <?= ($produto['produto']['ind_exige_vistoria'] ? 'Sim' : 'Não') ?> / DISPOSITIVO ANTI-FURTO? <?= ($produto['produto']['ind_exige_rastreador'] ? 'Sim' : 'Não') ?> </td>
+                                    <td class="pdf-table-td-content">VISTORIA
+                                        PRÉVIA? <?= ($produto['produto']['ind_exige_vistoria'] ? 'Sim' : 'Não') ?> /
+                                        DISPOSITIVO
+                                        ANTI-FURTO? <?= ($produto['produto']['ind_exige_rastreador'] ? 'Sim' : 'Não') ?> </td>
                                     <td class="pdf-table-td-content"></td>
                                 </tr>
                             </table>
@@ -440,11 +435,10 @@
                     </tr>
 
 
-
-                        <!--                    INICIO LOOP-->
-                        <?php foreach ($produto['produto']['seguradoras'] as $seguradora): ?>
-                            <?php $seguradoras[$seguradora['idseguradora']] = $seguradora['seguradora'] ?>
-                        <?php endforeach; ?>
+                    <!--                    INICIO LOOP-->
+                    <?php foreach ($produto['produto']['seguradoras'] as $seguradora): ?>
+                        <?php $seguradoras[$seguradora['idseguradora']] = $seguradora['seguradora'] ?>
+                    <?php endforeach; ?>
                     <!--                    FIM LOOP-->
 
 
@@ -461,37 +455,6 @@
     <?php endforeach; ?>
     <!--    Fim dados Coberturas e serviços -->
 
-    <!--    Inicio seguradoras -->
-
-    <tr class="pdf-table-tr-title">
-        <td><h4>SEGURADORAS RESPONSAVÉS PELAS APÓLICES</h4></td>
-    </tr>
-
-    <tr>
-        <td class="pdf-table-td">
-            <table class="pdf-table-td-table">
-
-                <?php foreach ($seguradoras as $seg): ?>
-                    <tr>
-                        <td>
-                            <table>
-                                <tr>
-                                    <td class="pdf-table-td-content"><li><?= $seg['segnome'] ?></li></td>
-                                    <td class="pdf-table-td-title"><b>CNPJ:</b></td>
-                                    <td class="pdf-table-td-content"><?= format('cpfcnpj', $seg['segcnpj']) ?></td>
-                                    <td class="pdf-table-td-title"><b>SUSEP:</b></td>
-                                    <td class="pdf-table-td-content"><?= $seg['segcodsusep'] ?></td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-
-            </table>
-        </td>
-    </tr>
-
-    <!--    FIm seguradoras -->
 
     <!--    Inicio condições de pagamento -->
     <tr class="pdf-table-tr-title">
@@ -556,104 +519,99 @@
     </tr>
     <!--    Fim condições de pagamento -->
 
+    <tr class="pdf-table-tr-title">
+        <td><h4>CONSIDERAÇÕES IMPORTANTES</h4></td>
+    </tr>
 
     </tbody>
 </table>
 
 <div class="texto-legal">
-    <h4>CONSIDERAÇÕES IMPORTANTES</h4>
 
-    <p><b>COBERTURA:</b> O “Seguro AUTOPRATICO” (Seguro contra roubo e furto) tem como base um fator de ajuste aplicado
-        sobre o
-        valor do veículo referência que constava na tabela FIPE na data de contratação do seguro, do site
-        <a href="">www.fipe.org.br</a> . Este produto Seguro AUTOPRATICO é a união de uma apólice de Seguro contra Roubo
-        e Furto a ser
-        emitida por uma das Seguradoras parceiras (conforme acima especificado para cada produto) que exigem o
-        monitoramento continuo por sistema anti-furto (rastreador GSM/GPS) da empresa SKYPROTECTION Tec. Inf. Veic.
-        Ltda. A SKYPROTECTION é empresa homologada a prestar esse monitoramento, a comercialilzar o combo (monitoramento
-        mais seguro) e a cobrar este combo diretamente dos clientes finais, sempre considerando a comercialização por
-        intermédio de um corretor de Seguros conforme norma do setor. As indenizações, caso ocorram serão sempre
-        exclusivamente arcadas por parte da Seguradora que emitir a Apólice e que consta na presente proposta. Estão
-        cobertos por este produto, os prejuízos, previstos nos termos de suas condições gerais das respectivas
-        seguradoras, devidamente comprovados e respeitados os riscos excluídos, decorrentes de Roubo ou Furto Total,
-        seguidos da não localização do veículo devidamente atestada pela SKYPROTECTION Tec. Inf. Veic. Ltda., no período
-        estipulado na apólice/certificado. Serão elegíveis à contratação do seguro apenas os veículos que, no momento da
-        adesão, adquirirem sistema de rastreamento/monitoramento veicular SKYPROTECTION, sendo que o início da cobertura
-        do seguro se dará após a devida instalação e ativação do sistema, desde que a instalação seja feita no prazo
-        máximo de até 15 dias a contar da data de entrega desta proposta.</p>
-    <p>
-        A cobrança tanto do equipamento anti furto como do serviço de monitoramento continuo e recorrente por todo
-        período de cobertura e necessário para a emissão das apólice de custo reduzida das respectivas seguradoras
-        (conforme previsto nos registros de referidos seguros junto a SUSEP), assim como o próprio premio do seguro será
-        unificada e de responsabilidade da SKYPROTECTION Tec. Inf. Veic. Ltda, que poderá parcelar a cobrança da forma
-        acertada com o Segurado e que poderá diferir da forma de parcelamento e do valor do premio isolado apenas da
-        parcela do Seguro que poderá constar das respectivas apólices. Passado este período, esta proposta estará
-        recusada.
-    </p>
+    <p>O “Seguro AUTOPRATICO” (Seguro contra roubo e furto) tem como base um fator de ajuste aplicado
+        sobre o valor do veículo referência que constava na tabela FIPE na data de contratação do seguro, do site
+        <a href="">www.fipe.org.br</a>. Este produto Seguro AUTOPRATICO é a união de uma apólice de Seguro Roubo e Furto
+        emitida por
+        <b>QBE Brasil Seguros S/A   -  CNPJ: 96.348.677/0001-94 </b>(Código SUSEP: 594-1) – Seguro ROUBO e FURTO
+         Processo
+        SUSEP n° 15414.901946/2014-12, ou por <b>USEBENS Seguros S.A. CNPJ N. 09.180.505/0001-50 </b> (Código SUSEP:
+        367-1) –
+        Seguro ROUBO e FURTO - Processo SUSEP n° 15414.90.2028/2013-1, que exigem o monitoramento continuo por sistema
+        anti-furto da empresa SKYPROTECTION Tec. Inf. Veic. Ltda. A SKYPROTECTION é empresa homologada a prestar esse
+        monitoramento, a comercialilzar o combo (monitoramento mais seguro) e a cobrar este combo diretamente dos
+        clientes finais, sempre considerando a comercialização por intermédio de um corretor de Seguros conforme norma
+        do setor. <br>
+        Estão cobertos os prejuízos, previstos nos termos de suas condições gerais das respectivas seguradoras,
+        devidamente comprovados e respeitados os riscos excluídos, decorrentes de Roubo ou Furto Total, seguidos da não
+        localização do veículo devidamente atestada pela SKYPROTECTION Tec. Inf. Veic. Ltda., no período estipulado na
+        apólice/certificado. Serão elegíveis à contratação do seguro apenas os veículos que, no momento da adesão,
+        adquirirem sistema de rastreamento/monitoramento veicular SKYPROTECTION, sendo que o início da cobertura do
+        seguro se dará após a devida instalação e ativação do sistema, desde que a instalação seja feita no prazo máximo
+        de até 15 dias a contar da data de entrega desta proposta. <br>
+        Apólices de RCF serão emitidas pela <b>Nobre Seguradora do Brasil S/A, CNPJ: 85.031.334/0001-85</b>, Registro
+        SUSEP:
+        575-4. Apólices de Perda Total por Colisão serão emitidas pela <b>QBE Brasil Seguros S/A</b>.
+        As indenizações, caso ocorram serão sempre exclusivamente arcadas por parte da Seguradora que emitir a Apólice.
+        A cobrança tanto do equipamento anti furto como do serviço de monitoramento necessário para a emissão das
+        apólices, assim como o próprio premio do seguro será unificada e de responsabilidade da SKYPROTECTION Tec. Inf.
+        Veic. Ltda. <br>
+        A inadimplência da primeira parcela do seguro implica na recusa desta Proposta de Adesão.
+        O não cumprimento das ações declaradas nesta proposta poderá acarretar a perda de direito à indenização do
+        seguro. <br>
+        Ao termino deste contrato é obrigatória a devolução do equipamento anti-furto para a SKYPROTECTION. Para a
+        desinstalação do rastreador haverá um custo no valor de R$ 199,00 (cento e noventa e nove reais) se realizada
+        dentro do primeiro ano de contrato e de R$ 100,00 (cem reais) para os demais casos. </p>
 
-    <p>A inadimplência da primeira parcela do seguro implica na recusa desta Proposta de Adesão.</p>
-
-    <p>O não cumprimento das ações declaradas nesta proposta poderá acarretar a perda de direito à indenização do
-        seguro. </p>
-
-    <p><b>DECLARAÇÕES IMPORTANTES E OBSERVAÇÕES:</b> As condições dos serviços e produtos aqui contratados assim como as
+    <p> As condições dos serviços e produtos aqui contratados assim como as
         Condições Gerais completas de seu Seguro encontram-se disponíveis para consulta nos respectivos sites das
-        seguradoras definidas no campo especifico acima e também por facilidade replicadas no site
-        <a href="">www.seguroautopratico.com.br/contratos</a>, motivo pelo qual informo ser desnecessário o envio das
-        Condições Gerais
-        impressas e que estou ciente de que, caso as necessite, poderei requisitá-las em sua Central de Atendimento ou
-        descarrega-las no site/endereço acima. - O Segurado, declara ainda ciência e concorda que tanto o contrato de
-        prestação de serviços de monitoramento como a(s) Apólice(s) de Seguro será(ão) disponibilizada(s) por meio
-        eletrônico, por email ou no(s) site(s) da(s) Seguradora(s), no prazo legal. - As informações acima foram
-        fornecidas pelo Proponente (mesmo que não preenchidas de próprio punho) e são levadas em consideração pela
-        Seguradora para o cálculo do prêmio de seguro para possível aceitação do risco. Em razão disso, o Proponente
-        declara que todas as informações previstas na presente proposta são verdadeiras e foram prestadas de boa-fé,
-        assumindo total responsabilidade pela sua exatidão, sob pena de prejudicar sua eventual indenização. - Antes da
-        assinatura da presente proposta de seguro, o Proponente declara já ter tomado conhecimento prévio das
-        particularidades dos serviços de monitoramento indissociáveis e necessários para a presente condição comercial
-        assim como das Condições Gerais que regem os Seguros incluidos, especialmente das cláusulas restritivas e/ou
-        limitativas de direitos, autorizando a Seguradora a emitir Apólice/Certificado em caso de aceitação do risco. -
-        A aceitação do seguro está sujeita à análise do risco, dentro do prazo legal. - A presente proposta, juntamente
-        com o contrato de prestação de serviço de monitoramento e as Condições Gerais, Apólice/Certificado de Seguro,
-        são partes integrante do contrato de Seguro, sendo as informações ora prestadas, fundamentais para a
-        precificação e subscrição do risco. O adiantamento do prêmio do sistema anti furto e das mensalidades de
-        monitoramento e de seguro não vincula a presente proposta, sendo facultado às Seguradoras, dentro do prazo de 15
-        (quinze) dias, recusá-la ou aceitá-la. Em caso de recusa, o prêmio pago, a título de adiantamento, será
-        devolvido, através de crébito em conta corrente do Proponente, a ser oportunamente fornecida.</p>
+        seguradoras e também por facilidade replicadas no site <a href="">www.seguroautopratico.com.br/contratos</a>,
+        motivo pelo qual
+        informo ser desnecessário o envio das Condições Gerais impressas e que estou ciente de que, caso as necessite,
+        poderei requisitá-las em sua Central de Atendimento ou descarrega-las no site/endereço acima. - O Segurado,
+        declara ainda ciência e concorda que tanto o contrato de prestação de serviços de monitoramento como a(s)
+        Apólice(s) de Seguro será(ão) disponibilizada(s) por meio eletrônico, por email ou no(s) site(s) da(s)
+        Seguradora(s), no prazo legal. - As informações acima foram fornecidas pelo Proponente (mesmo que não
+        preenchidas de próprio punho) e são levadas em consideração pela Seguradora para o cálculo do prêmio de seguro
+        para possível aceitação do risco. Em razão disso, o Proponente declara que todas as informações previstas na
+        presente proposta são verdadeiras e foram prestadas de boa-fé, assumindo total responsabilidade pela sua
+        exatidão, sob pena de prejudicar sua eventual indenização. - Antes da assinatura da presente proposta de seguro,
+        o Proponente declara já ter tomado conhecimento prévio das particularidades dos serviços de monitoramento
+        indissociáveis e necessários para a presente condição comercial assim como das Condições Gerais que regem os
+        Seguros incluidos, especialmente das cláusulas restritivas e/ou limitativas de direitos, autorizando a
+        Seguradora a emitir Apólice/Certificado em caso de aceitação do risco. - A aceitação do seguro está sujeita à
+        análise do risco, dentro do prazo legal. - A presente proposta, juntamente com o contrato de prestação de
+        serviço de monitoramento e as Condições Gerais, Apólice/Certificado de Seguro, são partes integrante do contrato
+        de Seguro, sendo as informações ora prestadas, fundamentais para a precificação e subscrição do risco. O
+        adiantamento do prêmio do sistema anti furto e das mensalidades de monitoramento e de seguro não vincula a
+        presente proposta, sendo facultado às Seguradoras, dentro do prazo de 15 (quinze) dias, recusá-la ou aceitá-la.
+        Em caso de recusa, o prêmio pago, a título de adiantamento, será devolvido, através de crébito em conta corrente
+        do Proponente, a ser oportunamente fornecida.</p>
 
     <p>Na ocorrência de sinistro, o Segurado que estiver em mora no momento da ocorrência, ficará sujeito às penalidades
-        impostas pelas Condições Gerais.<b> O Segurado declara estar ciente que o inadimplemento de qualquer parcela por
+        impostas pelas Condições Gerais. <b>O Segurado declara estar ciente que o inadimplemento de qualquer parcela por
             mais de 5 (cinco) dias do seu vencimento implica no cancelamento da apólice</b>, sendo facultado a
         Seguradora o
-        exercício de referida prerrogativa, que quando exercido será formalmente comunicado ao Segurado.
+        exercício de referida prerrogativa, que quando exercido será formalmente comunicado ao Segurado. <br>
         É facultado ao Segurado o direito de arrependimento no prazo de 07 (sete) dias corridos, contados da contratação
         do seguro, de acordo com o Código de Defesa do Consumidor, devendo manifestá-lo através do telefone (11)
-        27701601 ou por email para : <a href="">sac@seguroautopratico.com.br</a>.
-    <p>As condições contratuais/regulamento deste produto protocolizadas pelas Sociedades Seguradoras Parceiras junto à
+        27701601 ou por email para : <a href="">sac@seguroautopratico.com.br</a>.<br>
+        As condições contratuais/regulamento deste produto protocolizadas pelas Sociedades Seguradoras Parceiras junto à
         SUSEP poderão ser consultadas no endereço eletrônico <a href=""><b>www.susep.gov.br</b></a>, de acordo com o
         número de processo
         constante da apólice/proposta. O registro desses planos na Susep, não implica por parte da Autarquia, incentivo
         ou recomendação à sua comercialização. - O Proponente poderá consultar a situação cadastral da Seguradora, do
         Produto contratado e do seu corretor, no site da Susep (<a href="">www.susep.gov.br</a>), por meio do número de
         seu registro na
-        Susep, nome completo, CNPJ ou CPF. “As condições contratuais / regulamento deste produto encontram-se
-        registradas na SUSEP de acordo com o número de processo constante da apólice/proposta e poderão ser consultadas
-        no endereço eletrônico <a href="">www.susep.gov.br</a>.” “Em atendimento à Lei 12.741/12 informamos que incidem
-        as alíquotas de
-        0,65% de PIS/Pasep e de 4% de COFINS sobre os prêmios de seguros. “A FRAUDE CONTRA SEGUROS É CRIME DENUNCIE,
-        (21) 2253-1177 OU 181 - <a href="">www.fenaseg.org.br</a>.”</p>
-    <p>
-        Todos os valores constantes nesta proposta são expressos em reais (R$). Qualquer importância oferecida pelo
-        proponente junto com a proposta tem natureza de adiantamento, a ser devolvida no caso de não aceitação do risco.
-    </p>
+        Susep, nome completo, CNPJ ou CPF. “Em atendimento à Lei 12.741/12 informamos que incidem as alíquotas de 0,65%
+        de PIS/Pasep e de 4% de COFINS sobre os prêmios de seguros. “A FRAUDE CONTRA SEGUROS É CRIME DENUNCIE, (21)
+        2253-1177 OU 181 - <a href="">www.fenaseg.org.br</a>.”</p>
 
-    <p>
-        Para a desinstalação do rastreador haverá um custo no valor de R$ 100,00 (cem reais). O Segurado está ciente e
-        autoriza a inclusão de todos os dados e informações relacionadas ao presente seguro, assim como de todos os
-        eventuais sinistros e ocorrências referentes ao mesmo, em banco de dados, aos quais a seguradora poderá recorrer
-        para análise de riscos atuais e futuros e na liquidação de processos de sinistros.
-    </p>
-    <h4>Importante Canais de Comunicação</h4>
+    <p>O Segurado está ciente e autoriza a inclusão de todos os dados e informações relacionadas ao presente seguro,
+        assim como de todos os eventuais sinistros e ocorrências referentes ao mesmo, em banco de dados, aos quais a
+        seguradora poderá recorrer para análise de riscos atuais e futuros e na liquidação de processos de
+        sinistros.</p>
+
+    <h4>Canais de Comunicação</h4>
 
     <ul>
         <li>
@@ -693,17 +651,152 @@
             723 2886 </p>
     </ul>
 
-    <p><b>Observação</b> As coberturas contratadas tanto na apólice de PT por colisão, como de RCF-V (ambas opcionalmente
+    <p><b>Observação</b> As coberturas contratadas tanto na apólice de PT por colisão, como de RCF-V (ambas
+        opcionalmente
         contratadas de forma acessória ao Seguro contra roubo e furto), como na apólice mestre de Seguro contra roubo e
         furto (Seguro AUTOPRATICO) não compreendem e tampouco se confundem, com a cobertura total, bem como a
         indenização integral do veículo, cujo conceito faz parte do glossário constante das Condições Gerais. As
         coberturas de Danos Corporais e Danos Materiais cujos conceitos distintos fazem parte do glossário constante das
         inclusas Condições Gerais, não compreendem e tampouco se confundem com a cobertura de Danos Morais.</p>
+
+    <p><b>Declaração</b> Declaro estar ciente e de acordo, sob pena de perda de direito de cobertura, conforme
+        previsto no artigo 766 do Código Civil, que: Todas as informações aqui prestadas são verdadeiras e completas,
+        fazendo parte da proposta de seguro. O veículo objeto do seguro não será conduzido por pessoa inabilitada.
+        As garantias previstas no contrato só serão devidas se o veículo estiver devidamente regularizado e legalizado
+        junto às autoridades competentes. O Segurado esá ciente e concorda que é o responsável pela autenticidade do
+        veiculo e de sua documentação e ainda que o corretor indicado na proposta é seu representante legal neste
+        contrato. <br>
+        O Segurado obriga−se a comunicar imediatamente a SKYPROTECTION, por escrito, para o email:
+        <a href="">sac@seguroautopratico.com.br</a>, qualquer alteração nas condições estabelecidas no contrato de
+        seguro assim como no
+        meu cadastro ou nos meus dados de contato como fone e email.</p>
 </div>
 
-<div class="container">
+<table class="table-data">
+    <tr>
+        <td class="td-title-local">Local:</td>
+        <td class="td-content-local"></td>
+        <td class="td-title-data">Data Emissão:</td>
+        <td class="td-content-data"></td>
+    </tr>
+</table>
+<div class="assinatura-segurado">
+    <div><?=nomeCase($proposta['cotacao']['segurado']['clinomerazao'])?></div>
+</div>
+<div class="assinatura-div">
 
+    
+<table class="table-assinatura">
 
+    
+    <tr>
+        <td>
+            <table class="table-assinatura-table">
+                <tr>
+                    <td>Estipulante</td>
+                </tr>
+                <tr>
+                    <td><img class="logo" src="<?= base_url() ?>assets/img/logo-skyprotection.png" alt=""></td>
+                </tr>
+                <tr>
+                    <td>SKYPROTECTION TEC. INF. VEICULAR<br>
+                        CNPJ 17.241.995/0001-85
+                    </td>
+                </tr>
+                <tr>
+                    <td><img class="assinatura" src="<?= base_url() ?>assets/img/assinatura-sky.png" alt=""></td>
+
+                </tr>
+                <tr>
+                    <td>Luciano Ladeira <br>
+                        CEO
+                    </td>
+                </tr>
+            </table>
+        </td>
+
+        <td>
+            <table class="table-assinatura-table">
+                <tr>
+                    <td>Garantia: Roubo ou Furto e PT Colisão</td>
+                </tr>
+
+                <tr>
+                    <td><img class="logo" src="<?= base_url() ?>assets/img/logo-qbe.png" alt=""></td>
+                </tr>
+
+                <tr>
+                    <td>QBE Brasil Seguros S/A
+                        <br>
+                        CNPJ: 96.348.677/0001-94
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><img class="assinatura" src="<?= base_url() ?>assets/img/assinatura-qbe.png" alt=""></td>
+
+                </tr>
+                <tr>
+                    <td>Raphael Swierczynsk <br>
+                        CEO
+                    </td>
+                </tr>
+            </table>
+        </td>
+
+        <td>
+            <table class="table-assinatura-table">
+                <tr>
+                    <td>Garantia: Roubo ou Furto </td>
+                </tr>
+
+                <tr>
+                    <td><img class="logo" src="<?= base_url() ?>assets/img/logo-usebens.png" alt=""></td>
+                </tr>
+
+                <tr>
+                    <td>QBE Brasil Seguros S/A
+                        <br>
+                        CNPJ: 96.348.677/0001-94
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><img class="assinatura" src="<?= base_url() ?>assets/img/assinatura-usebens.png" alt=""></td>
+                </tr>
+                <tr>
+                    <td>USEBENS SEGUROS S/A</td>
+                </tr>
+            </table>
+        </td>
+        <td>
+            <table class="table-assinatura-table">
+                <tr>
+                    <td>Garantia RCF</td>
+                </tr>
+                <tr>
+                    <td><img class="logo" src="<?= base_url() ?>assets/img/logo-nobre.png" alt=""></td>
+                </tr>
+                <tr>
+                    <td>Nobre Seguradora do Brasil S/A
+
+                        <br>
+                        CNPJ: 85.031.334/0001-85
+                    </td>
+                </tr>
+                <tr>
+                    <td><img class="assinatura" src="<?= base_url() ?>assets/img/assinatura-nobre.png" alt=""></td>
+
+                </tr>
+                <tr>
+                    <td>
+                        .
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
 </div>
 </body>
 </html>
