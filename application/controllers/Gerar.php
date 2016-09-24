@@ -538,24 +538,27 @@ class Gerar extends REST_Controller
 
             $proposta = $datas['proposta'];
             $parcela = $this->Model_parcela->get($proposta['idformapg']);
-            $premio = $proposta['quantparc'] > $parcela['numparcsemjuros'] ? floatN($premio + ($premio * ($parcela['taxamesjuros'] / 100))) : $premio;
+            $parcelaj = $proposta['quantparc'] > $parcela['numparcsemjuros'] ? jurosComposto($premio,$parcela['taxamesjuros'],$proposta['quantparc']) : floatN($premio / $proposta['quantparc']);
+
+//            $premio = $proposta['quantparc'] > $parcela['numparcsemjuros'] ? floatN($premio + ($premio * ($parcela['taxamesjuros'] / 100))) : $premio;
             $parcela['taxamesjuros'] = $proposta['quantparc'] > $parcela['numparcsemjuros'] ? $parcela['taxamesjuros'] : 0;
-            if ($menorparcela > $premio / $proposta['quantparc'] && $proposta['idformapg'] == 2):
-                unset($produtos['premio']);
-                $produtos['premioTotal'] = $premio;
+            unset($produtos['premio']);
+
+            if ($menorparcela > $parcelaj && $proposta['idformapg'] == 2):
+                $parcelaj = jurosComposto(($premio - $menorparcela),$parcela['taxamesjuros'],($proposta['quantparc'] - 1));
+                $produtos['premioTotal'] = $menorparcela + ($parcelaj * ($proposta['quantparc'] - 1));
                 $produtos['formapagamento']['tipo'] = $parcela['descformapgto'];
                 $produtos['formapagamento']['quantidade'] = $proposta['quantparc'];
                 $produtos['formapagamento']['primeira'] = floatN($menorparcela);
-                $produtos['formapagamento']['demais'] = floatN(($premio - $menorparcela) / ($proposta['quantparc'] - 1));
+                $produtos['formapagamento']['demais'] = $parcelaj;
                 $produtos['formapagamento']['juros'] = $parcela['taxamesjuros'];
 
             else:
-                unset($produtos['premio']);
-                $produtos['premioTotal'] = $premio;
+                $produtos['premioTotal'] = $parcelaj * $proposta['quantparc'];
                 $produtos['formapagamento']['tipo'] = $parcela['descformapgto'];
                 $produtos['formapagamento']['quantidade'] = $proposta['quantparc'];
-                $produtos['formapagamento']['primeira'] = floatN($premio / $proposta['quantparc']);
-                $produtos['formapagamento']['demais'] = $proposta['quantparc'] == 1 ? 0 : floatN($premio / $proposta['quantparc']);
+                $produtos['formapagamento']['primeira'] = $parcelaj;
+                $produtos['formapagamento']['demais'] = $proposta['quantparc'] == 1 ? 0 : $parcelaj;
                 $produtos['formapagamento']['juros'] = 0;
 
             endif;
@@ -574,7 +577,6 @@ class Gerar extends REST_Controller
                     $juros = $parcela[$k]['taxamesjuros'];
                     $parc = $parcela[$k]['numparcsemjuros'] + 1;
 
-                    $valjuros = floatN($premio + ($premio * ($juros / 100)));
 
                     if ($key == 'numparcsemjuros'):
                         for ($i = 1; $i <= $val; $i++):
@@ -591,16 +593,18 @@ class Gerar extends REST_Controller
                         endfor;
                     elseif ($key == 'nummaxparc'):
                         for ($i = $parc; $i <= $val; $i++):
-                            $valjuros = floatN($premio + ($premio * ($juros / 100)));
+
                             $produtos['parcelamento']['formapagamento'][$c]['parcela']['tipo'] = $tipo;
                             $produtos['parcelamento']['formapagamento'][$c]['parcela']['quantidade'] = $i;
-                            if ($valjuros / $i < $menorparcela && $idforma == 2):
-                                $valjuros = $valjuros - $menorparcela;
+
+                            if (jurosComposto($premio,$juros,$i) < $menorparcela && $idforma == 2):
+                                $parcelajuros = jurosComposto(($premio - $menorparcela),$juros,$i - 1);
                                 $produtos['parcelamento']['formapagamento'][$c]['parcela']['primeira'] = floatN($menorparcela);
-                                $produtos['parcelamento']['formapagamento'][$c]['parcela']['demais'] = floatN($valjuros / ($i - 1));
+                                $produtos['parcelamento']['formapagamento'][$c]['parcela']['demais'] = $parcelajuros;
                             else:
-                                $produtos['parcelamento']['formapagamento'][$c]['parcela']['primeira'] = floatN($valjuros / $i);
-                                $produtos['parcelamento']['formapagamento'][$c]['parcela']['demais'] = floatN($valjuros / $i);
+                                $parcelajuros = jurosComposto($premio,$juros,$i);
+                                $produtos['parcelamento']['formapagamento'][$c]['parcela']['primeira'] = $parcelajuros;
+                                $produtos['parcelamento']['formapagamento'][$c]['parcela']['demais'] = $parcelajuros;
                             endif;
 
 

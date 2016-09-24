@@ -1,6 +1,7 @@
 <?php
 
-function verifca_fields($datas, $corretor) {
+function verifca_fields($datas, $corretor)
+{
     if ($corretor):
         if (!$datas['indPropVeic'] && !$datas['indCondutorVeic']):
             $verifyFields = 'cotacaoConPro';
@@ -25,14 +26,15 @@ function verifca_fields($datas, $corretor) {
     return $verifyFields;
 }
 
-function correctDatas($datas) {
+function correctDatas($datas)
+{
     $datasReady = $datas;
     if (count($datas) < 3):
 
         $datas = json_decode(key($datas));
         foreach ($datas as $k => $v):
             if (is_object($v)):
-                $v = (array) $v;
+                $v = (array)$v;
                 foreach ($v as $ko => $vo):
                     $datasReady[$k][$ko] = $vo;
                 endforeach;
@@ -110,7 +112,8 @@ function nomeCase($string, $delimiters = array(" ", "-", ".", "'", "O'", "Mc"), 
     return $string;
 }
 
-function jurosSimples($valor, $taxa, $parcelas) {
+function jurosSimples($valor, $taxa, $parcelas)
+{
     $taxa = $taxa / 100;
 
     $m = $valor * (1 + $taxa * $parcelas);
@@ -119,13 +122,30 @@ function jurosSimples($valor, $taxa, $parcelas) {
     return $valParcela;
 }
 
-function jurosComposto($valor, $taxa, $parcelas) {
+function jurosComposto($valor, $taxa, $parcelas)
+{
     $taxa = $taxa / 100;
-   return $valParcela = $valor * pow((1 + $taxa), $parcelas);
-
-    return $juros = $valParcela - $valor;
-    return $parcela = ($valor / $parcelas) + $juros ;
-    $valParcela = number_format($valParcela / $parcelas, 2, ",", ".");
+    $potencia = $valor * $taxa * pow(($taxa + 1), $parcelas) / (pow(($taxa + 1), $parcelas) - 1);
+    $valParcela = number_format($potencia, 2, ".", ",");
 
     return $valParcela;
+}
+
+function calcParcelaJuros($valor_total, $parcelas, $juros = 0)
+{
+    if ($juros == 0) {
+        $string = 'PARCELA - VALOR <br />';
+        for ($i = 1; $i < ($parcelas + 1); $i++) {
+            $string .= $i . 'x (Sem Juros) - R$ ' . number_format($valor_total / $parcelas, 2, ",", ".") . ' <br />';
+        }
+        return $string;
+    } else {
+        $string = 'PARCELA - VALOR <br />';
+        for ($i = 1; $i < ($parcelas + 1); $i++) {
+            $I = $juros / 100.00;
+            $valor_parcela = $valor_total * $I * pow((1 + $I), $parcelas) / (pow((1 + $I), $parcelas) - 1);
+            $string .= $i . 'x (Juros de: ' . $juros . '%) - R$ ' . number_format($valor_parcela, 2, ",", ".") . ' <br />';
+        }
+        return $string;
+    }
 }

@@ -142,7 +142,13 @@ class Home extends CI_Controller
     }
 
     public function juros(){
-        echo jurosComposto(1196,2.50,12);
+
+//        echo pow(5,2);
+//        echo calcParcelaJuros(1196,6,2.5);
+        $parcela =  jurosComposto(1196,2.5,12);
+
+        echo $parcela * 12;
+        
     }
 }
 
