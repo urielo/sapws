@@ -598,7 +598,7 @@ class Gerar extends REST_Controller
                             $produtos['parcelamento']['formapagamento'][$c]['parcela']['quantidade'] = $i;
 
                             if (jurosComposto($premio,$juros,$i) < $menorparcela && $idforma == 2):
-                                $parcelajuros = jurosComposto(($premio - $menorparcela),$juros,$i - 1);
+                                $parcelajuros = jurosComposto(($premio - $menorparcela),$juros,($i - 1));
                                 $produtos['parcelamento']['formapagamento'][$c]['parcela']['primeira'] = floatN($menorparcela);
                                 $produtos['parcelamento']['formapagamento'][$c]['parcela']['demais'] = $parcelajuros;
                             else:
