@@ -680,9 +680,12 @@
         <td class="td-content-data"></td>
     </tr>
 </table>
+
 <div class="assinatura-segurado">
     <div><?=nomeCase($proposta['cotacao']['segurado']['clinomerazao'])?></div>
 </div>
+
+
 <div class="assinatura-div">
 
     
