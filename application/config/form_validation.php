@@ -159,7 +159,7 @@ $config = array(
         array('field' => 'veiIndAcidentado', 'label' => 'Indicador de veiculo acidentado', 'rules' => 'trim|integer|max_length[1]|less_than[2]'),
         array('field' => 'veiIndAlienado', 'label' => 'Indicador de veiculo alienado', 'rules' => 'trim|integer|max_length[1]|less_than[2]'),
     ),
-    'seguradoProposta' => array(
+    'seguradoPropostaPF' => array(
         array('field' => 'segNomeRazao', 'label' => 'Segurado: Nome ou razão social', 'rules' => 'trim|required|max_length[50]'),
         array('field' => 'segCpfCnpj', 'label' => 'Segurado: CPF ou CNPJ', 'rules' => 'trim|required|min_length[11]|max_length[14]|numeric'),
         array('field' => 'segDtNasci', 'label' => 'Segurado: Data de nascimento', 'rules' => 'trim|required|max_length[8]|min_length[8]|integer|greater_than[19000000]|less_than[' . $anomin . ']'),
@@ -182,6 +182,31 @@ $config = array(
         array('field' => 'segEmissorRg', 'label' => 'Segurado: Orgão emissor do RG', 'rules' => 'trim|alpha'),
         array('field' => 'segCdUfRg', 'label' => 'Segurado: Estado de emissão do RG', 'rules' => 'trim|integer'),
     ),
+    'seguradoPropostaPJ' => array(
+        array('field' => 'segNomeRazao', 'label' => 'Segurado: Nome ou razão social', 'rules' => 'trim|required|max_length[50]'),
+        array('field' => 'segCpfCnpj', 'label' => 'Segurado: CPF ou CNPJ', 'rules' => 'trim|required|min_length[11]|max_length[14]|numeric'),
+        array('field' => 'segDtNasci', 'label' => 'Segurado: Data de nascimento', 'rules' => 'trim|required|max_length[8]|min_length[8]|integer'),
+        array('field' => 'segCdSexo', 'label' => 'Segurado: Sexo', 'rules' => 'trim|max_length[1]|numeric|less_than[3]'),
+        array('field' => 'segCdEstCivl', 'label' => 'Segurado: Estado Civil', 'rules' => 'trim|max_length[3]|integer'),
+        array('field' => 'segProfRamoAtivi', 'label' => 'Segurado: Profissao ou ramo de atividade comercial', 'rules' => 'trim|required|max_length[10]|integer'),
+        array('field' => 'segEmail', 'label' => 'Segurado: Email', 'rules' => 'trim|required|valid_email|required'),
+        array('field' => 'segCelDdd', 'label' => 'Segurado: DDD do celular', 'rules' => 'trim|max_length[2]|integer|greater_than[10]|less_than[100]'),
+        array('field' => 'segCelNum', 'label' => 'Segurado: Numero do celular', 'rules' => 'trim|max_length[9]|min_length[8]|integer|greater_than[40000000]'),
+        array('field' => 'segFoneDdd', 'label' => 'Segurado: DDD do telefone', 'rules' => 'trim|max_length[2]|integer|greater_than[10]|less_than[100]'),
+        array('field' => 'segFoneNum', 'label' => 'Segurado: Numero do telefone', 'rules' => 'trim|max_length[8]|integer'),
+        array('field' => 'segEnd', 'label' => 'Segurado: Logradouro', 'rules' => 'trim'),
+        array('field' => 'segEndNum', 'label' => 'Segurado: Numero do endereço', 'rules' => 'trim|required|max_length[10]'),
+        array('field' => 'segEndCompl', 'label' => 'Segurado: Complemento', 'rules' => 'trim|max_length[50]'),
+        array('field' => 'segEndCep', 'label' => 'Segurado: CEP', 'rules' => 'trim|required|max_length[8]|min_length[8]|numeric'),
+        array('field' => 'segEndCidade', 'label' => 'Segurado: Cidade', 'rules' => 'trim|required|max_length[20]'),
+        array('field' => 'segEndCdUf', 'label' => 'Segurado: Estado', 'rules' => 'trim|integer|required|max_length[5]'),
+        array('field' => 'segNumRg', 'label' => 'Segurado: Numero do RG', 'rules' => 'trim|numeric'),
+        array('field' => 'segDtEmissaoRg', 'label' => 'Segurado: Data emissão do RG', 'rules' => 'trim|numeric|min_length[8]'),
+        array('field' => 'segEmissorRg', 'label' => 'Segurado: Orgão emissor do RG', 'rules' => 'trim|alpha'),
+        array('field' => 'segCdUfRg', 'label' => 'Segurado: Estado de emissão do RG', 'rules' => 'trim|integer'),
+    ),
+    
+    
     'condutorProposta' => array(
         array('field' => 'condutNomeRazao', 'label' => 'Condutor: Nome ou razão social', 'rules' => 'trim|max_length[50]'),
         array('field' => 'condutCpfCnpj', 'label' => 'Condutor: CPF ou CNPJ', 'rules' => 'trim|min_length[11]|max_length[11]|numeric'),

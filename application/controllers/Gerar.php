@@ -155,7 +155,7 @@ class Gerar extends REST_Controller
             /*
              * Tratando dados do segurado e inserindo no banco
              */
-            $this->pessoadb($datas, 'Proposta', 'segurado');
+            $this->pessoadb($datas, (strlen($datas['segurado']['segCpfCnpj']) > 11 ?'PropostaPJ':'PropostaPF'), 'segurado');
 
             /*
              * Tratando dados do proprietario e inserindo no banco.
