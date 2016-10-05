@@ -681,7 +681,7 @@
     </tr>
 </table>
 <div class="espaco">
-    
+
 </div>
 <div class="assinatura-segurado">
     <div><?=nomeCase($proposta['cotacao']['segurado']['clinomerazao'])?></div>
@@ -690,10 +690,10 @@
 
 <div class="assinatura-div">
 
-    
+
 <table class="table-assinatura">
 
-    
+
     <tr>
         <td>
             <table class="table-assinatura-table">
@@ -771,32 +771,6 @@
                 </tr>
                 <tr>
                     <td>USEBENS SEGUROS S/A</td>
-                </tr>
-            </table>
-        </td>
-        <td>
-            <table class="table-assinatura-table">
-                <tr>
-                    <td>Garantia RCF</td>
-                </tr>
-                <tr>
-                    <td><img class="logo" src="<?= base_url() ?>assets/img/logo-nobre.png" alt=""></td>
-                </tr>
-                <tr>
-                    <td>Nobre Seguradora do Brasil S/A
-
-                        <br>
-                        CNPJ: 85.031.334/0001-85
-                    </td>
-                </tr>
-                <tr>
-                    <td><img class="assinatura" src="<?= base_url() ?>assets/img/assinatura-nobre.png" alt=""></td>
-
-                </tr>
-                <tr>
-                    <td>
-                        .
-                    </td>
                 </tr>
             </table>
         </td>

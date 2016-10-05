@@ -419,30 +419,33 @@ class Gerar extends REST_Controller
 
 
             if (!$produtodb):
-                $produtos['produto'][$i] = array(
-                    'status' => 'Atenção',
+                return $this->response(array(
+                    'status' => 'Error',
                     'cdretorno' => '009',
-                    'message' => "O idProtudo {$idproduto} é inválido",
-                );
-            elseif ($produtodb['idtipoveiculo'] != $veiculo['veiccdveitipo']):
-                $produtos['produto'][$i] = array(
-                    'status' => 'Atenção',
-                    'cdretorno' => '009',
-                    'message' => "O veiCdTipo {$veiculo['veiccdveitipo']} é inválido para idProtudo {$idproduto}",
-                );
-            elseif ($produtodb['idstatus'] == '001'):
-                $produtos['produto'][$i] = array(
-                    'status' => 'Atenção',
-                    'cdretorno' => '009',
-                    'message' => "O Produto {$idproduto} - {$produtodb['nomeproduto']} não está ativo",
-                );
-            elseif ($produtodb['tipodeseguro'] == 'RCF' && $prolmi != 50000 && $prolmi != 100000  && $prolmi != 200000):
-                $produtos['produto'][$i] = array(
-                    'status' => 'Atenção',
-                    'cdretorno' => '009',
-                    'message' => "O Produto {$idproduto} - {$produtodb['nomeproduto']} só aceita lmi 50000, 100000 ou 200000",
-                );
+                    'message' =>"O Produto {$idproduto} - {$produtodb['nomeproduto']}  é inválido",
+                ), REST_Controller::HTTP_BAD_REQUEST);
 
+            elseif ($produtodb['idtipoveiculo'] != $veiculo['veiccdveitipo']):
+                return $this->response(array(
+                    'status' => 'Error',
+                    'cdretorno' => '009',
+                    'message' =>"O Tipo de veículo {$veiculo['veiccdveitipo']} é inválido para o produto {$idproduto} - {$produtodb['nomeproduto']}",
+                ), REST_Controller::HTTP_BAD_REQUEST);
+
+
+            elseif ($produtodb['codstatus'] == 2):
+                return $this->response(array(
+                    'status' => 'Error',
+                    'cdretorno' => '009',
+                    'message' =>"O Produto {$idproduto} - {$produtodb['nomeproduto']} não está ativo",
+                ), REST_Controller::HTTP_BAD_REQUEST);
+
+            elseif ($produtodb['tipodeseguro'] == 'RCF' && $prolmi != 50000 && $prolmi != 100000  && $prolmi != 200000):
+                return $this->response(array(
+                    'status' => 'Error',
+                    'cdretorno' => '009',
+                    'message' =>"O Produto {$idproduto} - {$produtodb['nomeproduto']} só aceita lmi 50000, 100000 ou 200000",
+                ), REST_Controller::HTTP_BAD_REQUEST);
             else:
 
                 unset($produtodb["idtipoveiculo"]);
