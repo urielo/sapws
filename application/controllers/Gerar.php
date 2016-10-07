@@ -410,7 +410,7 @@ class Gerar extends REST_Controller
         $i = 0;
 
         /* Iniciando calculo e separando os produtos */
-//return $valorfipe;
+
         foreach ($produto as $k => $v):
             $idproduto = $produto[$k]['idProduto'];
             $prolmi = $produto[$k]['valorLmiProduto'];
