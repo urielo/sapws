@@ -427,7 +427,7 @@ class Gerar extends REST_Controller
 
             elseif ($produtodb['idtipoveiculo'] != $veiculo['veiccdveitipo']):
                 return $this->response(array(
-                    'status' => 'Atenção',
+                    'status' => 'Error',
                     'cdretorno' => '009',
                     'message' =>"O Tipo de veículo {$veiculo['veiccdveitipo']} é inválido para o produto {$idproduto} - {$produtodb['nomeproduto']}",
                 ), REST_Controller::HTTP_BAD_REQUEST);
@@ -442,7 +442,7 @@ class Gerar extends REST_Controller
 
             elseif ($produtodb['tipodeseguro'] == 'RCF' && $prolmi != 50000 && $prolmi != 100000  && $prolmi != 200000):
                 return $this->response(array(
-                    'status' => 'Error',
+                    'status' => 'Atenção',
                     'cdretorno' => '009',
                     'message' =>"O Produto {$idproduto} - {$produtodb['nomeproduto']} só aceita lmi 50000, 100000 ou 200000",
                 ), REST_Controller::HTTP_BAD_REQUEST);
