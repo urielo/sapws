@@ -435,14 +435,14 @@ class Gerar extends REST_Controller
 
             elseif ($produtodb['codstatus'] == 2):
                 return $this->response(array(
-                    'status' => 'Error',
+                    'status' => 'Atenção',
                     'cdretorno' => '009',
                     'message' =>"O Produto {$produtodb['nomeproduto']} não está ativo NO MOMENTO, refaça a sua  cotação SEM ESTA COBERTURA. Em breve ofereceremos novamente esta cobertura opcional.",
                 ), REST_Controller::HTTP_BAD_REQUEST);
 
             elseif ($produtodb['tipodeseguro'] == 'RCF' && $prolmi != 50000 && $prolmi != 100000  && $prolmi != 200000):
                 return $this->response(array(
-                    'status' => 'Atenção',
+                    'status' => 'Error',
                     'cdretorno' => '009',
                     'message' =>"O Produto {$idproduto} - {$produtodb['nomeproduto']} só aceita lmi 50000, 100000 ou 200000",
                 ), REST_Controller::HTTP_BAD_REQUEST);
