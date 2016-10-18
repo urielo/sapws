@@ -278,7 +278,7 @@ class Gerar extends REST_Controller
 
             $this->m_pdf->pdf->SetProtection(['copy', 'print'], '', '@SAPpdf#2770');
             $this->m_pdf->pdf->WriteHTML($html);
-            $this->m_pdf->pdf->Output('pdfteste.pdf','S');
+//            $this->m_pdf->pdf->Output('pdfteste.pdf','S');
 
             $b64encode = chunk_split(base64_encode($this->m_pdf->pdf->Output('pdfteste.pdf','S')));
 //            $html = gerarpdfb64(gerarhtml($proposta, $cotacao, $segurado, $veiculo, $corretor, $parcela, $produto, $parceiro, $proprietario));
@@ -437,7 +437,7 @@ class Gerar extends REST_Controller
                 return $this->response(array(
                     'status' => 'Error',
                     'cdretorno' => '009',
-                    'message' =>"O Produto {$idproduto} - {$produtodb['nomeproduto']} não está ativo",
+                    'message' =>"O Produto {$produtodb['nomeproduto']} não está ativo NO MOMENTO, refaça a sua  cotação SEM ESTA COBERTURA. Em breve ofereceremos novamente esta cobertura opcional.",
                 ), REST_Controller::HTTP_BAD_REQUEST);
 
             elseif ($produtodb['tipodeseguro'] == 'RCF' && $prolmi != 50000 && $prolmi != 100000  && $prolmi != 200000):
