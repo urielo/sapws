@@ -622,18 +622,18 @@
             veículo não seja recuperado, o Segurado ou um de seus representantes deverá encaminhar para a Seguradora,
             conforme informações constantes na respectiva apólice, os documentos relacionados nas Condições Gerais do
             produto.</p>
-        <li>
-            Aviso de Sinistro em casos de sinistro com Terceiros (para os Proponentes que optarem por esta cobertura):
-        </li>
-        <p> Opção online NOBRE SEGUROS: Acesse o site <a href="">www.nobre.com.br</a> e clique na opção “COMUNICAR UM
-            SINISTRO” e
-            proceda conforme instruções detalhadas nas telas.<br>
-            - Atendimento Sinistro NOBRE: Ligue para 4007-1115 capitais, regiões metropolitanas e grandes cidades ou
-            0800 16 3020 demais localidades de segunda à sexta-feira das 8:30h às 20:00h e aos sábados das 8:30h às
-            17:30h.<br>
-            - Central de Atendimento : Tel: 55 (11) 5069-1177 E-mail: <a href="">cacc@nobre.com.br</a></p>
-
-        <li>
+<!--        <li>-->
+<!--            Aviso de Sinistro em casos de sinistro com Terceiros (para os Proponentes que optarem por esta cobertura):-->
+<!--        </li>-->
+<!--        <p> Opção online NOBRE SEGUROS: Acesse o site <a href="">www.nobre.com.br</a> e clique na opção “COMUNICAR UM-->
+<!--            SINISTRO” e-->
+<!--            proceda conforme instruções detalhadas nas telas.<br>-->
+<!--            - Atendimento Sinistro NOBRE: Ligue para 4007-1115 capitais, regiões metropolitanas e grandes cidades ou-->
+<!--            0800 16 3020 demais localidades de segunda à sexta-feira das 8:30h às 20:00h e aos sábados das 8:30h às-->
+<!--            17:30h.<br>-->
+<!--            - Central de Atendimento : Tel: 55 (11) 5069-1177 E-mail: <a href="">cacc@nobre.com.br</a></p>-->
+<!---->
+<!--        <li>-->
             Aviso de Sinistro em casos de sinistro de Perda Total por colisão (para os Proponentes que optarem por esta
             cobertura):
         </li>
