@@ -155,4 +155,6 @@ $autoload['model'] = array(
     'Model_produto_seguradora',
     'Model_combos',
     'Model_key',
+    'Model_certificado',
+    'Model_custos_produto',
     );

@@ -275,7 +275,6 @@ class Gerar extends REST_Controller
                 15, // margin bottom
                 5, // margin header
                 6); // margin footer
-
             $this->m_pdf->pdf->SetProtection(['copy', 'print'], '', '@SAPpdf#2770');
             $this->m_pdf->pdf->WriteHTML($html);
 //            $this->m_pdf->pdf->Output('pdfteste.pdf','S');
