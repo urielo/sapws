@@ -1,0 +1,62 @@
+<?php
+
+
+use Illuminate\Database\Eloquent\Model;
+
+class Veiculos extends Model
+{
+
+    protected $table = 'veiculosegurado';
+    protected $primaryKey = 'veicid';
+    protected $fillable = [
+        "veiccodfipe",
+        "veicano",
+        "veicautozero",
+        "veiccdutilizaco",
+        "veiccdveitipo",
+        "veictipocombus",
+        "veicplaca",
+        "veicmunicplaca",
+        "veiccdufplaca",
+        "veicrenavam",
+        "veicanorenavam",
+        "veicchassi",
+        "veicchassiremar",
+        "veicleilao",
+        "veicalienado",
+        "veicacidentado",
+        "clicpfcnpj",
+        "propcpfcnpj",
+        "condcpfcnpj",
+        "idstatus",
+        "dtcreate",
+        "dtupdate",
+        "veicor",
+    ];
+    public $timestamps = FALSE;
+
+    public function segurado()
+    {
+        return $this->belongsTo(Segurado::class, 'clicpfcnpj', 'clicpfcnpj');
+    }
+
+    public function fipe()
+    {
+        return $this->belongsTo(Fipes::class, 'veiccodfipe', 'codefipe');
+    }
+
+    /**
+     * @return array
+     */
+    public function fipe_ano_valor()
+    {
+        return $this->hasMany(FipeAnoValor::class, 'codefipe', 'veiccodfipe');
+    }
+
+    public function combustivel()
+    {
+        return $this->belongsTo(Combustivel::class, 'veictipocombus', 'id_auto_comb');
+    }
+
+
+}
