@@ -51,13 +51,13 @@ class EloquentHook {
         $capsule->addConnection([
             'driver'    => $config->eloquent_dbdriver,
             'host'      => $config->eloquent_hostname,
-            'database'  => $config->eloquent_database,
-            'username'  => $config->eloquent_username,
-            'password'  => $config->eloquent_password,
-            'charset'   => $config->eloquent_char_set,
-            'collation' => $config->eloquent_dbcollat,
-            'prefix'    => $config->eloquent_dbprefix,
-            'schema' => $config->eloquent_schema,
+            'database'  => $config->database,
+            'username'  => $config->username,
+            'password'  => $config->password,
+            'charset'   => $config->char_set,
+            'collation' => $config->dbcollat,
+            'prefix'    => $config->dbprefix,
+            'schema' => $config->schema,
         ]);
 
         $capsule->setAsGlobal();
