@@ -14,7 +14,13 @@
 	{
 		"php": ">=5.2.4",
 		"illuminate/database": "5.0.28",
-		"doctrine/dbal": "v2.5.4"
+		"doctrine/dbal": "v2.5.4",
+		"psr/log": "^1.0",
+		"symfony/config": "^3.1",
+		"symfony/yaml": "^3.1",
+		"jeremeamia/superclosure": "^2.2",
+		"symfony/var-dumper": "^3.1",
+		"symfony/console": "^3.1"
 	},
 	"require-dev":
 	{
