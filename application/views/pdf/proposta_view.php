@@ -36,9 +36,17 @@
                     <td>
                         <table>
                             <tr>
-                                <td class="pdf-table-td-title">FONE:</td>
-                                <td class="pdf-table-td-content"> (<?= $proposta['cotacao']['corretor']['corrdddcel'] ?>
-                                    ) <?= format('fone', $proposta['cotacao']['corretor']['corrnmcel']) ?></td>
+                                <?php if (strlen($proposta['cotacao']['corretor']['corrnmcel']) > 6) { ?>
+                                    <td class="pdf-table-td-title">FONE:</td>
+                                    <td class="pdf-table-td-content">
+                                        (<?= $proposta['cotacao']['corretor']['corrdddfone'] ?>
+                                        ) <?= format('fone', $proposta['cotacao']['corretor']['corrnmfone']) ?></td>
+                                <?php } elseif (strlen($proposta['cotacao']['corretor']['corrnmfone']) > 6) { ?>
+                                    <td class="pdf-table-td-title">CEL:</td>
+                                    <td class="pdf-table-td-content">
+                                        (<?= $proposta['cotacao']['corretor']['corrdddcel'] ?>
+                                        ) <?= format('fone', $proposta['cotacao']['corretor']['corrnmcel']) ?></td>
+                                <?php } ?>
                                 <td class="pdf-table-td-title">EMAIL:</td>
                                 <td class="pdf-table-td-content"> <?= $proposta['cotacao']['corretor']['corremail'] ?></td>
                                 <td class="pdf-table-td-title">PARCEIRO:</td>
@@ -622,20 +630,20 @@
             veículo não seja recuperado, o Segurado ou um de seus representantes deverá encaminhar para a Seguradora,
             conforme informações constantes na respectiva apólice, os documentos relacionados nas Condições Gerais do
             produto.</p>
-<!--        <li>-->
-<!--            Aviso de Sinistro em casos de sinistro com Terceiros (para os Proponentes que optarem por esta cobertura):-->
-<!--        </li>-->
-<!--        <p> Opção online NOBRE SEGUROS: Acesse o site <a href="">www.nobre.com.br</a> e clique na opção “COMUNICAR UM-->
-<!--            SINISTRO” e-->
-<!--            proceda conforme instruções detalhadas nas telas.<br>-->
-<!--            - Atendimento Sinistro NOBRE: Ligue para 4007-1115 capitais, regiões metropolitanas e grandes cidades ou-->
-<!--            0800 16 3020 demais localidades de segunda à sexta-feira das 8:30h às 20:00h e aos sábados das 8:30h às-->
-<!--            17:30h.<br>-->
-<!--            - Central de Atendimento : Tel: 55 (11) 5069-1177 E-mail: <a href="">cacc@nobre.com.br</a></p>-->
-<!---->
-<!--        <li>-->
-            Aviso de Sinistro em casos de sinistro de Perda Total por colisão (para os Proponentes que optarem por esta
-            cobertura):
+        <!--        <li>-->
+        <!--            Aviso de Sinistro em casos de sinistro com Terceiros (para os Proponentes que optarem por esta cobertura):-->
+        <!--        </li>-->
+        <!--        <p> Opção online NOBRE SEGUROS: Acesse o site <a href="">www.nobre.com.br</a> e clique na opção “COMUNICAR UM-->
+        <!--            SINISTRO” e-->
+        <!--            proceda conforme instruções detalhadas nas telas.<br>-->
+        <!--            - Atendimento Sinistro NOBRE: Ligue para 4007-1115 capitais, regiões metropolitanas e grandes cidades ou-->
+        <!--            0800 16 3020 demais localidades de segunda à sexta-feira das 8:30h às 20:00h e aos sábados das 8:30h às-->
+        <!--            17:30h.<br>-->
+        <!--            - Central de Atendimento : Tel: 55 (11) 5069-1177 E-mail: <a href="">cacc@nobre.com.br</a></p>-->
+        <!---->
+        <!--        <li>-->
+        Aviso de Sinistro em casos de sinistro de Perda Total por colisão (para os Proponentes que optarem por esta
+        cobertura):
         </li>
         <p> Em caso de PT por colisão do veículo do segurado, este deve comunicar o sinistro para a QBE Seguradora, e
             enviar através da Caixa Postal nº (29217) CEP: 04561-970 – São Paulo/SP, os documentos relacionados nas
@@ -684,98 +692,99 @@
 
 </div>
 <div class="assinatura-segurado">
-    <div><?=nomeCase($proposta['cotacao']['segurado']['clinomerazao'])?></div>
+    <div><?= nomeCase($proposta['cotacao']['segurado']['clinomerazao']) ?></div>
 </div>
 
 
 <div class="assinatura-div">
 
 
-<table class="table-assinatura">
+    <table class="table-assinatura">
 
 
-    <tr>
-        <td>
-            <table class="table-assinatura-table">
-                <tr>
-                    <td>Estipulante</td>
-                </tr>
-                <tr>
-                    <td><img class="logo" src="<?= base_url() ?>assets/img/logo-skyprotection.png" alt=""></td>
-                </tr>
-                <tr>
-                    <td>SKYPROTECTION TEC. INF. VEICULAR<br>
-                        CNPJ 17.241.995/0001-85
-                    </td>
-                </tr>
-                <tr>
-                    <td><img class="assinatura" src="<?= base_url() ?>assets/img/assinatura-sky.png" alt=""></td>
+        <tr>
+            <td>
+                <table class="table-assinatura-table">
+                    <tr>
+                        <td>Estipulante</td>
+                    </tr>
+                    <tr>
+                        <td><img class="logo" src="<?= base_url() ?>assets/img/logo-skyprotection.png" alt=""></td>
+                    </tr>
+                    <tr>
+                        <td>SKYPROTECTION TEC. INF. VEICULAR<br>
+                            CNPJ 17.241.995/0001-85
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><img class="assinatura" src="<?= base_url() ?>assets/img/assinatura-sky.png" alt=""></td>
 
-                </tr>
-                <tr>
-                    <td>Luciano Ladeira <br>
-                        CEO
-                    </td>
-                </tr>
-            </table>
-        </td>
+                    </tr>
+                    <tr>
+                        <td>Luciano Ladeira <br>
+                            CEO
+                        </td>
+                    </tr>
+                </table>
+            </td>
 
-        <td>
-            <table class="table-assinatura-table">
-                <tr>
-                    <td>Garantia: Roubo ou Furto e PT Colisão</td>
-                </tr>
+            <td>
+                <table class="table-assinatura-table">
+                    <tr>
+                        <td>Garantia: Roubo ou Furto e PT Colisão</td>
+                    </tr>
 
-                <tr>
-                    <td><img class="logo" src="<?= base_url() ?>assets/img/logo-qbe.png" alt=""></td>
-                </tr>
+                    <tr>
+                        <td><img class="logo" src="<?= base_url() ?>assets/img/logo-qbe.png" alt=""></td>
+                    </tr>
 
-                <tr>
-                    <td>QBE Brasil Seguros S/A
-                        <br>
-                        CNPJ: 96.348.677/0001-94
-                    </td>
-                </tr>
+                    <tr>
+                        <td>QBE Brasil Seguros S/A
+                            <br>
+                            CNPJ: 96.348.677/0001-94
+                        </td>
+                    </tr>
 
-                <tr>
-                    <td><img class="assinatura" src="<?= base_url() ?>assets/img/assinatura-qbe.png" alt=""></td>
+                    <tr>
+                        <td><img class="assinatura" src="<?= base_url() ?>assets/img/assinatura-qbe.png" alt=""></td>
 
-                </tr>
-                <tr>
-                    <td>Raphael Swierczynsk <br>
-                        CEO
-                    </td>
-                </tr>
-            </table>
-        </td>
+                    </tr>
+                    <tr>
+                        <td>Raphael Swierczynsk <br>
+                            CEO
+                        </td>
+                    </tr>
+                </table>
+            </td>
 
-        <td>
-            <table class="table-assinatura-table">
-                <tr>
-                    <td>Garantia: Roubo ou Furto </td>
-                </tr>
+            <td>
+                <table class="table-assinatura-table">
+                    <tr>
+                        <td>Garantia: Roubo ou Furto</td>
+                    </tr>
 
-                <tr>
-                    <td><img class="logo" src="<?= base_url() ?>assets/img/logo-usebens.png" alt=""></td>
-                </tr>
+                    <tr>
+                        <td><img class="logo" src="<?= base_url() ?>assets/img/logo-usebens.png" alt=""></td>
+                    </tr>
 
-                <tr>
-                    <td>QBE Brasil Seguros S/A
-                        <br>
-                        CNPJ: 96.348.677/0001-94
-                    </td>
-                </tr>
+                    <tr>
+                        <td>QBE Brasil Seguros S/A
+                            <br>
+                            CNPJ: 96.348.677/0001-94
+                        </td>
+                    </tr>
 
-                <tr>
-                    <td><img class="assinatura" src="<?= base_url() ?>assets/img/assinatura-usebens.png" alt=""></td>
-                </tr>
-                <tr>
-                    <td>USEBENS SEGUROS S/A</td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
+                    <tr>
+                        <td><img class="assinatura" src="<?= base_url() ?>assets/img/assinatura-usebens.png" alt="">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>USEBENS SEGUROS S/A</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </div>
 </body>
 </html>

@@ -26,15 +26,59 @@ class Debuga extends REST_Controller
 
 
         $datas = $this->post();
+
+        $datas = dataOrganizeProposta($datas);
+
+//        $segurado = $this->record_db('segurado', $datas['segurado']);
+
+        $veiculo = $datas['veiculo'];
+
+        $dados = Veiculos::
+        where('veicplaca', $veiculo['veicplaca'])->
+        orWhere("veicrenavam", $veiculo['veicrenavam'])->
+        orWhere("veicchassi", $veiculo['veicchassi'])->
+        get();
+
+        if (count($dados)) {
+            $this->response(array(
+                'dados' => $dados,
+            ));
+        } else {
+            $this->response(array(
+                'dados' => 'ok',
+            ));
+        }
+        return;
+        if (isset($segurado->errorInfo)) {
+            $this->response(array(
+                'dados' => $segurado->errorInfo[2],
+            ));
+        } else {
+            $this->response(array(
+                'dados' => $segurado,
+            ));
+        }
+
+
+//        $segurado = Segurado::firstOrCreate(['clicpfcnpj' => $datas['clicpfcnpj']]);
+////        $segurado->update($datas['segurado']);
+//
+//        $this->response(array(
+//            'dados' => $segurado,
+//        ));
+
         $server = $_SERVER;
         $http = getallheaders();
-        if(!$this->Model_key->get(['user_id'=>$datas['idParceiro'],'key'=>$_SERVER['HTTP_X_API_KEY']])){
+        if (!$this->Model_key->get(['user_id' => $datas['idParceiro'], 'key' => $_SERVER['HTTP_X_API_KEY']])) {
             $this->response(array(
                 'status' => 'Acesso negado',
                 'cdretorno' => '098',
-                'message' => 'API KEY invalido para o parceiro, nome: '.$datas['nmParceiro'].' id: '.$datas['idParceiro']), REST_Controller::HTTP_FORBIDDEN);
+                'message' => 'API KEY invalido para o parceiro, nome: ' . $datas['nmParceiro'] . ' id: ' . $datas['idParceiro']), REST_Controller::HTTP_FORBIDDEN);
         }
 
+        $datas = dataOrganizeProposta($datas);
+        $segurado = Segurado::firstOrCreate(['clicpfcnpj' => $datas['clicpfcnpj']]);
+        $segurado->update($datas);
 
         $this->load->library('form_validation');
         $this->form_validation->set_data($datas);
@@ -45,8 +89,8 @@ class Debuga extends REST_Controller
                 'cdretorno' => '023',
                 'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         else:
-                $v = false;
-            $where = ($v ? ['idcotacao'=>7029,'idparceiro'=>1] : ['idcotacao'=>7029]) ;
+            $v = false;
+            $where = ($v ? ['idcotacao' => 7029, 'idparceiro' => 1] : ['idcotacao' => 7029]);
 
             $proposta = $this->Model_proposta->with_cotacao([
                 'with' => [
@@ -112,12 +156,12 @@ class Debuga extends REST_Controller
                     $proposta['cotacao']['veiculo']['fipe']['valores'] = $valor;
                 }
             }
-            
+
             foreach ($cotacao['produtos'] as $pkey => $produto) {
 
                 $key = array_search($produto['idprecoproduto'], array_column($produto['produto']['precos'], 'idprecoproduto'));
                 $cotacao['produtos'][$pkey]['produto']['precos'] = $produto['produto']['precos'][$key];
-                
+
 
             }
 
@@ -148,35 +192,35 @@ class Debuga extends REST_Controller
                 'status' => 'Error',
                 'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         else:
-            $this->form_validation->reset_validation();
 
-            #$datas['veiculo']['segCpfCnpj'] = $datas['segurado']['segCpfCnpj'];
+
+            if (!$this->Model_key->get(['user_id' => $datas['idParceiro'], 'key' => $_SERVER['HTTP_X_API_KEY']])) {
+                $this->response(array(
+                    'status' => 'Acesso negado',
+                    'cdretorno' => '098',
+                    'message' => 'API KEY invalido para o parceiro, nome: ' . $datas['nmParceiro'] . ' id: ' . $datas['idParceiro']), REST_Controller::HTTP_FORBIDDEN);
+            }
+
+            $this->form_validation->reset_validation();
 
             $this->validadb($datas);
 
-
             $produto = $this->getProdutoParcPremio($datas, 'cotacao');
 
-
-            if ($this->Model_parceiro->get($datas['idParceiro']) == null):
-                $this->response(array(
-                    'cdretorno' => '015',
-                    'status' => 'Error',
-                    'message' => 'idParceiro Inválido',
-                ));
-            endif;
-
+//            $this->response(dataOrganize($datas));
             /*
              * Tratando dados do segurado e inserindo no banco
              */
 
             if (isset($datas['segurado']) && strlen($datas['segurado']['segCpfCnpj']) > 0):
+
                 if (strlen($datas['segurado']['segCpfCnpj']) > 11):
                     $validacao = 'CotacaoPJ';
                 else:
                     $validacao = 'Cotacao';
                 endif;
-                $this->pessoadb($datas, $validacao, 'segurado');
+                $this->valida_pessoas('segurado', $validacao, $datas);
+
             endif;
 
 
@@ -185,7 +229,10 @@ class Debuga extends REST_Controller
              */
 
             if (!$datas['indProprietVeic']):
-                $datas['proprietario']['proprCpfCnpj'] = $this->pessoadb($datas, 'Cotacao', 'proprietario');
+
+                $proprietario = $this->valida_pessoas('proprietario', 'Cotacao', $datas);
+                $datas['proprietario']['proprCpfCnpj'] = $proprietario->id;
+//                $datas['proprietario']['proprCpfCnpj'] = $this->pessoadb($datas, 'Cotacao', 'proprietario');
             endif;
 
             /*
@@ -193,21 +240,25 @@ class Debuga extends REST_Controller
              */
 
             if (!$datas['indCondutorVeic']):
-                $datas['condutor']["condutCpfCnpj"] = $this->pessoadb($datas, 'Cotacao', 'condutor');
+
+                $condutor = $this->valida_pessoas('condutor', 'Cotacao', $datas);
+                $datas['condutor']["condutCpfCnpj"] = $condutor->id;
+//                $datas['condutor']["condutCpfCnpj"] = $this->pessoadb($datas, 'Cotacao', 'condutor');
             endif;
 
             /*
              * Tratando dados do veiculo e inserindo no banco
              */
 
-            $veicid = $this->veiculodb($datas, 'Cotacao');
+            $veiculo = $this->veiculo($datas, 'Cotacao');
+//            $veicid = $this->veiculodb($datas, 'Cotacao');
 
 
             /*
              * Tratando dados do cotacao e inserindo no banco
              */
 
-            $cotacao = $this->cotacaodb($datas, $produto, $veicid);
+            $cotacao = $this->cotacaodb($datas, $produto, $veiculo->veicid);
 
             /*
              * Preparando retorno
@@ -254,22 +305,36 @@ class Debuga extends REST_Controller
             /*
              * Tratando dados do segurado e inserindo no banco
              */
-            $this->pessoadb($datas, 'Proposta', 'segurado');
+
+
+            if (strlen($datas['segurado']['segCpfCnpj']) > 11):
+                $validacao = 'PropostaPJ';
+            else:
+                $validacao = 'Proposta';
+            endif;
+            $this->valida_pessoas('segurado', $validacao, $datas);
+
 
             /*
              * Tratando dados do proprietario e inserindo no banco.
              */
 
+
             if (!$datas['indProprietVeic']):
-                $datas['proprietario']['proprCpfCnpj'] = $this->pessoadb($datas, 'Proposta', 'proprietario');
+
+                $proprietario = $this->valida_pessoas('proprietario', 'Proposta', $datas);
+                $datas['proprietario']['proprCpfCnpj'] = $proprietario->id;
+//                $datas['proprietario']['proprCpfCnpj'] = $this->pessoadb($datas, 'Cotacao', 'proprietario');
             endif;
 
             /*
              * Tratando dados do condutor e inserindo no banco
              */
-
             if (!$datas['indCondutorVeic']):
-                $datas['condutor']["condutCpfCnpj"] = $this->pessoadb($datas, 'Proposta', 'condutor');
+
+                $condutor = $this->valida_pessoas('condutor', 'Proposta', $datas);
+                $datas['condutor']["condutCpfCnpj"] = $condutor->id;
+//                $datas['condutor']["condutCpfCnpj"] = $this->pessoadb($datas, 'Cotacao', 'condutor');
             endif;
 
             /*
@@ -727,14 +792,17 @@ class Debuga extends REST_Controller
 
     protected function cotacaodb($datas, $produto, $veicid)
     {
-        $idcorretor = $this->corretordb($datas, 'corretor');
+
+        $idcorretor = $this->valida_pessoas('corretor', '', $datas);
+
+//        $idcorretor = $this->corretordb($datas, 'corretor');
 
         $datas = dataOrganizeCotacao($datas);
 
         /*
          * Tratando dados do corretor e inserindo no banco
          */
-        $datas['cotacao']['idcorretor'] = $idcorretor;
+        $datas['cotacao']['idcorretor'] = $idcorretor->idcorretor;
 
 
         $datas['cotacao']['veicid'] = $veicid;
@@ -1188,6 +1256,223 @@ class Debuga extends REST_Controller
      * Cliente  insert & Update* 
      */
 
+    protected function veiculo($datas, $validacao)
+    {
+
+        $this->form_validation->reset_validation();
+        $this->form_validation->set_data((isset($datas['veiculo']) ? $datas['veiculo'] : $datas));
+        $datas = dataOrganize($datas);
+
+
+        if ($this->form_validation->run('veiculo' . ucfirst($validacao)) == false) {
+            return $this->response(array(
+                'status' => 'Error',
+                'cdretorno' => '023',
+                'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
+        }
+
+        if ($validacao == 'Cotacao') {
+            $datas = $datas['veiculo'];
+
+            if (!empty($datas['veicplaca']) || $datas['veicplaca'] != NULL || $datas['veicplaca'] != '') {
+                $create = [
+                    "veiccodfipe" => $datas['veiccodfipe'],
+                    "veicano" => $datas['veicano'],
+                    "veictipocombus" => $datas['veictipocombus'],
+                    "veicplaca" => $datas['veicplaca'],
+                    "clicpfcnpj" => $datas['clicpfcnpj'],
+                    "veicautozero" => $datas['veicautozero'],
+                    "veiccdutilizaco" => $datas['veiccdutilizaco'],
+                    "veiccdveitipo" => $datas['veiccdveitipo'],
+                ];
+            } else {
+                $create = [
+                    "veiccodfipe" => $datas['veiccodfipe'],
+                    "veicano" => $datas['veicano'],
+                    "veictipocombus" => $datas['veictipocombus'],
+                    "clicpfcnpj" => $datas['clicpfcnpj'],
+                    "veicautozero" => $datas['veicautozero'],
+                    "veiccdutilizaco" => $datas['veiccdutilizaco'],
+                    "veiccdveitipo" => $datas['veiccdveitipo'],
+                ];
+            }
+
+            try {
+                $veiculo = Veiculos::firstOrCreate($create);
+            } catch (Illuminate\Database\QueryException $e) {
+                return $this->response(array(
+                    'status' => 'Error',
+                    'cdretorno' => '013',
+                    'message' => ['veiculo' => 'Ao gravar por favor contate o administrador']
+                ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            return $veiculo;
+
+
+        } elseif ($validacao == 'Proposta') {
+            $veiculo = $datas['veiculo'];
+
+            $cotacao = Cotacao::find($datas['proposta']['idcotacao']);
+
+
+            $veiculos = Veiculos::
+            where('veicplaca', $veiculo['veicplaca'])->
+            orWhere("veicrenavam", $veiculo['veicrenavam'])->
+            orWhere("veicchassi", $veiculo['veicchassi'])->
+            get();
+
+            $unset = ['veiccodfipe', 'veicano', 'veictipocombus', 'veicautozero', 'veiccdveitipo', 'veiccdutilizaco'];
+
+            foreach ($veiculo as $key => $value) {
+                if (in_array($key, $unset)) {
+                    unset($veiculo[$key]);
+                }
+            }
+
+            if (count($veiculos)) {
+
+                foreach ($veiculos as $veic) {
+
+                    /*
+                     * Verifica se a placa, renavam ou chassi está em um veículo com proposta ativa
+                     * */
+                    if ($veic->veicplaca == $veiculo['veicplaca'] &&
+                        $veic->veicrenavam == $veiculo['veicrenavam'] &&
+                        $veic->veicchassi == $veiculo['veicchassi'] && $veic->idstatus == 10 ||
+                        $veic->veicplaca == $veiculo['veicplaca'] && $veic->idstatus == 10 ||
+                        $veic->veicrenavam == $veiculo['veicrenavam'] && $veic->idstatus == 10 ||
+                        $veic->veicchassi == $veiculo['veicchassi'] && $veic->idstatus == 10
+                    ) {
+
+                        return $this->response(array(
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'message' => ['veiculo' => 'Existe uma proposta em aberto pra esse veiculo']
+                        ), REST_Controller::HTTP_BAD_REQUEST);
+
+
+                        /*
+                         * Verifica se existe um veiculo com placa, renavam ou chassi sem está vinculado a uma proposta
+                         */
+
+                    } elseif ($veic->veicplaca == $veiculo['veicplaca'] &&
+                        $veic->veicrenavam == $veiculo['veicrenavam'] &&
+                        $veic->veicchassi == $veiculo['veicchassi'] && $veic->idstatus != 10 ||
+                        $veic->veicplaca == $veiculo['veicplaca'] && $veic->idstatus != 10 ||
+                        $veic->veicrenavam == $veiculo['veicrenavam'] && $veic->idstatus != 10 ||
+                        $veic->veicchassi == $veiculo['veicchassi'] && $veic->idstatus != 10
+                    ) {
+
+                        /*
+                         * Verifica se o veiculo tem os mesmos paramentros do que está da cotacao
+                         */
+
+                        if ($veic->veiccodfipe == $cotacao->veiculo->veiccodfipe &&
+                            $veic->veicano == $cotacao->veiculo->veicano &&
+                            $veic->veictipocombus == $cotacao->veiculo->veictipocombus &&
+                            $veic->veicautozero == $cotacao->veiculo->veicautozero &&
+                            $veic->veiccdutilizaco == $cotacao->veiculo->veiccdutilizaco &&
+                            $veic->veiccdveitipo == $cotacao->veiculo->veiccdveitipo
+                        ) {
+
+                            /*
+                             * Verifica se o veiculo é o mesmo da cotacao
+                             */
+
+                            if ($veic->veicid != $cotacao->veicid) {
+                                /*
+                                 * Verifica se o veiculo da cotacao está vinculado a outras cotações
+                                 */
+                                if (count(Cotacoes::whereIn('veicid', $cotacao->veicid)->where('idcotacao <>', $cotacao->idcotacao)->get()) == 0) {
+                                    $destroy_id = $cotacao->veicid;
+
+                                    try {
+                                        $cotacao->veicid = $veic->veicid;
+                                        $cotacao->save();
+                                        $cotacao->veiculo->update($veiculo);
+                                        Veiculos::destroy($destroy_id);
+                                    } catch (Illuminate\Database\QueryException $e) {
+                                        return $this->response(array(
+                                            'status' => 'Error',
+                                            'cdretorno' => '013',
+                                            'message' => ['veiculo' => 'Ao atualizar por favor contate o administrador']
+                                        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                                    }
+
+                                }
+
+                            } else {
+                                try {
+                                    $cotacao->veiculo->update($veiculo);
+                                } catch (Illuminate\Database\QueryException $e) {
+                                    return $this->response(array(
+                                        'status' => 'Error',
+                                        'cdretorno' => '013',
+                                        'message' => ['veiculo' => 'Ao atualizar por favor contate o administrador']
+                                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                                }
+
+                            }
+
+
+                        } else {
+
+                            //placa cadastrada em outro veiculo
+                            $msg = '';
+                            if ($veic->veicplaca == $veiculo['veicplaca']) {
+                                $msg = 'Placa: ' . $veiculo['veicplaca'];
+                            } elseif ($veic->veicrenavam == $veiculo['veicrenavam']) {
+                                $msg = 'Renavam: ' . $veiculo['veicrenavam'];
+
+                            } elseif ($veic->veicchassi == $veiculo['veicchassi']) {
+                                $msg = 'Chassi: ' . $veiculo['veicchassi'];
+
+                            }
+
+
+                            return $this->response(array(
+                                'status' => 'Error',
+                                'cdretorno' => '013',
+                                'message' => ['veiculo' => 'Proposta: ' . $msg . ' já está cadastrado em outro veiculo.']
+                            ), REST_Controller::HTTP_BAD_REQUEST);
+
+                        }
+
+
+                    }
+                }
+
+
+            } else {
+                /*
+                 * Verifica se o veiculo é nunca teve em proposta
+                 */
+                if ($cotacao->veiculo->veicplaca == null &&
+                    $cotacao->veiculo->veicrenavam == null &&
+                    $cotacao->veiculo->veicchassi == null ||
+                    $cotacao->veiculo->veicrenavam == null ||
+                    $cotacao->veiculo->veicchassi == null
+                ) {
+                    try {
+                        $cotacao->veiculo->update($veiculo);
+                    } catch (Illuminate\Database\QueryException $e) {
+                        return $this->response(array(
+                            'status' => 'Error',
+                            'cdretorno' => '013',
+                            'message' => ['veiculo' => 'Ao atualizar por favor contate o administrador']
+                        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                    }
+                }
+
+            }
+
+            return $cotacao->veiculo;
+        }
+
+
+    }
+
     protected function pessoadb($datas, $validacao, $tipoCliente)
     {
         $validacao = ucfirst($validacao);
@@ -1473,4 +1758,106 @@ class Debuga extends REST_Controller
             endif;
         endif;
     }
+
+
+    protected function valida_pessoas($pessoa, $tipo_validacao, $datas)
+    {
+        $this->form_validation->reset_validation();
+
+        $this->form_validation->set_data($datas[$pessoa]);
+
+        $datas = dataOrganize($datas);
+
+        if ($this->form_validation->run($pessoa . $tipo_validacao) == false):
+            return $this->response(array(
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
+        else:
+            return $this->record_db($pessoa, $datas[$pessoa]);
+        endif;
+
+
+    }
+
+    protected function record_db($pessoa, $datas)
+    {
+
+        foreach ($datas as $key => $value) {
+            if ($value == null || empty($value) || $value == '') {
+                unset($datas[$key]);
+            }
+        }
+        $pessoa_msg = $pessoa;
+
+        switch ($pessoa) {
+            case 'segurado':
+
+                try {
+                    $pessoa = Segurado::firstOrCreate(['clicpfcnpj' => $datas['clicpfcnpj']]);
+
+                } catch (Illuminate\Database\QueryException $e) {
+
+                    return $this->response(array(
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => [$pessoa_msg => 'Erro ao cadastrar : ' . $e->errorInfo[2]]), REST_Controller::HTTP_BAD_REQUEST);
+//                    return $e;
+                }
+                break;
+            case 'proprietario':
+
+                try {
+                    $pessoa = Proprietario::firstOrCreate(['proprcpfcnpj' => $datas['proprcpfcnpj']]);
+
+                } catch (Illuminate\Database\QueryException $e) {
+                    return $this->response(array(
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => [$pessoa_msg => 'Erro ao cadastrar : ' . $e->errorInfo[2]]), REST_Controller::HTTP_BAD_REQUEST);
+                }
+
+
+                break;
+            case 'condutor':
+                try {
+                    $pessoa = Condutor::firstOrCreate(['condcpfcnpj' => $datas['condcpfcnpj']]);
+
+                } catch (Illuminate\Database\QueryException $e) {
+                    return $this->response(array(
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => [$pessoa_msg => 'Erro ao cadastrar : ' . $e->errorInfo[2]]), REST_Controller::HTTP_BAD_REQUEST);
+                }
+
+                break;
+            case 'corretor':
+                try {
+                    $pessoa = Corretores::firstOrCreate(['corrcpfcnpj' => $datas['corrcpfcnpj']]);
+
+                } catch (Illuminate\Database\QueryException $e) {
+                    return $this->response(array(
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => [$pessoa_msg => 'Erro ao cadastrar : ' . $e->errorInfo[2]]), REST_Controller::HTTP_BAD_REQUEST);
+                }
+                break;
+            default :
+                return false;
+        }
+
+        try {
+            $pessoa->update($datas);
+        } catch (Illuminate\Database\QueryException $e) {
+            return $this->response(array(
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => [$pessoa_msg => 'Erro ao atualizar : ' . $e->errorInfo[2]]), REST_Controller::HTTP_BAD_REQUEST);
+        }
+
+
+        return $pessoa;
+
+    }
+
 }

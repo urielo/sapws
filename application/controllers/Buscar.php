@@ -13,8 +13,7 @@ class Buscar extends REST_Controller
         parent::__construct();
         $this->load->helper('pdfgerator');
         $this->load->helper('message_error');
-//        $this->load->model('Custo_produto');
-//        $this->load->library('m_pdf');
+
         date_default_timezone_set('America/Sao_Paulo');
     }
 
