@@ -1359,35 +1359,80 @@ class Gerar extends REST_Controller
 
     protected function record_db($pessoa, $datas)
     {
-        $message = '';
 
         foreach ($datas as $key => $value) {
             if ($value == null || empty($value) || $value == '') {
                 unset($datas[$key]);
             }
         }
-
+        $pessoa_msg = $pessoa;
 
         switch ($pessoa) {
             case 'segurado':
-                $pessoa = Segurado::firstOrCreate(['clicpfcnpj' => $datas['clicpfcnpj']]);
-                $pessoa->update($datas);
+
+                try {
+                    $pessoa = Segurado::firstOrCreate(['clicpfcnpj' => $datas['clicpfcnpj']]);
+
+                } catch (Illuminate\Database\QueryException $e) {
+
+                    return $this->response(array(
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => [$pessoa_msg => 'Erro ao cadastrar : ' . $e->errorInfo[2]]), REST_Controller::HTTP_BAD_REQUEST);
+//                    return $e;
+                }
                 break;
             case 'proprietario':
-                $pessoa = Proprietario::firstOrCreate(['clicpfcnpj' => $datas['clicpfcnpj']]);
-                $pessoa->update($datas);
+
+                try {
+                    $pessoa = Proprietario::firstOrCreate(['proprcpfcnpj' => $datas['proprcpfcnpj']]);
+
+                } catch (Illuminate\Database\QueryException $e) {
+                    return $this->response(array(
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => [$pessoa_msg => 'Erro ao cadastrar : ' . $e->errorInfo[2]]), REST_Controller::HTTP_BAD_REQUEST);
+                }
+
+
                 break;
             case 'condutor':
-                $pessoa = Condutor::firstOrCreate(['clicpfcnpj' => $datas['clicpfcnpj']]);
-                $pessoa->update($datas);
+                try {
+                    $pessoa = Condutor::firstOrCreate(['condcpfcnpj' => $datas['condcpfcnpj']]);
+
+                } catch (Illuminate\Database\QueryException $e) {
+                    return $this->response(array(
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => [$pessoa_msg => 'Erro ao cadastrar : ' . $e->errorInfo[2]]), REST_Controller::HTTP_BAD_REQUEST);
+                }
+
                 break;
             case 'corretor':
-                $pessoa = Condutor::firstOrCreate(['clicpfcnpj' => $datas['clicpfcnpj']]);
-                $pessoa->update($datas);
+                try {
+                    $pessoa = Corretores::firstOrCreate(['corrcpfcnpj' => $datas['corrcpfcnpj']]);
+
+                } catch (Illuminate\Database\QueryException $e) {
+                    return $this->response(array(
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => [$pessoa_msg => 'Erro ao cadastrar : ' . $e->errorInfo[2]]), REST_Controller::HTTP_BAD_REQUEST);
+                }
                 break;
             default :
                 return false;
         }
+
+        try {
+            $pessoa->update($datas);
+        } catch (Illuminate\Database\QueryException $e) {
+            return $this->response(array(
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => [$pessoa_msg => 'Erro ao atualizar : ' . $e->errorInfo[2]]), REST_Controller::HTTP_BAD_REQUEST);
+        }
+
+
         return $pessoa;
 
     }
