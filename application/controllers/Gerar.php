@@ -69,23 +69,23 @@ class Gerar extends REST_Controller
              * Tratando dados do proprietario e inserindo no banco.
              */
 
-            if (!$datas['indProprietVeic']):
-
-                $proprietario = $this->valida_pessoas('proprietario', 'Cotacao', $datas);
-                $datas['proprietario']['proprCpfCnpj'] = $proprietario->id;
-//                $datas['proprietario']['proprCpfCnpj'] = $this->pessoadb($datas, 'Cotacao', 'proprietario');
-            endif;
-
-            /*
-             * Tratando dados do condutor e inserindo no banco
-             */
-
-            if (!$datas['indCondutorVeic']):
-
-                $condutor = $this->valida_pessoas('condutor', 'Cotacao', $datas);
-                $datas['condutor']["condutCpfCnpj"] = $condutor->id;
-//                $datas['condutor']["condutCpfCnpj"] = $this->pessoadb($datas, 'Cotacao', 'condutor');
-            endif;
+//            if (!$datas['indProprietVeic']):
+//
+//                $proprietario = $this->valida_pessoas('proprietario', 'Cotacao', $datas);
+//                $datas['proprietario']['proprCpfCnpj'] = $proprietario->id;
+////                $datas['proprietario']['proprCpfCnpj'] = $this->pessoadb($datas, 'Cotacao', 'proprietario');
+//            endif;
+//
+//            /*
+//             * Tratando dados do condutor e inserindo no banco
+//             */
+//
+//            if (!$datas['indCondutorVeic']):
+//
+//                $condutor = $this->valida_pessoas('condutor', 'Cotacao', $datas);
+//                $datas['condutor']["condutCpfCnpj"] = $condutor->id;
+////                $datas['condutor']["condutCpfCnpj"] = $this->pessoadb($datas, 'Cotacao', 'condutor');
+//            endif;
 
             /*
              * Tratando dados do veiculo e inserindo no banco
@@ -177,7 +177,6 @@ class Gerar extends REST_Controller
              * Tratando dados do condutor e inserindo no banco
              */
             if (!$datas['indCondutorVeic']):
-
                 $condutor = $this->valida_pessoas('condutor', 'Proposta', $datas);
                 $datas['condutor']["condutCpfCnpj"] = $condutor->id;
 //                $datas['condutor']["condutCpfCnpj"] = $this->pessoadb($datas, 'Cotacao', 'condutor');

@@ -446,7 +446,7 @@ $config['rest_access_table'] = 'access';
 | Set to FALSE to log as serialized PHP
 |
 */
-$config['rest_logs_json_params'] = FALSE;
+$config['rest_logs_json_params'] = true;
 
 /*
 |--------------------------------------------------------------------------
