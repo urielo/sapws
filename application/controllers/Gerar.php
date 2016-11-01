@@ -1458,29 +1458,17 @@ class Gerar extends REST_Controller
         if ($validacao == 'Cotacao') {
             $datas = $datas['veiculo'];
 
-            if (!empty($datas['veicplaca']) || $datas['veicplaca'] != NULL || $datas['veicplaca'] != '') {
-                $create = [
-                    "veiccodfipe" => $datas['veiccodfipe'],
-                    "veicano" => $datas['veicano'],
-                    "veictipocombus" => $datas['veictipocombus'],
-                    "veicplaca" => $datas['veicplaca'],
-                    "clicpfcnpj" => $datas['clicpfcnpj'],
-                    "veicautozero" => $datas['veicautozero'],
-                    "veiccdutilizaco" => $datas['veiccdutilizaco'],
-                    "veiccdveitipo" => $datas['veiccdveitipo'],
-                ];
-            } else {
-                $create = [
-                    "veiccodfipe" => $datas['veiccodfipe'],
-                    "veicano" => $datas['veicano'],
-                    "veictipocombus" => $datas['veictipocombus'],
-                    "clicpfcnpj" => $datas['clicpfcnpj'],
-                    "veicautozero" => $datas['veicautozero'],
-                    "veiccdutilizaco" => $datas['veiccdutilizaco'],
-                    "veiccdveitipo" => $datas['veiccdveitipo'],
-                ];
-            }
 
+            $create = [
+                "veiccodfipe" => $datas['veiccodfipe'],
+                "veicano" => $datas['veicano'],
+                "veictipocombus" => $datas['veictipocombus'],
+                "clicpfcnpj" => $datas['clicpfcnpj'],
+                "veicautozero" => $datas['veicautozero'],
+                "veiccdutilizaco" => $datas['veiccdutilizaco'],
+                "veiccdveitipo" => $datas['veiccdveitipo'],
+            ];
+            
 
             try {
                 $veiculo = Veiculos::firstOrCreate($create);
