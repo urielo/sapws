@@ -88,7 +88,7 @@ $config = array(
         array('field' => 'correProfRamoAtivi', 'label' => 'Corretor: Profissao ou ramo de atividade comercial', 'rules' => 'trim|max_length[10]|integer'),
         array('field' => 'correEmail', 'label' => 'Corretor: Email', 'rules' => 'trim|required|valid_email'),
         array('field' => 'correCelDdd', 'label' => 'Corretor: DDD do celular', 'rules' => 'trim|max_length[2]|integer|greater_than[10]|less_than[100]'),
-        array('field' => 'correCelNum', 'label' => 'Corretor: Numero do celular', 'rules' => 'trim|max_length[9]|min_length[8]|integer|greater_than[40000000]'),
+        array('field' => 'correCelNum', 'label' => 'Corretor: Numero do celular', 'rules' => 'trim|max_length[9]|min_length[8]|integer'),
         array('field' => 'correFoneDdd', 'label' => 'Corretor: DDD do telefone', 'rules' => 'trim|max_length[2]|integer|greater_than[10]|less_than[100]'),
         array('field' => 'correFoneNum', 'label' => 'Corretor: Numero do telefone', 'rules' => 'trim|max_length[9]|min_length[8]|integer'),
         array('field' => 'correEnd', 'label' => 'Corretor: Logradouro', 'rules' => 'trim'),
