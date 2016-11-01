@@ -235,7 +235,7 @@
                     <td>
                         <table>
                             <tr>
-                                <?php if (strlen($proposta['cotacao']['segurado']['clidddfone']) < 8): ?>
+                                <?php if (strlen($proposta['cotacao']['segurado']['clidddfone']) >= 8): ?>
                                     <td class="pdf-table-td-title"><b>TELEFONE:</b></td>
                                     <td class="pdf-table-td-content">
                                         (<?= $proposta['cotacao']['segurado']['clidddfone'] ?>) <?= format('fone',
@@ -243,7 +243,7 @@
                                     </td>
                                 <?php endif; ?>
 
-                                <?php if (strlen($proposta['cotacao']['segurado']['clinmcel']) < 8): ?>
+                                <?php if (strlen($proposta['cotacao']['segurado']['clinmcel']) >= 8): ?>
                                     <td class="pdf-table-td-title"><b>CELULAR:</b></td>
                                     <td class="pdf-table-td-content">
                                         (<?= $proposta['cotacao']['segurado']['clidddcel'] ?>) <?= format('fone',
@@ -556,9 +556,7 @@
         adquirirem sistema de rastreamento/monitoramento veicular SKYPROTECTION, sendo que o início da cobertura do
         seguro se dará após a devida instalação e ativação do sistema, desde que a instalação seja feita no prazo máximo
         de até 15 dias a contar da data de entrega desta proposta. <br>
-        Apólices de RCF serão emitidas pela <b>Nobre Seguradora do Brasil S/A, CNPJ: 85.031.334/0001-85</b>, Registro
-        SUSEP:
-        575-4. Apólices de Perda Total por Colisão serão emitidas pela <b>QBE Brasil Seguros S/A</b>.
+      Apólices de Perda Total por Colisão serão emitidas pela <b>QBE Brasil Seguros S/A</b>.
         As indenizações, caso ocorram serão sempre exclusivamente arcadas por parte da Seguradora que emitir a Apólice.
         A cobrança tanto do equipamento anti furto como do serviço de monitoramento necessário para a emissão das
         apólices, assim como o próprio premio do seguro será unificada e de responsabilidade da SKYPROTECTION Tec. Inf.
@@ -597,9 +595,7 @@
 
     <p>Na ocorrência de sinistro, o Segurado que estiver em mora no momento da ocorrência, ficará sujeito às penalidades
         impostas pelas Condições Gerais. <b>O Segurado declara estar ciente que o inadimplemento de qualquer parcela por
-            mais de 5 (cinco) dias do seu vencimento implica no cancelamento da apólice</b>, sendo facultado a
-        Seguradora o
-        exercício de referida prerrogativa, que quando exercido será formalmente comunicado ao Segurado. <br>
+            mais de 5 (cinco) dias do seu vencimento implica no cancelamento da apólice</b>. <br>
         É facultado ao Segurado o direito de arrependimento no prazo de 07 (sete) dias corridos, contados da contratação
         do seguro, de acordo com o Código de Defesa do Consumidor, devendo manifestá-lo através do telefone (11)
         27701601 ou por email para : <a href="">sac@seguroautopratico.com.br</a>.<br>
@@ -626,7 +622,7 @@
             Aviso de Sinistro em Caso de Roubo e Furto:
         </li>
         <p> Em caso de Roubo ou Furto do veículo o segurado deve comunicar o sinistro imediatamente para a central de
-            rastreamento no Fone 0800 77 25099 e/ou no fone (11) 27701601; que irá tentar localizar o veículo. Caso o
+            rastreamento no Fone 0800 77 25099 e/ou no fone (11) 27701601; sob pena de perder seus direitos por negligência. Caso o
             veículo não seja recuperado, o Segurado ou um de seus representantes deverá encaminhar para a Seguradora,
             conforme informações constantes na respectiva apólice, os documentos relacionados nas Condições Gerais do
             produto.</p>
@@ -677,7 +673,7 @@
         O Segurado obriga−se a comunicar imediatamente a SKYPROTECTION, por escrito, para o email:
         <a href="">sac@seguroautopratico.com.br</a>, qualquer alteração nas condições estabelecidas no contrato de
         seguro assim como no
-        meu cadastro ou nos meus dados de contato como fone e email.</p>
+        seu cadastro ou nos seus dados de contato como fone e email.</p>
 </div>
 
 <table class="table-data">
