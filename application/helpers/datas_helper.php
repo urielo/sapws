@@ -96,6 +96,7 @@ function dataOrganizeProposta($datas)
     $return['segurado']['clicdsexo'] = $datas['segurado']["segCdSexo"];
     $return['segurado']['clicdestadocivil'] = $datas['segurado']["segCdEstCivl"];
     $return['segurado']['clicdprofiramoatividade'] = $datas['segurado']["segProfRamoAtivi"];
+    $return['segurado']['bairro'] = $datas['segurado']["segBairro"];
     $return['segurado']['cliemail'] = strtolower($datas['segurado']["segEmail"]);
     ($datas['segurado']["segCelDdd"] != NULL ? $return['segurado']['clidddcel'] = $datas['segurado']["segCelDdd"] : NULL);
     ($datas['segurado']["segCelNum"] != NULL ? $return['segurado']['clinmcel'] = $datas['segurado']["segCelNum"] : NULL);
@@ -219,6 +220,7 @@ function dataOrganizeCotacao($datas)
         $return['segurado']['clidddfone'] = $datas['segurado']["segFoneDdd"];
         $return['segurado']['clinmfone'] = $datas['segurado']["segFoneNum"];
         $return['segurado']['clinmend'] = $datas['segurado']["segEnd"];
+        $return['segurado']['bairro'] = $datas['segurado']["segBairro"];
         $return['segurado']['clinumero'] = $datas['segurado']["segEndNum"];
         $return['segurado']['cliendcomplet'] = $datas['segurado']["segEndCompl"];
         $return['segurado']['clicep'] = $datas['segurado']["segEndCep"];
@@ -437,6 +439,7 @@ function dataOrganize($datas)
         $return['segurado']['clicep'] = $datas['segurado']["segEndCep"];
         $return['segurado']['clinmcidade'] = $datas['segurado']["segEndCidade"];
         $return['segurado']['clicduf'] = $datas['segurado']["segEndCdUf"];
+        $return['segurado']['bairro'] = $datas['segurado']["segBairro"];
         $return['segurado']['clinumrg'] = isset($datas['segurado']["segNumRg"]) ? $datas['segurado']["segNumRg"] : NULL;
         $return['segurado']['clidtemissaorg'] = isset($datas['segurado']["segDtEmissaoRg"]) ? $datas['segurado']["segDtEmissaoRg"] : NULL;
         $return['segurado']['cliemissorrg'] = isset($datas['segurado']["segEmissorRg"]) ? $datas['segurado']["segEmissorRg"] : NULL;
