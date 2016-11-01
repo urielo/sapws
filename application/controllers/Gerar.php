@@ -5,6 +5,7 @@ require APPPATH . './libraries/REST_Controller.php';
 
 class Gerar extends REST_Controller
 {
+    protected $_insert_id = '';
 
     function __construct()
     {
@@ -25,6 +26,9 @@ class Gerar extends REST_Controller
 
     function cotacao_post()
     {
+
+        $this->_insert_id = 11154;
+
         $datas = $this->post();
         $this->load->library('form_validation');
         $this->form_validation->set_data($datas);
@@ -125,7 +129,7 @@ class Gerar extends REST_Controller
     function proposta_post()
     {
 
-
+        $this->_insert_id = 11154;
         $datas = $this->post();
         $this->load->library('form_validation');
         $this->form_validation->set_data($datas);
@@ -156,7 +160,7 @@ class Gerar extends REST_Controller
             if (strlen($datas['segurado']['segCpfCnpj']) > 11):
                 $validacao = 'PropostaPJ';
             else:
-                $validacao = 'Proposta';
+                $validacao = 'PropostaPF';
             endif;
             $this->valida_pessoas('segurado', $validacao, $datas);
 
@@ -912,8 +916,8 @@ class Gerar extends REST_Controller
 
 
 //        $this->veiculodb($datas, 'proposta');
-        
-        $this->veiculo($datas,'Proposta');
+
+        $this->veiculo($datas, 'Proposta');
 
         $datas = dataOrganizeProposta($datas);
 
@@ -1477,6 +1481,7 @@ class Gerar extends REST_Controller
                 ];
             }
 
+
             try {
                 $veiculo = Veiculos::firstOrCreate($create);
             } catch (Illuminate\Database\QueryException $e) {
@@ -1493,7 +1498,7 @@ class Gerar extends REST_Controller
         } elseif ($validacao == 'Proposta') {
             $veiculo = $datas['veiculo'];
 
-            $cotacao = Cotacao::find($datas['proposta']['idcotacao']);
+            $cotacao = Cotacoes::find($datas['proposta']['idcotacao']);
 
 
             $veiculos = Veiculos::
@@ -1664,7 +1669,7 @@ class Gerar extends REST_Controller
         if ($this->form_validation->run($pessoa . $tipo_validacao) == false):
             return $this->response(array(
                 'status' => 'Error',
-                'cdretorno' => '013',
+                'cdretorno' => '023',
                 'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         else:
             return $this->record_db($pessoa, $datas[$pessoa]);
@@ -1672,5 +1677,6 @@ class Gerar extends REST_Controller
 
 
     }
+
 
 }
