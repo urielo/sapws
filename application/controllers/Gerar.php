@@ -1468,7 +1468,7 @@ class Gerar extends REST_Controller
                 "veiccdutilizaco" => $datas['veiccdutilizaco'],
                 "veiccdveitipo" => $datas['veiccdveitipo'],
             ];
-            
+
 
             try {
                 $veiculo = Veiculos::firstOrCreate($create);
@@ -1486,6 +1486,7 @@ class Gerar extends REST_Controller
         } elseif ($validacao == 'Proposta') {
             $veiculo = $datas['veiculo'];
 
+
             $cotacao = Cotacoes::find($datas['proposta']['idcotacao']);
 
 
@@ -1495,15 +1496,19 @@ class Gerar extends REST_Controller
             orWhere("veicchassi", $veiculo['veicchassi'])->
             get();
 
-            $unset = ['veiccodfipe', 'veicano', 'veictipocombus', 'veicautozero', 'veiccdveitipo', 'veiccdutilizaco'];
+            $replace = ['veiccodfipe', 'veicano', 'veictipocombus', 'veicautozero', 'veiccdveitipo', 'veiccdutilizaco'];
 
             foreach ($veiculo as $key => $value) {
-                if (in_array($key, $unset)) {
-                    unset($veiculo[$key]);
+                if (in_array($key, $replace)) {
+
+                    $veiculo[$key] = $cotacao->veiculo->{$key};
+
                 }
             }
+            $veiculo['idstatus'] = 10;
 
             if (count($veiculos)) {
+                $veiculo['dtupdate']= date('Y-m-d H:i:s');
 
                 foreach ($veiculos as $veic) {
 
@@ -1529,7 +1534,8 @@ class Gerar extends REST_Controller
                          * Verifica se existe um veiculo com placa, renavam ou chassi sem está vinculado a uma proposta
                          */
 
-                    } elseif ($veic->veicplaca == $veiculo['veicplaca'] &&
+                    } elseif (
+                        $veic->veicplaca == $veiculo['veicplaca'] &&
                         $veic->veicrenavam == $veiculo['veicrenavam'] &&
                         $veic->veicchassi == $veiculo['veicchassi'] && $veic->idstatus != 10 ||
                         $veic->veicplaca == $veiculo['veicplaca'] && $veic->idstatus != 10 ||
@@ -1557,9 +1563,9 @@ class Gerar extends REST_Controller
                                 /*
                                  * Verifica se o veiculo da cotacao está vinculado a outras cotações
                                  */
-                                if (count(Cotacoes::whereIn('veicid', $cotacao->veicid)->where('idcotacao <>', $cotacao->idcotacao)->get()) == 0) {
-                                    $destroy_id = $cotacao->veicid;
 
+                                if (count(Cotacoes::whereIn('veicid', $cotacao->veicid)->where('idcotacao', '<>', $cotacao->idcotacao)->get()) == 0) {
+                                    $destroy_id = $cotacao->veicid;
                                     try {
                                         $cotacao->veicid = $veic->veicid;
                                         $cotacao->save();
@@ -1573,11 +1579,31 @@ class Gerar extends REST_Controller
                                         ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                                     }
 
+                                } else {
+
+                                    try {
+                                        $cotacao->veicid = $veic->veicid;
+                                        $cotacao->save();
+                                        $cotacao->veiculo->update($veiculo);
+
+
+                                    } catch (Illuminate\Database\QueryException $e) {
+                                        return $this->response(array(
+                                            'status' => 'Error',
+                                            'cdretorno' => '013',
+                                            'message' => ['veiculo' => 'Ao atualizar por favor contate o administrador']
+                                        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+                                    }
+
                                 }
 
                             } else {
+//                                return $this->response(['status 3'=>$cotacao->veiculo]);
+
                                 try {
                                     $cotacao->veiculo->update($veiculo);
+
+
                                 } catch (Illuminate\Database\QueryException $e) {
                                     return $this->response(array(
                                         'status' => 'Error',
@@ -1618,25 +1644,24 @@ class Gerar extends REST_Controller
 
 
             } else {
-                /*
-                 * Verifica se o veiculo é nunca teve em proposta
-                 */
-                if ($cotacao->veiculo->veicplaca == null &&
-                    $cotacao->veiculo->veicrenavam == null &&
-                    $cotacao->veiculo->veicchassi == null ||
-                    $cotacao->veiculo->veicrenavam == null ||
-                    $cotacao->veiculo->veicchassi == null
-                ) {
-                    try {
-                        $cotacao->veiculo->update($veiculo);
-                    } catch (Illuminate\Database\QueryException $e) {
-                        return $this->response(array(
-                            'status' => 'Error',
-                            'cdretorno' => '013',
-                            'message' => ['veiculo' => 'Ao atualizar por favor contate o administrador']
-                        ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
-                    }
+
+//                return $this->response(['status 6'=>$veiculo]);
+
+
+                try {
+                    $veic = Veiculos::create($veiculo);
+                    $cotacao->veicid = $veic->veicid;
+                    $cotacao->save();
+
+
+                } catch (Illuminate\Database\QueryException $e) {
+                    return $this->response(array(
+                        'status' => 'Error',
+                        'cdretorno' => '013',
+                        'message' => ['veiculo' => 'Ao atualizar por favor contate o administrador']
+                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                 }
+
 
             }
 
