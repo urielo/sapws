@@ -14,7 +14,8 @@ class Gerar extends REST_Controller
         $this->load->helper('pdfgerator');
 //        $this->load->helper('datas');
         $this->load->helper('message_error');
-        $this->load->library('m_pdf');
+
+
         date_default_timezone_set('America/Sao_Paulo');
     }
 
@@ -209,6 +210,11 @@ class Gerar extends REST_Controller
 
     function pdf_post()
     {
+
+        error_reporting(E_ERROR);
+        $this->load->library('m_pdf');
+
+
         $datas = $this->post();
 
 //        $this->response(array(
@@ -277,6 +283,7 @@ class Gerar extends REST_Controller
             ])->with_forma_pagamento()->get($datas['idProposta']);
 
             $html = $this->load->view('pdf/proposta_view', $proposta, true);
+            error_reporting(E_ERROR);
 
 
             $this->m_pdf->pdf->SetHTMLHeader($this->load->view('pdf/header_view', $proposta, true));
