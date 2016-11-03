@@ -1572,7 +1572,7 @@ class Gerar extends REST_Controller
                                  * Verifica se o veiculo da cotacao está vinculado a outras cotações
                                  */
 
-                                if (count(Cotacoes::whereIn('veicid', $cotacao->veicid)->where('idcotacao', '<>', $cotacao->idcotacao)->get()) == 0) {
+                                if (count(Cotacoes::where('veicid', $cotacao->veicid)->where('idcotacao', '<>', $cotacao->idcotacao)->get()) == 0) {
                                     $destroy_id = $cotacao->veicid;
                                     try {
                                         $cotacao->veicid = $veic->veicid;

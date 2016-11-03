@@ -708,12 +708,12 @@ abstract class REST_Controller extends CI_Controller
         // correct HTTP status code
         $http_code > 0 || $http_code = self::HTTP_OK;
 
-        $this->output->set_status_header($http_code);
+
 
         // JC: Log response code only if rest logging enabled
         if ($this->config->item('rest_enable_logging') === TRUE) {
             $this->_log_response_code($http_code);
-            $this->_log_response_params($output);
+
         }
 
         // Output the data
