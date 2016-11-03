@@ -666,7 +666,7 @@ abstract class REST_Controller extends CI_Controller
      */
     public function response($data = NULL, $http_code = NULL, $continue = FALSE, $log_id = NULL)
     {
-        $data['insert_id'] = $this->_insert_id;
+        
         // If the HTTP status is not NULL, then cast as an integer
         if ($http_code !== NULL) {
             // So as to be safe later on in the process
@@ -1435,7 +1435,7 @@ abstract class REST_Controller extends CI_Controller
      */
     public function post($key = NULL, $xss_clean = NULL)
     {
-        $this->_post_args['logs_id'] = $this->_insert_id;
+     
         if ($key === NULL) {
             return $this->_post_args;
         }

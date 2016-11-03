@@ -36,12 +36,12 @@
                     <td>
                         <table>
                             <tr>
-                                <?php if (strlen($proposta['cotacao']['corretor']['corrnmcel']) > 6) { ?>
+                                <?php if (strlen($proposta['cotacao']['corretor']['corrnmfone']) >= 8) { ?>
                                     <td class="pdf-table-td-title">FONE:</td>
                                     <td class="pdf-table-td-content">
                                         (<?= $proposta['cotacao']['corretor']['corrdddfone'] ?>
                                         ) <?= format('fone', $proposta['cotacao']['corretor']['corrnmfone']) ?></td>
-                                <?php } elseif (strlen($proposta['cotacao']['corretor']['corrnmfone']) > 6) { ?>
+                                <?php } elseif (strlen($proposta['cotacao']['corretor']['corrnmcel']) >= 8) { ?>
                                     <td class="pdf-table-td-title">CEL:</td>
                                     <td class="pdf-table-td-content">
                                         (<?= $proposta['cotacao']['corretor']['corrdddcel'] ?>
