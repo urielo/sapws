@@ -15,7 +15,7 @@ class Gerar extends REST_Controller
 //        $this->load->helper('datas');
         $this->load->helper('message_error');
 
-        error_reporting(E_ERROR);
+//        error_reporting(E_ERROR);
 
         date_default_timezone_set('America/Sao_Paulo');
     }
