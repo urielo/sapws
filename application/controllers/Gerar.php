@@ -11,10 +11,11 @@ class Gerar extends REST_Controller
     {
         parent::__construct();
 //        $this->load->helper('my_ajust');
-        $this->load->helper('pdfgerator');
+//        $this->load->helper('pdfgerator');
 //        $this->load->helper('datas');
         $this->load->helper('message_error');
 
+        error_reporting(E_ERROR);
 
         date_default_timezone_set('America/Sao_Paulo');
     }

@@ -1,5 +1,5 @@
 <?php
-include_once 'mpdf/mpdf.php';   
+include_once 'mpdf/mpdf.php';
 include_once 'my_ajust_helper.php';
 
 function gerarpdfb64($html)
