@@ -28,6 +28,11 @@ class Debuga extends REST_Controller
         $datas = $this->post();
 
         $datas = dataOrganizeProposta($datas);
+        
+//        $this->guardkey($datas['logs_id']);
+
+        $this->response($datas);
+
 
 //        $segurado = $this->record_db('segurado', $datas['segurado']);
 

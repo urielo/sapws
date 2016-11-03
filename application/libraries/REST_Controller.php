@@ -666,7 +666,7 @@ abstract class REST_Controller extends CI_Controller
      */
     public function response($data = NULL, $http_code = NULL, $continue = FALSE, $log_id = NULL)
     {
-        
+        $data['insert_id'] = $this->_insert_id;
         // If the HTTP status is not NULL, then cast as an integer
         if ($http_code !== NULL) {
             // So as to be safe later on in the process
@@ -709,11 +709,10 @@ abstract class REST_Controller extends CI_Controller
         $http_code > 0 || $http_code = self::HTTP_OK;
 
 
-
         // JC: Log response code only if rest logging enabled
         if ($this->config->item('rest_enable_logging') === TRUE) {
             $this->_log_response_code($http_code);
-
+            $this->_log_response_params($output);
         }
 
         // Output the data
@@ -1436,11 +1435,17 @@ abstract class REST_Controller extends CI_Controller
      */
     public function post($key = NULL, $xss_clean = NULL)
     {
+        $this->_post_args['logs_id'] = $this->_insert_id;
         if ($key === NULL) {
             return $this->_post_args;
         }
 
         return isset($this->_post_args[$key]) ? $this->_xss_clean($this->_post_args[$key], $xss_clean) : NULL;
+    }
+
+    public function guardkey($key)
+    {
+        $this->_insert_id = $key;
     }
 
     /**
@@ -1915,7 +1920,7 @@ abstract class REST_Controller extends CI_Controller
 
         return $this->rest->db->update(
             $this->config->item('rest_logs_table'), $payload, [
-            'id' => $this->insert_id
+            'id' => $this->_insert_id
         ]);
     }
 
@@ -1933,7 +1938,7 @@ abstract class REST_Controller extends CI_Controller
 
         return $this->rest->db->update(
             $this->config->item('rest_logs_table'), $payload, [
-            'id' => $this->insert_id
+            'id' => $this->_insert_id
         ]);
     }
 
@@ -1952,7 +1957,7 @@ abstract class REST_Controller extends CI_Controller
 
         return $this->rest->db->update(
             $this->config->item('rest_logs_table'), $payload, [
-            'id' => $this->insert_id
+            'id' => $this->_insert_id
         ]);
     }
 

@@ -131,7 +131,7 @@ class Gerar extends REST_Controller
     function proposta_post()
     {
 
-        $this->_insert_id = 11154;
+
         $datas = $this->post();
         $this->load->library('form_validation');
         $this->form_validation->set_data($datas);
@@ -172,7 +172,7 @@ class Gerar extends REST_Controller
              */
 
 
-            if (!$datas['indProprietVeic']):
+            if ($datas['indProprietVeic'] == 1):
 
                 $proprietario = $this->valida_pessoas('proprietario', 'Proposta', $datas);
                 $datas['proprietario']['proprCpfCnpj'] = $proprietario->id;
@@ -182,7 +182,7 @@ class Gerar extends REST_Controller
             /*
              * Tratando dados do condutor e inserindo no banco
              */
-            if (!$datas['indCondutorVeic']):
+            if ($datas['indCondutorVeic'] == 1):
                 $condutor = $this->valida_pessoas('condutor', 'Proposta', $datas);
                 $datas['condutor']["condutCpfCnpj"] = $condutor->id;
 //                $datas['condutor']["condutCpfCnpj"] = $this->pessoadb($datas, 'Cotacao', 'condutor');
