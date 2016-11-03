@@ -172,7 +172,7 @@ class Gerar extends REST_Controller
              */
 
 
-            if ($datas['indProprietVeic'] == 1):
+            if (!$datas['indProprietVeic']):
 
                 $proprietario = $this->valida_pessoas('proprietario', 'Proposta', $datas);
                 $datas['proprietario']['proprCpfCnpj'] = $proprietario->id;
@@ -182,7 +182,7 @@ class Gerar extends REST_Controller
             /*
              * Tratando dados do condutor e inserindo no banco
              */
-            if ($datas['indCondutorVeic'] == 1):
+            if (!$datas['indCondutorVeic']):
                 $condutor = $this->valida_pessoas('condutor', 'Proposta', $datas);
                 $datas['condutor']["condutCpfCnpj"] = $condutor->id;
 //                $datas['condutor']["condutCpfCnpj"] = $this->pessoadb($datas, 'Cotacao', 'condutor');
