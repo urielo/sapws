@@ -1443,10 +1443,7 @@ abstract class REST_Controller extends CI_Controller
         return isset($this->_post_args[$key]) ? $this->_xss_clean($this->_post_args[$key], $xss_clean) : NULL;
     }
 
-    public function guardkey($key)
-    {
-        $this->_insert_id = $key;
-    }
+   
 
     /**
      * Retrieve a value from a PUT request

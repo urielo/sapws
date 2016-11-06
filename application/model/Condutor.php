@@ -7,7 +7,7 @@ class Condutor extends Model
 {
 
     protected $table = 'condutor';
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'condcpfcnpj';
     protected $fillable = [
         'id',
         'condcpfcnpj',

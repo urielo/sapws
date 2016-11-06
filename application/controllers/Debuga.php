@@ -25,13 +25,16 @@ class Debuga extends REST_Controller
     {
 
 
+$where = ['idcotacao'=>7601,'idparceiro'=>1];
+        $veiculos = Cotacoes::where($where)->first();
+
         $datas = $this->post();
 
         $datas = dataOrganizeProposta($datas);
         
 //        $this->guardkey($datas['logs_id']);
 
-        $this->response([$datas, $this->head(), $this->options(), $this->_post_args]);
+        $this->response([$veiculos]);
 
 
 //        $segurado = $this->record_db('segurado', $datas['segurado']);

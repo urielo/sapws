@@ -15,7 +15,7 @@ class Gerar extends REST_Controller
 //        $this->load->helper('datas');
         $this->load->helper('message_error');
 
-//        error_reporting(E_ERROR);
+        error_reporting(E_ERROR);
 
         date_default_timezone_set('America/Sao_Paulo');
     }
@@ -152,9 +152,26 @@ class Gerar extends REST_Controller
             $this->form_validation->reset_validation();
 
 
+            $where = ($datas['idParceiro'] == 99 ? ['idparceiro'=>$datas['idParceiro']] : ['idparceiro'=>$datas['idParceiro'], 'idcotacao' => $datas['cdCotacao']] );
+            $cotacao = Cotacoes::where($where)->first();
+
+
+            if (!$cotacao):
+                return $this->response(array(
+                    'status' => 'Error',
+                    'message' => "Cotacao Nº: {$datas["cdCotacao"]} Inválido!",
+                ), REST_Controller::HTTP_BAD_REQUEST);
+            endif;
+
+
+
+
             /*
              * Tratando dados do cotacao e e froma de pagamento inserindo no banco
              */
+
+            $veiculo = $this->veiculo($datas, 'Proposta');
+
 
             /*
              * Tratando dados do segurado e inserindo no banco
@@ -164,7 +181,9 @@ class Gerar extends REST_Controller
             else:
                 $validacao = 'PropostaPF';
             endif;
-            $this->valida_pessoas('segurado', $validacao, $datas);
+            $segurado = $this->valida_pessoas('segurado', $validacao, $datas);
+
+            $veiculo->segurado->save($segurado->toArray());
 
 
             /*
@@ -175,7 +194,7 @@ class Gerar extends REST_Controller
             if (!$datas['indProprietVeic']):
 
                 $proprietario = $this->valida_pessoas('proprietario', 'Proposta', $datas);
-                $datas['proprietario']['proprCpfCnpj'] = $proprietario->id;
+                $veiculo->proprietario()->save($proprietario);
 //                $datas['proprietario']['proprCpfCnpj'] = $this->pessoadb($datas, 'Cotacao', 'proprietario');
             endif;
 
@@ -184,7 +203,7 @@ class Gerar extends REST_Controller
              */
             if (!$datas['indCondutorVeic']):
                 $condutor = $this->valida_pessoas('condutor', 'Proposta', $datas);
-                $datas['condutor']["condutCpfCnpj"] = $condutor->id;
+                $veiculo->condutor()->save($condutor);
 //                $datas['condutor']["condutCpfCnpj"] = $this->pessoadb($datas, 'Cotacao', 'condutor');
             endif;
 
@@ -903,7 +922,7 @@ class Gerar extends REST_Controller
     protected function propostadb($datas)
     {
 
-        $where = ($datas['idParceiro'] == 99 ? ['idcotacao' => $datas["cdCotacao"], 'idparceiro' => $datas["idParceiro"]] : ['idcotacao' => $datas["cdCotacao"]]);
+
         $cotacao = $this->Model_cotacao->with_produtos(['with' =>
             ['relation' => 'produto',
                 'with' => [
@@ -912,20 +931,13 @@ class Gerar extends REST_Controller
                         'with' => ['relation' => 'seguradora']
                     ],
                 ]
-            ]])->with_veiculo()->get($where);
+            ]])->with_veiculo()->get(['idcotacao' => $datas["cdCotacao"]]);
 
 
-        if (!$cotacao):
-            return $this->response(array(
-                'status' => 'Error',
-                'message' => "Cotacao Nº: {$datas["cdCotacao"]} Inválido!",
-            ), REST_Controller::HTTP_BAD_REQUEST);
-        endif;
 
 
 //        $this->veiculodb($datas, 'proposta');
 
-        $this->veiculo($datas, 'Proposta');
 
         $datas = dataOrganizeProposta($datas);
 
@@ -1516,7 +1528,7 @@ class Gerar extends REST_Controller
             $veiculo['idstatus'] = 10;
 
             if (count($veiculos)) {
-                $veiculo['dtupdate']= date('Y-m-d H:i:s');
+                $veiculo['dtupdate'] = date('Y-m-d H:i:s');
 
                 foreach ($veiculos as $veic) {
 

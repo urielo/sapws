@@ -48,6 +48,7 @@ class Veiculos extends Model
     /**
      * @return array
      */
+    
     public function fipe_ano_valor()
     {
         return $this->hasMany(FipeAnoValor::class, 'codefipe', 'veiccodfipe');
@@ -56,6 +57,15 @@ class Veiculos extends Model
     public function combustivel()
     {
         return $this->belongsTo(Combustivel::class, 'veictipocombus', 'id_auto_comb');
+    }
+
+    public function proprietario()
+    {
+        return $this->hasOne(Proprietario::class, 'proprcpfcnpj','propcpfcnpj');
+    }
+    public function condutor()
+    {
+        return $this->hasOne(Condutor::class, 'condcpfcnpj','condcpfcnpj');
     }
 
 

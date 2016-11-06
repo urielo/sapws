@@ -7,7 +7,7 @@ class Proprietario extends Model
 {
 
     protected $table = 'proprietario';
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'proprcpfcnpj';
     protected $fillable = [
         'id',
         'proprcpfcnpj',
