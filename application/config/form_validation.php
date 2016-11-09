@@ -221,7 +221,7 @@ $config = array(
     ),
     'proprietarioProposta' => array(
         array('field' => 'proprNomeRazao', 'label' => 'Proprietário: Nome ou razão social', 'rules' => 'trim|max_length[50]'),
-        array('field' => 'proprCpfCnpj', 'label' => 'Proprietário: CPF ou CNPJ', 'rules' => 'trim|min_length[11]|max_length[14]|numeric'),
+        array('field' => 'proprCpfCnpj', 'label' => 'Proprietário: CPF ou CNPJ', 'rules' => 'trim|min_length[11]|max_length[14]|numeric|required'),
         array('field' => 'proprDtNasci', 'label' => 'Proprietário: Data de nascimento', 'rules' => 'trim|max_length[8]|min_length[8]|integer|greater_than[19000000]|less_than[' . $anomin . ']'),
         array('field' => 'proprCdSexo', 'label' => 'Proprietário: Sexo', 'rules' => 'trim|max_length[1]|numeric|less_than[3]'),
         array('field' => 'proprCdEstCivl', 'label' => 'Proprietário: Estado Civil', 'rules' => 'trim|max_length[3]|integer'),

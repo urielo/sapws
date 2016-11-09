@@ -423,7 +423,7 @@ function dataOrganize($datas)
 
     if (isset($datas['segurado'])):
         $return['segurado']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
-        $return['segurado']['clinomerazao'] = $datas['segurado']["segNomeRazao"];
+        $return['segurado']['clinomerazao'] = strtoupper($datas['segurado']["segNomeRazao"]);
         $return['segurado']['clidtnasc'] = $datas['segurado']["segDtNasci"];
         $return['segurado']['clicdsexo'] = $datas['segurado']["segCdSexo"];
         $return['segurado']['clicdestadocivil'] = $datas['segurado']["segCdEstCivl"];
@@ -499,7 +499,7 @@ function dataOrganize($datas)
     $return['produto'] = $datas['produto'];
 
     $return['corretor']["corresusep"] = ($datas['corretor']["correSusep"] != null || !empty($datas['corretor']["correSusep"]) ? $datas['corretor']["correSusep"] : null);
-    $return['corretor']["corrnomerazao"] = ($datas['corretor']["correNomeRazao"] != null || !empty($datas['corretor']["correNomeRazao"]) ? $datas['corretor']["correNomeRazao"] : null);
+    $return['corretor']["corrnomerazao"] = ($datas['corretor']["correNomeRazao"] != null || !empty($datas['corretor']["correNomeRazao"]) ? strtoupper($datas['corretor']["correNomeRazao"]) : null);
     $return['corretor']["corrcpfcnpj"] = ($datas['corretor']["correCpfCnpj"] != null || !empty($datas['corretor']["correCpfCnpj"]) ? $datas['corretor']["correCpfCnpj"] : null);
     $return['corretor']["corrdtnasc"] = ($datas['corretor']["correDtNasci"] != null || !empty($datas['corretor']["correDtNasci"]) ? $datas['corretor']["correDtNasci"] : null);
     $return['corretor']["corrcdsexo"] = ($datas['corretor']["correCdSexo"] != null || !empty($datas['corretor']["correCdSexo"]) ? $datas['corretor']["correCdSexo"] : null);
