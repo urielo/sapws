@@ -433,13 +433,13 @@ function dataOrganize($datas)
         $return['segurado']['clinmcel'] = ($datas['segurado']["segCelNum"] != NULL ? $datas['segurado']["segCelNum"] : NULL);
         $return['segurado']['clidddfone'] = ($datas['segurado']["segFoneDdd"] != NULL ? $datas['segurado']["segFoneDdd"] : NULL);
         $return['segurado']['clinmfone'] = ($datas['segurado']["segFoneNum"] != NULL ? $datas['segurado']["segFoneNum"] : NULL);
-        $return['segurado']['clinmend'] = $datas['segurado']["segEnd"];
+        $return['segurado']['clinmend'] = strtoupper( $datas['segurado']["segEnd"]);
         $return['segurado']['clinumero'] = $datas['segurado']["segEndNum"];
-        $return['segurado']['cliendcomplet'] = $datas['segurado']["segEndCompl"];
+        $return['segurado']['cliendcomplet'] = strtoupper($datas['segurado']["segEndCompl"]);
         $return['segurado']['clicep'] = $datas['segurado']["segEndCep"];
-        $return['segurado']['clinmcidade'] = $datas['segurado']["segEndCidade"];
+        $return['segurado']['clinmcidade'] = strtoupper($datas['segurado']["segEndCidade"]);
         $return['segurado']['clicduf'] = $datas['segurado']["segEndCdUf"];
-        $return['segurado']['bairro'] = $datas['segurado']["segBairro"];
+        $return['segurado']['bairro'] = strtoupper($datas['segurado']["segBairro"]);
         $return['segurado']['clinumrg'] = isset($datas['segurado']["segNumRg"]) ? $datas['segurado']["segNumRg"] : NULL;
         $return['segurado']['clidtemissaorg'] = isset($datas['segurado']["segDtEmissaoRg"]) ? $datas['segurado']["segDtEmissaoRg"] : NULL;
         $return['segurado']['cliemissorrg'] = isset($datas['segurado']["segEmissorRg"]) ? $datas['segurado']["segEmissorRg"] : NULL;

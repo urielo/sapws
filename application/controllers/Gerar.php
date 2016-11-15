@@ -512,6 +512,7 @@ class Gerar extends REST_Controller
                             $preco['premioliquidoproduto'] = $preco['premioliquidoproduto'] + $contigencia;
 
                         }
+                        $produtos['cotacaoproduto'][$i]['premioliquidoproduto'] = $preco['premioliquidoproduto'];
                         $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao);
 
                         $produtos['produto'][$i] = $produtodb;
@@ -536,6 +537,7 @@ class Gerar extends REST_Controller
 
 
                     elseif ($preco['idtipoveiculo'] == $tipoveiculo && $preco['vlrfipeminimo'] == null && $preco['vlrfipemaximo'] == null && $idade <= $preco['idadeaceitamax']):
+                        $produtos['cotacaoproduto'][$i]['premioliquidoproduto'] = $preco['premioliquidoproduto'];
                         $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao);
                         $produtos['produto'][$i] = $produtodb;
                         $produtos['produto'][$i]['caractproduto'] = $preco['caractproduto'];
@@ -548,6 +550,7 @@ class Gerar extends REST_Controller
 
                         $produtos['cotacaoproduto'][$i]['idprecoproduto'] = $preco['idprecoproduto'];
                         $produtos['cotacaoproduto'][$i]['idproduto'] = $idproduto;
+
 
                         $menorparcela = $menorparcela + $preco['vlrminprimparc'];
 
@@ -1485,7 +1488,6 @@ class Gerar extends REST_Controller
                 "veictipocombus" => $datas['veictipocombus'],
                 "clicpfcnpj" => $datas['clicpfcnpj'],
                 "veicautozero" => $datas['veicautozero'],
-                "veiccdutilizaco" => $datas['veiccdutilizaco'],
                 "veiccdveitipo" => $datas['veiccdveitipo'],
             ];
 
@@ -1516,7 +1518,7 @@ class Gerar extends REST_Controller
             orWhere("veicchassi", $veiculo['veicchassi'])->
             get();
 
-            $replace = ['veiccodfipe', 'veicano', 'veictipocombus', 'veicautozero', 'veiccdveitipo', 'veiccdutilizaco'];
+            $replace = ['veiccodfipe', 'veicano', 'veictipocombus', 'veicautozero', 'veiccdveitipo'];
 
             foreach ($veiculo as $key => $value) {
                 if (in_array($key, $replace)) {
