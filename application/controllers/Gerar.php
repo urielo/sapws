@@ -191,7 +191,7 @@ class Gerar extends REST_Controller
              */
 
 
-            if (!$datas['indProprietVeic']):
+            if (isset($datas['indProprietVeic'])  && !$datas['indProprietVeic']):
 
                 $proprietario = $this->valida_pessoas('proprietario', 'Proposta', $datas);
                 $veiculo->proprietario()->save($proprietario);
@@ -1573,7 +1573,6 @@ class Gerar extends REST_Controller
                             $veic->veicano == $cotacao->veiculo->veicano &&
                             $veic->veictipocombus == $cotacao->veiculo->veictipocombus &&
                             $veic->veicautozero == $cotacao->veiculo->veicautozero &&
-                            $veic->veiccdutilizaco == $cotacao->veiculo->veiccdutilizaco &&
                             $veic->veiccdveitipo == $cotacao->veiculo->veiccdveitipo
                         ) {
 
