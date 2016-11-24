@@ -1597,7 +1597,8 @@ class Gerar extends REST_Controller
                                         return $this->response(array(
                                             'status' => 'Error',
                                             'cdretorno' => '013',
-                                            'message' => ['veiculo' => 'Ao atualizar por favor contate o administrador']
+                                            'message' => ['veiculo' => 'Ao atualizar por favor contate o administrador'],
+                                            'error' =>$e
                                         ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                                     }
 
@@ -1613,7 +1614,8 @@ class Gerar extends REST_Controller
                                         return $this->response(array(
                                             'status' => 'Error',
                                             'cdretorno' => '013',
-                                            'message' => ['veiculo' => 'Ao atualizar por favor contate o administrador']
+                                            'message' => ['veiculo' => 'Ao atualizar por favor contate o administrador'],
+                                            'error' =>$e
                                         ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                                     }
 
@@ -1630,7 +1632,8 @@ class Gerar extends REST_Controller
                                     return $this->response(array(
                                         'status' => 'Error',
                                         'cdretorno' => '013',
-                                        'message' => ['veiculo' => 'Ao atualizar por favor contate o administrador']
+                                        'message' => ['veiculo' => 'Ao atualizar por favor contate o administrador'],
+                                        'error' =>$e
                                     ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                                 }
 
@@ -1680,7 +1683,8 @@ class Gerar extends REST_Controller
                     return $this->response(array(
                         'status' => 'Error',
                         'cdretorno' => '013',
-                        'message' => ['veiculo' => 'Ao atualizar por favor contate o administrador']
+                        'message' => ['veiculo' => 'Ao atualizar por favor contate o administrador'],
+                        'error' =>$e
                     ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                 }
 
