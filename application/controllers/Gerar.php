@@ -201,7 +201,7 @@ class Gerar extends REST_Controller
             /*
              * Tratando dados do condutor e inserindo no banco
              */
-            if (!$datas['indCondutorVeic']):
+            if (isset($datas['indCondutorVeic']) && !$datas['indCondutorVeic']):
                 $condutor = $this->valida_pessoas('condutor', 'Proposta', $datas);
                 $veiculo->condutor()->save($condutor);
 //                $datas['condutor']["condutCpfCnpj"] = $this->pessoadb($datas, 'Cotacao', 'condutor');
