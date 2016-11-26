@@ -393,7 +393,7 @@ class Gerar extends REST_Controller
         $ano = $veiculo['veicautozero'] == 1 ? 0 : $veiculo['veicano'];
         $valorfipe = $this->Model_fipeanovalor
             ->fields('valor')
-            ->where(array('codefipe' => $veiculo['veiccodfipe'], 'ano' => $ano))
+            ->where(array('codefipe' => $veiculo['veiccodfipe'], 'ano' => $veiculo['veicano']))
             ->with_fipe(['with' => ['relation' => 'contigencia']])->get();
         $contigencia = $valorfipe['fipe']['contigencia']['valor'];
 
@@ -417,7 +417,7 @@ class Gerar extends REST_Controller
                 'status' => 'Error',
                 'cdretorno' => '010',
                 'message' => array(
-                    'veiculo' => 'Fipe ou ano do modelo do veiculo invalido',
+                    'veiculo' => 'Fipe ou ano do modelo do veiculo invalido Ano: '.$veiculo['veicano'],
                 )
             ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
         else:
@@ -443,7 +443,7 @@ class Gerar extends REST_Controller
         endif;
 
         $tipoveiculo = $veiculo['veiccdveitipo'];
-        $idade = date('Y') - $veiculo['veicano'];
+        $idade = ($veiculo['veicano'] == 0 ? $veiculo['veicano'] : date('Y') - $veiculo['veicano']);
         $comissao = $datas['cotacao']['comissao'];
         $categoria = $this->Model_fipecategoria->get(['codefipe' => $veiculo['veiccodfipe'], 'idseguradora' => 2]);
         $i = 0;

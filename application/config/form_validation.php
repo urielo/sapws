@@ -15,7 +15,7 @@ $config = array(
     ),
     'veiculoCotacao' => array(
         array('field' => 'veiCodFipe', 'label' => 'Codigo fipe', 'rules' => 'trim|required|max_length[10]'),
-        array('field' => 'veiAno', 'label' => 'Ano do modelo do veículo', 'rules' => "trim|required|integer|min_length[4]|max_length[4]|less_than[{$anovei}]"),
+        array('field' => 'veiAno', 'label' => 'Ano do modelo do veículo', 'rules' => "trim|required|integer|min_length[1]|max_length[4]|less_than[{$anovei}]"),
         array('field' => 'veiAnoFab', 'label' => 'Ano de fabricação do veículo', 'rules' => "trim|integer|min_length[4]|max_length[4]|less_than[{$anovei}]"),
         array('field' => 'veiIndZero', 'label' => 'Indicação de veiculo 0KM', 'rules' => 'trim|required|integer|max_length[1]|less_than[2]'),
         array('field' => 'veiCdUtiliz', 'label' => 'Utilização do veículo', 'rules' => 'trim|integer|max_length[1]|greater_than[0]|less_than[3]'),
@@ -143,7 +143,7 @@ $config = array(
     ),
     'veiculoProposta' => array(
         array('field' => 'veiCodFipe', 'label' => 'Codigo fipe', 'rules' => 'trim|required|max_length[10]'),
-        array('field' => 'veiAno', 'label' => 'Ano do modelo do veiculo', 'rules' => "trim|required|integer|min_length[4]|max_length[4]|less_than[{$anovei}]"),
+        array('field' => 'veiAno', 'label' => 'Ano do modelo do veiculo', 'rules' => "trim|required|integer|min_length[1]|max_length[4]|less_than[{$anovei}]"),
         array('field' => 'veiAnoFab', 'label' => 'Ano de fabricação do veículo', 'rules' => "trim|integer|min_length[4]|max_length[4]|less_than[{$anovei}]"),
         array('field' => 'veiIndZero', 'label' => 'Indicação de veiculo 0KM', 'rules' => 'trim|required|integer|max_length[1]|less_than[2]'),
         array('field' => 'veiCdUtiliz', 'label' => 'Utilização do veículo', 'rules' => 'trim|required|integer|max_length[1]|greater_than[0]|less_than[3]'),

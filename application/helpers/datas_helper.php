@@ -262,7 +262,7 @@ function dataOrganizeCotacao($datas)
 
 
     $return['veiculo']['veiccodfipe'] = $datas['veiculo']["veiCodFipe"];
-    $return['veiculo']['veicano'] = $datas['veiculo']["veiAno"];
+    $return['veiculo']['veicano'] = $datas['veiculo']["veiAno"] == 0 ? 0 : $datas['veiculo']["veiAno"];
     $return['veiculo']['veicautozero'] = $datas['veiculo']["veiIndZero"] == 0 ? 0 : 1;
     $return['veiculo']['veiccdutilizaco'] = $datas['veiculo']["veiCdUtiliz"];
     $return['veiculo']['veiccdveitipo'] = $datas['veiculo']["veiCdTipo"];
