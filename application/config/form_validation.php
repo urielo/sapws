@@ -9,6 +9,7 @@ $config = array(
     'cotacao' => array(
         array('field' => 'idParceiro', 'label' => 'Codigo do Parceiro', 'rules' => 'trim|required|max_length[10]|integer'),
         array('field' => 'nmParceiro', 'label' => 'Nome do Parceiro', 'rules' => 'trim|required|max_length[50]'),
+        array('field' => 'renova', 'label' => 'Renova', 'rules' => 'trim|max_length[1]|integer|less_than[2]'),
         array('field' => 'indProprietVeic', 'label' => 'Indicação do proprietario do veículo', 'rules' => 'trim|max_length[1]|less_than[2]'),
         array('field' => 'indCondutorVeic', 'label' => 'Indicação do condutor do veículo', 'rules' => 'trim|max_length[1]|less_than[2]'),
         array('field' => 'comissao', 'label' => 'comissao', 'rules' => 'trim|required|integer|max_length[2]'),

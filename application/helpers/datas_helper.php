@@ -304,6 +304,8 @@ function dataOrganizeCotacao($datas)
 
     $return['cotacao']['comissao'] = $datas['comissao'] == null ? 0 : $datas['comissao'];
     $return['cotacao']['idparceiro'] = $datas['idParceiro'];
+    $return['cotacao']['renova'] = isset($datas['renova']) ? $datas['renova'] : 0;
+
 
 
     return $return;
@@ -520,6 +522,8 @@ function dataOrganize($datas)
 
     $return['cotacao']['comissao'] = $datas['comissao'] == null ? 0 : $datas['comissao'];
     $return['cotacao']['idparceiro'] = $datas['idParceiro'];
+    $return['cotacao']['renova'] = isset($datas['renova']) ? $datas['renova'] : 0;
+
 
 
     return $return;

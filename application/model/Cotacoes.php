@@ -20,6 +20,7 @@ class Cotacoes extends Model
         'dtcreate',
         'dtupdate',
         'usuario_id',
+        'renova',
     ];
     public $timestamps = FALSE;
     

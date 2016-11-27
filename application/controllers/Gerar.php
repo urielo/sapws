@@ -445,6 +445,7 @@ class Gerar extends REST_Controller
         $tipoveiculo = $veiculo['veiccdveitipo'];
         $idade = ($veiculo['veicano'] == 0 ? $veiculo['veicano'] : date('Y') - $veiculo['veicano']);
         $comissao = $datas['cotacao']['comissao'];
+        $renova = $datas['cotacao']['renova'];
         $categoria = $this->Model_fipecategoria->get(['codefipe' => $veiculo['veiccodfipe'], 'idseguradora' => 2]);
         $i = 0;
 
@@ -505,6 +506,14 @@ class Gerar extends REST_Controller
 
                 foreach ($precos as $preco):
 
+                    /*aplicando desconto*/
+                    if($produtodb['tipoproduto'] == 'master' && $renova == 1 ){
+
+                        $desconto = Descontos::where('tipo','renova')->first()->valor;
+                    } else {
+                        $desconto = 0;
+                    }
+
                     if ($valorfipe >= $preco['vlrfipeminimo'] && $valorfipe <= $preco['vlrfipemaximo'] && $preco['idcategoria'] == ($preco['idcategoria'] == $categoria['idcategoria'] ? $categoria['idcategoria'] && $preco['lmiproduto'] == $prolmi : null) && $idade <= max($maxidade) && $preco['idtipoveiculo'] == $tipoveiculo):
 
                         if ($idproduto == 1) {
@@ -512,8 +521,10 @@ class Gerar extends REST_Controller
                             $preco['premioliquidoproduto'] = $preco['premioliquidoproduto'] + $contigencia;
 
                         }
+
+
                         $produtos['cotacaoproduto'][$i]['premioliquidoproduto'] = $preco['premioliquidoproduto'];
-                        $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao);
+                        $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao) - $desconto;
 
                         $produtos['produto'][$i] = $produtodb;
                         $produtos['produto'][$i]['indexigenciavistoria'] = $produtodb['ind_exige_vistoria'];
@@ -538,7 +549,7 @@ class Gerar extends REST_Controller
 
                     elseif ($preco['idtipoveiculo'] == $tipoveiculo && $preco['vlrfipeminimo'] == null && $preco['vlrfipemaximo'] == null && $idade <= $preco['idadeaceitamax']):
                         $produtos['cotacaoproduto'][$i]['premioliquidoproduto'] = $preco['premioliquidoproduto'];
-                        $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao);
+                        $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao) - $desconto;
                         $produtos['produto'][$i] = $produtodb;
                         $produtos['produto'][$i]['caractproduto'] = $preco['caractproduto'];
                         $produtos['produto'][$i]['nomeproduto'] = $preco['nomeproduto'];
