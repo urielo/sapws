@@ -493,7 +493,7 @@
                                 <td class="pdf-table-td-content">
                                     <?php if ($proposta['forma_pagamento']['idformapgto'] == 1): ?>
                                         <?= $proposta['quantparc'] ?>X de
-                                        R$ <?= real($proposta['primeiraparc']) ?> <?= ($proposta['quantparc'] > $proposta['forma_pagamento']['numparcsemjuros'] ? "com {$proposta['forma_pagamento']['taxamesjuros']}%  de juros " : '') ?>
+                                        R$ <?= real($proposta['primeiraparc']) ?> <?= ($proposta['quantparc'] > $proposta['forma_pagamento']['numparcsemjuros'] ? "com {$proposta['forma_pagamento']['taxamesjuros']}%  de juros " : 'sem juros') ?>
                                         no <?= $proposta['forma_pagamento']['descformapgto'] ?>
                                     <?php else: ?>
 
@@ -508,7 +508,7 @@
                                                 1ª de R$ <?= real($proposta['primeiraparc']) ?> e mais <?= $proposta['quantparc'] ?> de R$ <?= real($proposta['demaisparc']) ?>
                                             <?php endif; ?>
 
-                                            <?= ($proposta['quantparc'] > $proposta['forma_pagamento']['numparcsemjuros'] ? "com {$proposta['forma_pagamento']['taxamesjuros']}%  de juros " : '') ?>
+                                            <?= ($proposta['quantparc'] > $proposta['forma_pagamento']['numparcsemjuros'] ? "com {$proposta['forma_pagamento']['taxamesjuros']}%  de juros " : 'sem juros') ?>
                                             no <?= $proposta['forma_pagamento']['descformapgto'] ?>
                                         <?php endif; ?>
 
