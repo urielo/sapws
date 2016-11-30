@@ -7,6 +7,8 @@ class Gerar extends REST_Controller
 {
     protected $_insert_id = '';
 
+    protected $proprietario ;
+
     function __construct()
     {
         parent::__construct();
@@ -194,7 +196,7 @@ class Gerar extends REST_Controller
             if (isset($datas['indProprietVeic'])  && !$datas['indProprietVeic']):
 
                 $proprietario = $this->valida_pessoas('proprietario', 'Proposta', $datas);
-                $veiculo->proprietario()->save($proprietario);
+                $veiculo->update(['proprcpfcnpj' => $this->proprietario]);
 //                $datas['proprietario']['proprCpfCnpj'] = $this->pessoadb($datas, 'Cotacao', 'proprietario');
             endif;
 
@@ -217,12 +219,13 @@ class Gerar extends REST_Controller
              */
 
             $result = $this->propostadb($datas);
-
+            $veiculo->update(['idstatus'=>10]);
 
             $this->response(array(
                 'status' => '000 - sucesso',
                 'cdretorno' => '000',
-                'retorno' => $result,));
+                'retorno' => $result,
+                'prop'=>$this->proprietario));
 
 
         endif;
@@ -1431,7 +1434,9 @@ class Gerar extends REST_Controller
             case 'proprietario':
 
                 try {
-                    $pessoa = Proprietario::firstOrCreate(['proprcpfcnpj' => $datas['proprcpfcnpj']]);
+                    $pessoa = Proprietario::firstOrCreate($datas);
+
+                    $this->proprietario =  $pessoa->id ;
 
                 } catch (Illuminate\Database\QueryException $e) {
                     return $this->response(array(
@@ -1547,7 +1552,7 @@ class Gerar extends REST_Controller
 
                 }
             }
-            $veiculo['idstatus'] = 10;
+          
 
             if (count($veiculos)) {
                 $veiculo['dtupdate'] = date('Y-m-d H:i:s');

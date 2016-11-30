@@ -62,7 +62,7 @@ class Veiculos extends Model
 
     public function proprietario()
     {
-        return $this->hasOne(Proprietario::class, 'proprcpfcnpj','propcpfcnpj');
+        return $this->belongsTo(Proprietario::class, 'proprcpfcnpj','id');
     }
     public function condutor()
     {
