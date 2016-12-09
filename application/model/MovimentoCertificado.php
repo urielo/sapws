@@ -9,13 +9,13 @@ class MovimentoCertificado extends Model
     protected $table = 'movimento_certificado';
     protected $primaryKey = 'id';
     protected $fillable = [
-        
-        'certificado_id',
-        'dt_carga',
-        'dt_retorno',
-        'cd_retorno',
-        'texto_retrono',
-        'status_id',
+
+        "datas_enviadas",
+        "datas_recebidas",
+        "dt_envio",
+        "dt_retorno",
+        "tipo_envio",
+        "status_id",
 
     ];
 

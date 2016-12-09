@@ -149,3 +149,4 @@ function calcParcelaJuros($valor_total, $parcelas, $juros = 0)
         return $string;
     }
 }
+

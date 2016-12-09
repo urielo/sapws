@@ -26,11 +26,13 @@ class Certificados extends Model
 
     public function proposta()
     {
-        return $this->belongsTo(Propostas::class,'idproposta','idproposta');
+        return $this->belongsTo(Propostas::class, 'idproposta', 'idproposta');
     }
 
-    public function movimento()
+    public function custo_mensal()
     {
-        return $this->hasOne(MovimentoCertificado::class,'certificado_id','id');
+        return $this->hasMany(CustoCertificado::class,'certificado_id','id');
     }
+
+   
 }
