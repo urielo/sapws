@@ -37,18 +37,18 @@ class Certificado extends REST_Controller
             $coberturas = [];
             $dados = [
                 "tipo_arquivo" => 2,
-                "numero_certificado" => $certificado->id,
+                "numero_certificado" =>str_pad($certificado->id, 20, 0, STR_PAD_LEFT) ,
                 "ano" => $certificado->proposta->cotacao->veiculo->veicano,
                 "combustivel" => $certificado->proposta->cotacao->veiculo->combustivel->sigla,
-                "numero_capitalizacao" => 0,
-                "numero_serie_sorteio" => 0,
+                "numero_capitalizacao" => NULL,
+                "numero_serie_sorteio" => NULL,
                 "chassi" => $certificado->proposta->cotacao->veiculo->veicchassi,
-                "renavam" => $certificado->proposta->cotacao->veiculo->veicrenav,
+                "renavam" => $certificado->proposta->cotacao->veiculo->veicrenavam,
                 "placa" => $certificado->proposta->cotacao->veiculo->veicplaca,
                 "marca" => $certificado->proposta->cotacao->veiculo->fipe->marca,
                 "modelo" => $certificado->proposta->cotacao->veiculo->fipe->modelo,
                 "cod_fipe" => $certificado->proposta->cotacao->veiculo->fipe->codefipe,
-                "cor" => $certificado->proposta->cotacao->veiculo->veiccor,
+                "cor" => $certificado->proposta->cotacao->veiculo->veicor,
                 "valor" => $certificado->proposta->cotacao->veiculo->fipe
                     ->anovalor()
                     ->where('ano', $certificado->proposta->cotacao->veiculo->veicano)
@@ -59,7 +59,7 @@ class Certificado extends REST_Controller
                 "nome" => $certificado->proposta->cotacao->segurado->clinomerazao,
                 "cpf_cnpj" => $certificado->proposta->cotacao->segurado->clicpfcnpj,
                 "cep" => $certificado->proposta->cotacao->segurado->clicep,
-                "endereco" => $certificado->proposta->cotacao->segurado->cliendnm,
+                "endereco" => $certificado->proposta->cotacao->segurado->clinmend,
                 "numero" => $certificado->proposta->cotacao->segurado->clinumero,
                 "complemento" => $certificado->proposta->cotacao->segurado->cliendcomplet,
                 "bairro" => $certificado->proposta->cotacao->segurado->bairro,
@@ -129,143 +129,38 @@ class Certificado extends REST_Controller
 
             $certificados_enviados = json_decode($movimento->datas_enviadas);
 
-            $retorno = [];
-            foreach ($certificados_enviados as $certificado) {
-//                $retorno[] = str_pad($certificado->numero_certificado, 20, 0, STR_PAD_LEFT);
+            $aceitos = [];
+            $nao_aceitos=[];
+            $nao_retorno=[];
 
-                if (in_array(str_pad($certificado->numero_certificado, 20, 0, STR_PAD_LEFT), array_column($datas['retorno'], 'numero_certificado'))) {
-                    $retorno[] = $certificado->numero_certificado;
+            foreach ($datas['retorno'] as $key => $data_retorno){
+                if($data_retorno['status'] == 1){
+                    $nao_aceitos[] = (int) $data_retorno['numero_certificado'];
+                }
+            }
+
+            foreach ($certificados_enviados as $certificado) {
+
+                if (in_array(str_pad((int) $certificado->numero_certificado, 20, 0, STR_PAD_LEFT), array_column($datas['retorno'], 'numero_certificado'))) {
+                    $aceitos[] = (int) $certificado->numero_certificado;
+                } else {
+                    $nao_retorno[] = $certificado->numero_certificado;
                 }
 
             }
-
-//            foreach ($datas['retorno'] as $ret) {
-//                $retorno[] = $ret['numero_certificado'];
-//            }
 
 
             $this->response([
                 'status' => '000 - sucesso',
                 'cdretorno' => '000',
-                'retorno' => 'Operação realizada com sucesso',
-                'dados' => $retorno]);
+                'retorno' => (count($nao_retorno) >= 1 ? 'Operação realizada com sucesso! Porém alguns dos certificados enviados não teve retorno, checar o parâmentro retnornado "nao_reternou" ' : 'Operação realizada com sucesso'),
+                'nao_retornou' => $nao_retorno]);
         }
 
 
     }
 
-    function pdf_post()
-    {
 
-        error_reporting(E_ERROR);
-        $this->load->library('m_pdf');
-
-
-        $datas = $this->post();
-
-//        $this->response(array(
-//            'status' => '009 - Atenção',
-//            'cdretorno' => '009',
-//            'message' => 'Estamos em manutenção por favor tente novamente mais tarde!!!'
-//        ));
-
-        $this->load->library('form_validation');
-        $this->form_validation->set_data($datas);
-
-        if ($this->form_validation->run('pdf') == false):
-            $this->response(array(
-                'status' => 'Error',
-                'cdretorno' => '023',
-                'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
-        else:
-
-            if (!$this->Model_key->get(['user_id' => $datas['idParceiro'], 'key' => $_SERVER['HTTP_X_API_KEY']])) {
-                $this->response(array(
-                    'status' => 'Acesso negado',
-                    'cdretorno' => '098',
-                    'message' => 'API KEY invalido para o parceiro, nome: ' . $datas['nmParceiro'] . ' id: ' . $datas['idParceiro']), REST_Controller::HTTP_FORBIDDEN);
-            }
-
-            $proposta['proposta'] = $this->Model_proposta->with_cotacao([
-                'with' => [
-                    ['relation' => 'segurado',
-                        'with' => [
-                            ['relation' => 'uf'],
-                            ['relation' => 'rg_uf'],
-                            ['relation' => 'profissao'],
-                            ['relation' => 'ramoatividade'],
-                            ['relation' => 'estadocivl'],
-                        ]
-                    ],
-                    ['relation' => 'parceiro'],
-                    ['relation' => 'veiculo',
-                        'with' => [
-                            ['relation' => 'fipe',
-                                'with' => [
-                                    ['relation' => 'valores'],
-                                    ['relation' => 'contigencia'],
-                                ]
-                            ],
-                            ['relation' => 'combustivel'],
-                            ['relation' => 'utilizacao'],
-                            ['relation' => 'proprietario'],
-                        ]
-
-                    ],
-                    ['relation' => 'produtos',
-                        'with' =>
-                            ['relation' => 'produto',
-                                'with' => [
-                                    ['relation' => 'precos'],
-                                    ['relation' => 'seguradoras',
-                                        'with' => ['relation' => 'seguradora']
-                                    ],
-                                ]
-                            ],
-                    ],
-                    ['relation' => 'corretor'],
-                ]
-
-            ])->with_forma_pagamento()->get($datas['idProposta']);
-
-            $html = $this->load->view('pdf/proposta_view', $proposta, true);
-            error_reporting(E_ERROR);
-
-
-            $this->m_pdf->pdf->SetHTMLHeader($this->load->view('pdf/header_view', $proposta, true));
-            $this->m_pdf->pdf->SetHTMLFooter($this->load->view('pdf/footer_view', $proposta, true));
-            $this->m_pdf->pdf->AddPage('', // L - landscape, P - portrait
-                '', '', '', '', 10, // margin_left
-                10, // margin right
-                25, // margin top
-                15, // margin bottom
-                5, // margin header
-                6); // margin footer
-            $this->m_pdf->pdf->SetProtection(['copy', 'print'], '', '@SAPpdf#2770');
-            $this->m_pdf->pdf->WriteHTML($html);
-//            $this->m_pdf->pdf->Output('pdfteste.pdf','S');
-
-            $b64encode = chunk_split(base64_encode($this->m_pdf->pdf->Output('pdfteste.pdf', 'S')));
-//            $html = gerarpdfb64(gerarhtml($proposta, $cotacao, $segurado, $veiculo, $corretor, $parcela, $produto, $parceiro, $proprietario));
-//
-////            header("Content-type: application/pdf");
-////            echo base64_decode($html);
-
-
-            $this->response(array(
-                'status' => '000 - sucesso',
-                'cdretorno' => '000',
-                'idproposta' => $proposta['proposta']['idproposta'],
-//                'idparceiro' => $parceiro['idparceiro'],
-                'base64' => $b64encode,
-            ));
-
-//            $this->response(array(
-//                $veiculo, $combustivel, $utilizacao  
-//            ));
-
-        endif;
-    }
 
 
 }
