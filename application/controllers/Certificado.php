@@ -74,7 +74,7 @@ class Certificado extends REST_Controller
             ];
             foreach ($certificado->custos as $custo) {
                 $cobert = $custo->seguradora_produto()->where('idseguradora', 3)->first();
-                $coberturas[] = [
+                $dados['coberturas'][] = [
                     'CodigoCobertura' => $cobert->id_produto_seguradora,
                     'Premio' => $custo->custo_mensal,
                 ];
@@ -91,7 +91,7 @@ class Certificado extends REST_Controller
             ];
 
 
-            $retorno[] = array_merge($dados, $coberturas,$assitencias);
+            $retorno[] = array_merge($dados, $assitencias);
         }
 
         $movimento = MovimentoCertificado::create([
@@ -101,13 +101,13 @@ class Certificado extends REST_Controller
             'tipo_envio' => 'emitidos'
         ]);
 
-        $retorno['id_requisicoa'] = $movimento->id;
+        $retorno['id_lote'] = $movimento->id;
 
-        $this->response(array(
+        $this->response([
             'status' => '000 - sucesso',
             'cdretorno' => '000',
             'retorno' => $retorno,
-        ));
+        ]);
 
     }
 
@@ -118,7 +118,7 @@ class Certificado extends REST_Controller
         $datas = $this->post();
 
 
-        $movimento = MovimentoCertificado::find($datas['id_requisicoa']);
+        $movimento = MovimentoCertificado::find($datas['id_lote']);
 
         if (!$movimento) {
             return $this->response([
