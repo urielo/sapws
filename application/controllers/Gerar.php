@@ -193,12 +193,13 @@ class Gerar extends REST_Controller
              */
 
 
-            if (isset($datas['indProprietVeic'])  && !$datas['indProprietVeic']):
-
-                $proprietario = $this->valida_pessoas('proprietario', 'Proposta', $datas);
-                $veiculo->update(['proprcpfcnpj' => $this->proprietario]);
-//                $datas['proprietario']['proprCpfCnpj'] = $this->pessoadb($datas, 'Cotacao', 'proprietario');
-            endif;
+//            if (isset($datas['indProprietVeic'])  && !$datas['indProprietVeic']):
+//
+//
+//                $proprietario = $this->valida_pessoas('proprietario', 'Proposta', $datas);
+//                $veiculo->update(['proprcpfcnpj' => $this->proprietario]);
+////                $datas['proprietario']['proprCpfCnpj'] = $this->pessoadb($datas, 'Cotacao', 'proprietario');
+//            endif;
 
             /*
              * Tratando dados do condutor e inserindo no banco

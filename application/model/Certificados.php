@@ -34,5 +34,9 @@ class Certificados extends Model
         return $this->hasMany(CustoCertificado::class,'certificado_id','id');
     }
 
+    public function motivo(){
+        return $this->belongsTo(MotivosCancelamentoCertificado::class,'id_motivo' ,'id');
+    }
+
    
 }
