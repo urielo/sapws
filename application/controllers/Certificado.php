@@ -32,7 +32,7 @@ class Certificado extends REST_Controller
     {
 
 
-        Certificados::whereIn('status_id', [26, 27, 32, 29])->update(['status_id' => 1]);
+        Certificados::whereIn('status_id', [30, 31, 32, 33])->update(['status_id' => 1]);
 
         try {
 
@@ -108,7 +108,7 @@ class Certificado extends REST_Controller
                     'status_id' => 26,
                     'tipo_envio' => 'emitidos'
                 ]);
-                Certificados::where('status_id', 1)->update(['status_id' => 26]);
+                Certificados::where('status_id', 1)->update(['status_id' => 30]);
 
 
                 $retorno = array_merge([
@@ -144,7 +144,7 @@ class Certificado extends REST_Controller
     function emitidosRetorno_post()
     {
 
-        Certificados::whereIn('status_id', [27, 32, 29])->update(['status_id' => 26]);
+        Certificados::whereIn('status_id', [31, 32, 33])->update(['status_id' => 30]);
 
         $datas = $this->post();
 
@@ -185,9 +185,9 @@ class Certificado extends REST_Controller
 
             }
 
-            Certificados::whereIn('id', $aceitos)->update(['status_id'=> 27]);
-            Certificados::whereIn('id', $nao_retorno)->update(['status_id'=> 32]);
-            Certificados::whereIn('id', $nao_aceitos)->update(['status_id'=> 29]);
+            Certificados::whereIn('id', $aceitos)->update(['status_id'=> 31]);
+            Certificados::whereIn('id', $nao_aceitos)->update(['status_id'=> 32]);
+            Certificados::whereIn('id', $nao_retorno)->update(['status_id'=> 33]);
 
 
             $this->response([
@@ -203,11 +203,11 @@ class Certificado extends REST_Controller
     public function cancelados_get()
     {
 
-        Certificados::whereIn('status_id', [31, 33, 34,30])->update(['status_id' => 29]);
+        Certificados::whereIn('status_id', [41, 42, 43,44])->update(['status_id' => 40]);
 
         try {
 
-            $certificados = Certificados::where('status_id', 29)->get();
+            $certificados = Certificados::where('status_id', 40)->get();
             $retorno = [];
 
             if (!$certificados->isEmpty()) {
@@ -265,7 +265,7 @@ class Certificado extends REST_Controller
 
     public function canceladosRetorno_post()
     {
-        Certificados::whereIn('status_id', [31, 33, 34])->update(['status_id' => 30]);
+        Certificados::whereIn('status_id', [42, 43,44])->update(['status_id' => 41]);
 
         $datas = $this->post();
 
@@ -305,9 +305,9 @@ class Certificado extends REST_Controller
 
             }
 
-            Certificados::whereIn('id', $aceitos)->update(['status_id'=> 31]);
-            Certificados::whereIn('id', $nao_retorno)->update(['status_id'=> 33]);
-            Certificados::whereIn('id', $nao_aceitos)->update(['status_id'=> 34]);
+            Certificados::whereIn('id', $aceitos)->update(['status_id'=> 42]);
+            Certificados::whereIn('id', $nao_aceitos)->update(['status_id'=> 43]);
+            Certificados::whereIn('id', $nao_retorno)->update(['status_id'=> 44]);
 
 
             $this->response([
