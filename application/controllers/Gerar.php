@@ -56,10 +56,14 @@ class Gerar extends REST_Controller
 
             $produto = $this->getProdutoParcPremio($datas, 'cotacao');
 
-//            $this->response(dataOrganize($datas));
+
             /*
              * Tratando dados do segurado e inserindo no banco
              */
+
+
+
+
 
             if (isset($datas['segurado']) && strlen($datas['segurado']['segCpfCnpj']) > 0):
 
@@ -73,34 +77,8 @@ class Gerar extends REST_Controller
             endif;
 
 
-            /*
-             * Tratando dados do proprietario e inserindo no banco.
-             */
-
-//            if (!$datas['indProprietVeic']):
-//
-//                $proprietario = $this->valida_pessoas('proprietario', 'Cotacao', $datas);
-//                $datas['proprietario']['proprCpfCnpj'] = $proprietario->id;
-////                $datas['proprietario']['proprCpfCnpj'] = $this->pessoadb($datas, 'Cotacao', 'proprietario');
-//            endif;
-//
-//            /*
-//             * Tratando dados do condutor e inserindo no banco
-//             */
-//
-//            if (!$datas['indCondutorVeic']):
-//
-//                $condutor = $this->valida_pessoas('condutor', 'Cotacao', $datas);
-//                $datas['condutor']["condutCpfCnpj"] = $condutor->id;
-////                $datas['condutor']["condutCpfCnpj"] = $this->pessoadb($datas, 'Cotacao', 'condutor');
-//            endif;
-
-            /*
-             * Tratando dados do veiculo e inserindo no banco
-             */
-
             $veiculo = $this->veiculo($datas, 'Cotacao');
-//            $veicid = $this->veiculodb($datas, 'Cotacao');
+
 
 
             /*
@@ -144,6 +122,8 @@ class Gerar extends REST_Controller
                 'cdretorno' => '023',
                 'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         else:
+
+
             if (!$this->Model_key->get(['user_id' => $datas['idParceiro'], 'key' => $_SERVER['HTTP_X_API_KEY']])) {
                 $this->response(array(
                     'status' => 'Acesso negado',
@@ -469,12 +449,12 @@ class Gerar extends REST_Controller
                     'message' => "O Produto {$idproduto} - {$produtodb['nomeproduto']}  é inválido",
                 ), REST_Controller::HTTP_BAD_REQUEST);
 
-            elseif ($produtodb['idtipoveiculo'] != $veiculo['veiccdveitipo']):
-                return $this->response(array(
-                    'status' => 'Error',
-                    'cdretorno' => '009',
-                    'message' => "O Tipo de veículo {$veiculo['veiccdveitipo']} é inválido para o produto {$idproduto} - {$produtodb['nomeproduto']}",
-                ), REST_Controller::HTTP_BAD_REQUEST);
+//            elseif ($produtodb['idtipoveiculo'] != $veiculo['veiccdveitipo']):
+//                return $this->response(array(
+//                    'status' => 'Error',
+//                    'cdretorno' => '009',
+//                    'message' => "O Tipo de veículo {$veiculo['veiccdveitipo']} é inválido para o produto {$idproduto} - {$produtodb['nomeproduto']}",
+//                ), REST_Controller::HTTP_BAD_REQUEST);
 
 
             elseif ($produtodb['codstatus'] == 2):
@@ -578,7 +558,7 @@ class Gerar extends REST_Controller
 
             $i++;
         endforeach;
-//        return $produtos;
+
 
         if (!isset($produtos['premio']) || $produtos['premio'] == 0):
             return $this->response(array(
@@ -695,13 +675,13 @@ class Gerar extends REST_Controller
 
         $idcorretor = $this->valida_pessoas('corretor', '', $datas);
 
-//        $idcorretor = $this->corretordb($datas, 'corretor');
 
         $datas = dataOrganizeCotacao($datas);
 
         /*
          * Tratando dados do corretor e inserindo no banco
          */
+
         $datas['cotacao']['idcorretor'] = $idcorretor->idcorretor;
 
 
