@@ -48,7 +48,10 @@ class Propostas extends Model
     }
     public function cobranca()
     {
-        return $this->hasOne(Cobranca::class, 'idproposta', 'idproposta');
+        return $this->hasOne(Cobranca::class, 'idproposta', 'idproposta')->with(['segurado.estadocivil','veiculo'=>function($q){
+            $q->with('combustivel');
+            $q->with('fipe');
+        }]);
     }
     
     public function apoliceseguradora()

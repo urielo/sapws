@@ -52,6 +52,11 @@ class ApolicesSeguradora extends Model
     {
         return $this->hasOne(ConfigSeguradora::class,'id_config_seguradora','id');
     }
+
+    public function cancelamento()
+    {
+        return $this->hasOne(Cancelamento::class,'cancelado_id','id');
+    }
     
    
 

@@ -38,5 +38,10 @@ class Certificados extends Model
         return $this->belongsTo(MotivosCancelamentoCertificado::class,'id_motivo' ,'id');
     }
 
+    public function apolice()
+    {
+        return $this->hasOne(ApolicesSeguradora::class,'id_apolice_seguradora','id');
+    }
+
    
 }

@@ -36,7 +36,7 @@ class Certificado extends REST_Controller
 
         try {
 
-            $certificados = Certificados::where('status_id', 1)->get();
+            $certificados = Certificados::with('proposta.cotacao','custos')->where('status_id', 1)->get();
             $retorno = [];
             $assitencia = [];
 
@@ -207,7 +207,7 @@ class Certificado extends REST_Controller
 
         try {
 
-            $certificados = Certificados::where('status_id', 40)->get();
+            $certificados = Certificados::with('apolice.cancelamento.motivo')->where('status_id', 40)->get();
             $retorno = [];
 
             if (!$certificados->isEmpty()) {
@@ -217,9 +217,9 @@ class Certificado extends REST_Controller
                         "tipo_arquivo" => 4,
                         "numero_certificado" => str_pad($certificado->id, 20, 0, STR_PAD_LEFT),
                         "cpf_cnpj" => $certificado->proposta->cotacao->segurado->clicpfcnpj,
-                        "data_cancelamento" => date('Y-m-d', strtotime($certificado->dt_cancelamento)),
-                        "tipo_cancelamento" => $certificado->motivo->tipo,
-                        "motivo_cancelamento" => $certificado->motivo->cod_motivo,
+                        "data_cancelamento" => date('Y-m-d', strtotime($certificado->apolice->cancelamento->created_at)),
+                        "tipo_cancelamento" => $certificado->apolice->cancelamento->motivo->tipo,
+                        "motivo_cancelamento" => $certificado->apolice->cancelamento->motivo->cod_motivo,
                     ];
                 }
 
