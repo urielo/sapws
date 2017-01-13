@@ -12,6 +12,7 @@ class Model_parceiro extends MY_Model
         $this->table = 'parceiro';
         $this->primary_key = 'idparceiro';
         $this->return_as = 'array';
+        $this->has_one['key'] = ['Model_key','user_id','idparceiro'];
         parent::__construct();
     }
 }

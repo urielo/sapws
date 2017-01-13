@@ -83,7 +83,7 @@ $autoload['drivers'] = array();
   |
   |	$autoload['helper'] = array('url', 'file');
  */
-$autoload['helper'] = array('url');
+$autoload['helper'] = array('url','my_ajust', 'datas');
 
 /*
   | -------------------------------------------------------------------
@@ -154,4 +154,7 @@ $autoload['model'] = array(
     'Model_contingencia',
     'Model_produto_seguradora',
     'Model_combos',
+    'Model_key',
+    'Model_certificado',
+    'Model_custos_produto',
     );

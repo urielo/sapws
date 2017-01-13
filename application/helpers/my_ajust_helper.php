@@ -1,6 +1,7 @@
 <?php
 
-function verifca_fields($datas, $corretor) {
+function verifca_fields($datas, $corretor)
+{
     if ($corretor):
         if (!$datas['indPropVeic'] && !$datas['indCondutorVeic']):
             $verifyFields = 'cotacaoConPro';
@@ -25,14 +26,15 @@ function verifca_fields($datas, $corretor) {
     return $verifyFields;
 }
 
-function correctDatas($datas) {
+function correctDatas($datas)
+{
     $datasReady = $datas;
     if (count($datas) < 3):
 
         $datas = json_decode(key($datas));
         foreach ($datas as $k => $v):
             if (is_object($v)):
-                $v = (array) $v;
+                $v = (array)$v;
                 foreach ($v as $ko => $vo):
                     $datasReady[$k][$ko] = $vo;
                 endforeach;
@@ -44,3 +46,107 @@ function correctDatas($datas) {
 
     return $datasReady;
 }
+
+function format($tipo, $string)
+{
+    if (empty($string) || strlen($string) < 1):
+        return $string;
+    else:
+        switch ($tipo):
+            case 'cpfcnpj':
+                if (strlen($string) > 11):
+                    $mask = "%s%s.%s%s%s.%s%s%s/%s%s%s%s-%s%s";
+                #91.805.050/0001-50
+                #85.031.334/0001-85
+                else:
+                    $mask = "%s%s%s.%s%s%s.%s%s%s-%s%s";
+                endif;
+                break;
+            case 'fone':
+                if (strlen($string) <= 8):
+                    $mask = "%s%s%s%s-%s%s%s%s";
+                else:
+                    $mask = "%s%s%s%s%s-%s%s%s%s";
+                endif;
+                break;
+            case 'cep':
+                $mask = "%s%s%s%s%s-%s%s%s";
+                break;
+            case 'placa':
+                $string = strtoupper($string);
+                $mask = "%s%s%s-%s%s%s%s";
+                break;
+        endswitch;
+
+        return vsprintf($mask, str_split($string));
+    endif;
+}
+
+function nomeCase($string, $delimiters = array(" ", "-", ".", "'", "O'", "Mc"), $exceptions = array("de", "da", "dos", "das", "do", "I", "II", "III", "IV", "V", "VI"))
+{
+    /*
+     * Exceptions in lower case are words you don't want converted
+     * Exceptions all in upper case are any words you don't want converted to title case
+     *   but should be converted to upper case, e.g.:
+     *   king henry viii or king henry Viii should be King Henry VIII
+     */
+    $string = mb_convert_case($string, MB_CASE_TITLE, "UTF-8");
+    foreach ($delimiters as $dlnr => $delimiter) {
+        $words = explode($delimiter, $string);
+        $newwords = array();
+        foreach ($words as $wordnr => $word) {
+            if (in_array(mb_strtoupper($word, "UTF-8"), $exceptions)) {
+                // check exceptions list for any words that should be in upper case
+                $word = mb_strtoupper($word, "UTF-8");
+            } elseif (in_array(mb_strtolower($word, "UTF-8"), $exceptions)) {
+                // check exceptions list for any words that should be in upper case
+                $word = mb_strtolower($word, "UTF-8");
+            } elseif (!in_array($word, $exceptions)) {
+                // convert to uppercase (non-utf8 only)
+                $word = ucfirst($word);
+            }
+            array_push($newwords, $word);
+        }
+        $string = join($delimiter, $newwords);
+    }//foreach
+    return $string;
+}
+
+function jurosSimples($valor, $taxa, $parcelas)
+{
+    $taxa = $taxa / 100;
+
+    $m = $valor * (1 + $taxa * $parcelas);
+    $valParcela = number_format($m / $parcelas, 2, ",", ".");
+
+    return $valParcela;
+}
+
+function jurosComposto($valor, $taxa, $parcelas)
+{
+    $taxa = $taxa / 100;
+    $potencia = $valor * $taxa * pow(($taxa + 1), $parcelas) / (pow(($taxa + 1), $parcelas) - 1);
+    $valParcela = number_format($potencia, 2, ".", ",");
+
+    return $valParcela;
+}
+
+function calcParcelaJuros($valor_total, $parcelas, $juros = 0)
+{
+    if ($juros == 0) {
+        $string = 'PARCELA - VALOR <br />';
+        for ($i = 1; $i < ($parcelas + 1); $i++) {
+            $string .= $i . 'x (Sem Juros) - R$ ' . number_format($valor_total / $parcelas, 2, ",", ".") . ' <br />';
+        }
+        return $string;
+    } else {
+        $string = 'PARCELA - VALOR <br />';
+        for ($i = 1; $i < ($parcelas + 1); $i++) {
+            $I = $juros / 100.00;
+            $valor_parcela = $valor_total * $I * pow((1 + $I), $parcelas) / (pow((1 + $I), $parcelas) - 1);
+            $string .= $i . 'x (Juros de: ' . $juros . '%) - R$ ' . number_format($valor_parcela, 2, ",", ".") . ' <br />';
+        }
+        return $string;
+    }
+}
+

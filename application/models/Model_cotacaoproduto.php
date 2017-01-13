@@ -29,12 +29,14 @@ class Model_cotacaoproduto extends MY_Model
             'idproduto',
             'idprecoproduto',
             'idcotacao',
+            'premioliquidoproduto',
         );
 
         $modelDataDB = array(
             'idproduto' => 'idproduto',
             'idprecoproduto' => 'idprecoproduto',
             'idcotacao' => 'idcotacao',
+            'premioliquidoproduto' => 'premioliquidoproduto',
         );
 
 

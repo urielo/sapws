@@ -16,6 +16,7 @@ class Model_proposta extends MY_Model
         #$this->before_create = array('prep_data');
         $this->timestamps = FALSE;
         $this->has_one['cotacao'] = ['Model_cotacao', 'idcotacao','idcotacao'];
+        $this->has_one['forma_pagamento'] = ['Model_parcela', 'idformapgto','idformapg'];
 
         parent::__construct();
     }
