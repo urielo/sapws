@@ -142,7 +142,7 @@ class Certificado extends REST_Controller
 
     }
 
-    function emitidosRetorno_post()
+    function emitidasRetorno_post()
     {
 
 
