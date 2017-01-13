@@ -490,15 +490,6 @@ class Gerar extends REST_Controller
 
                 foreach ($precos as $preco):
 
-<<<<<<< HEAD
-                    if ($valorfipe >= $preco['vlrfipeminimo'] && $valorfipe <= $preco['vlrfipemaximo'] && $preco['idcategoria'] == ($preco['idcategoria'] == $categoria['idcategoria'] ? $categoria['idcategoria'] : null) && $idade <= max($maxidade) && $preco['idtipoveiculo'] == $tipoveiculo):
-
-                        if ($fipe['idstatus'] == 23 && $idproduto == 1) {
-                            $vlcontig = $this->Model_contingencia->where('idseguradora', $produtodb['idseguradora'])->get();
-                            if ($vlcontig) {
-                                $preco['premioliquidoproduto'] = $preco['premioliquidoproduto'] + $vlcontig['valor'];
-                            }
-=======
                     /*aplicando desconto*/
                     if($produtodb['tipoproduto'] == 'master' && $renova == 1 ){
                         $preco['premioliquidoproduto'] = $preco['premioliquidoproduto'] - Descontos::where('tipo','renova')->first()->valor;
@@ -510,7 +501,6 @@ class Gerar extends REST_Controller
 
                             $preco['premioliquidoproduto'] = $preco['premioliquidoproduto'] + $contigencia;
 
->>>>>>> eloqeunt
                         }
                         $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao);
 
