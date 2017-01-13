@@ -32,13 +32,14 @@ class Certificado extends REST_Controller
     {
 
 
-        Certificados::whereIn('status_id', [30, 31, 32, 33])->update(['status_id' => 1]);
-
         try {
+
 
             $certificados = Certificados::with('proposta.cotacao','custos')->where('status_id', 1)->get();
             $retorno = [];
             $assitencia = [];
+
+
 
             if (!$certificados->isEmpty()) {
                 foreach ($certificados as $certificado) {
@@ -144,7 +145,6 @@ class Certificado extends REST_Controller
     function emitidosRetorno_post()
     {
 
-        Certificados::whereIn('status_id', [31, 32, 33])->update(['status_id' => 30]);
 
         $datas = $this->post();
 
@@ -203,7 +203,6 @@ class Certificado extends REST_Controller
     public function cancelados_get()
     {
 
-        Certificados::whereIn('status_id', [41, 42, 43,44])->update(['status_id' => 40]);
 
         try {
 
@@ -265,8 +264,7 @@ class Certificado extends REST_Controller
 
     public function canceladosRetorno_post()
     {
-        Certificados::whereIn('status_id', [42, 43,44])->update(['status_id' => 41]);
-
+        
         $datas = $this->post();
 
 
