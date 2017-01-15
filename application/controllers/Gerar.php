@@ -506,7 +506,6 @@ class Gerar extends REST_Controller
 
 
                         $produtos['cotacaoproduto'][$i]['premioliquidoproduto'] = $preco['premioliquidoproduto'];
-                        $preco['premioliquidoproduto'] = aplicaComissao($preco['premioliquidoproduto'], $comissao);
 
                         $produtos['produto'][$i] = $produtodb;
                         $produtos['produto'][$i]['indexigenciavistoria'] = $produtodb['ind_exige_vistoria'];
