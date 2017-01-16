@@ -396,6 +396,16 @@ class Gerar extends REST_Controller
             ), REST_Controller::HTTP_BAD_REQUEST);
         endif;
 
+        if (!Fipes::where('idstatus','!=',29)->where('codefipe', $veiculo['veiccodfipe'])->first()):
+            return $this->response(array(
+                'status' => 'Error',
+                'cdretorno' => '010',
+                'message' => array(
+                    'veiculo' => 'Não tem aceitação para esse veiculo',
+                )
+            ), REST_Controller::HTTP_BAD_REQUEST);
+        endif;
+
         if (!$valorfipe):
             return $this->response(array(
                 'status' => 'Error',
