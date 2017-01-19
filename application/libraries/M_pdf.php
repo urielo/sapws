@@ -1,7 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
- 
-//include_once APPPATH.'/third_party/vendor/autoload.php';
-include_once APPPATH.'third_party/vendor/mpdf/mpdf/mpdf.php';
+
+
 
 class M_pdf {
  

@@ -37,3 +37,5 @@ application/controllers/Teste.php
 index.php
 /application/controllers/Debuga.php
 .idea/
+/application/third_party/composer.lock
+/composer.lock
