@@ -35,7 +35,7 @@ class Certificado extends REST_Controller
         try {
 
 
-            $certificados = Certificados::with('proposta.cotacao','custos')->where('status_id', 1)->get();
+            $certificados = Certificados::with('proposta.cotacao','custos')->whereIn('status_id', [1,30])->get();
             $retorno = [];
             $assitencia = [];
 

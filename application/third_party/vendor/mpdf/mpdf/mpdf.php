@@ -48,7 +48,7 @@ define('FC_SMALLCAPS', 512);
 
 
 if (!defined('_MPDF_PATH')) {
-	define('_MPDF_PATH', dirname(preg_replace('/\\\\/', '/', __FILE__)) . '/');
+	define('_MPDF_PATH', APPPATH.'third_party/vendor/mpdf/mpdf/');
 }
 
 if (!defined('_MPDF_URI')) {

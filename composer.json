@@ -30,7 +30,8 @@
 	{
 		"classmap":
 		[
-			"application/model"
+			"application/model",
+			"application/third_party"
 		]
 	}
 }

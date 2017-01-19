@@ -214,7 +214,6 @@ class Gerar extends REST_Controller
 
     function pdf_post()
     {
-
         error_reporting(E_ERROR);
         $this->load->library('m_pdf');
 
@@ -439,7 +438,7 @@ class Gerar extends REST_Controller
         $tipoveiculo = $veiculo['veiccdveitipo'];
         $idade = ($veiculo['veicano'] == 0 ? $veiculo['veicano'] : date('Y') - $veiculo['veicano']);
         $comissao = $datas['cotacao']['comissao'];
-        $renova = $datas['cotacao']['renova'];
+        $renova = $datas[$tipo]['renova'];
         $categoria = $this->Model_fipecategoria->get(['codefipe' => $veiculo['veiccodfipe'], 'idseguradora' => 2]);
         $i = 0;
 
