@@ -78,7 +78,7 @@ class Certificado extends REST_Controller
                         "estado_civil" => $certificado->proposta->cotacao->segurado->estadocivil->sigla,
                         "valor_mensal_seguro" => $certificado->custo_mensal->sum('custo_mensal'),
 
-                        "categoria" => 3620,
+                        "categoria" => $certificado->proposta->cotacao->veiculo->tipo->codigo,
                         "data_venda" => $certificado->dt_inicio_virgencia,
                     ];
                     foreach ($certificado->custos as $custo) {

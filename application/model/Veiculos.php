@@ -68,6 +68,9 @@ class Veiculos extends Model
     {
         return $this->hasOne(Condutor::class, 'condcpfcnpj','condcpfcnpj');
     }
-
+    public function tipo()
+    {
+        return $this->belongsTo(TipoVeiculos::class,'veiccdveitipo','idtipoveiculo');
+    }
 
 }
