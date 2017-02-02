@@ -94,9 +94,9 @@ $config = array(
         array('field' => 'correFoneNum', 'label' => 'Corretor: Numero do telefone', 'rules' => 'trim|max_length[9]|min_length[8]|integer'),
         array('field' => 'correEnd', 'label' => 'Corretor: Logradouro', 'rules' => 'trim'),
         array('field' => 'correEndNum', 'label' => 'Corretor: Numero do endereço', 'rules' => 'trim|max_length[10]'),
-        array('field' => 'correEndCompl', 'label' => 'Corretor: Complement', 'rules' => 'trim|max_length[50]'),
+        array('field' => 'correEndCompl', 'label' => 'Corretor: Complement', 'rules' => 'trim|max_length[255]'),
         array('field' => 'correEndCep', 'label' => 'Corretor: CEP', 'rules' => 'trim|max_length[8]|min_length[8]|numeric'),
-        array('field' => 'correEndCidade', 'label' => 'Corretor: Cidade', 'rules' => 'trim|max_length[20]'),
+        array('field' => 'correEndCidade', 'label' => 'Corretor: Cidade', 'rules' => 'trim|max_length[255]'),
         array('field' => 'correEndCdUf', 'label' => 'Corretor: Estado', 'rules' => 'trim|integer|max_length[5]'),
     ),
     'condutorCotacao' => array(

@@ -11,23 +11,25 @@ class Cotacoes extends Model
         'idcotacao',
         'idparceiro',
         'idcorretor',
-        'clicpfcnpj',
+        'segurado_id',
         'veicid',
         'premio',
         'comissao',
         'idstatus',
-        'dtvalidade',
+        'validade',
         'dtcreate',
         'dtupdate',
         'usuario_id',
         'renova',
+        'code_fipe',
+        'ano_veiculo',
+        'combustivel_id',
+        'tipo_veiculo_id',
+        'ind_veiculo_zero',
+        'validade',
     ];
-    public $timestamps = FALSE;
     
-    public function veiculo()
-    {
-        return $this->belongsTo(Veiculos::class,'veicid','veicid');
-    }
+
     
     public function corretor()
     {
@@ -35,7 +37,7 @@ class Cotacoes extends Model
     }
     public function segurado()
     {
-        return $this->belongsTo(Segurado::class,'clicpfcnpj','clicpfcnpj');
+        return $this->belongsTo(Segurado::class,'segurado_id','id');
     }
     public function parceiro()
     {

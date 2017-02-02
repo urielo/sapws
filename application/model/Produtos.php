@@ -45,7 +45,7 @@ class Produtos extends Model
 
     public function combos()
     {
-        return $this->hasMany(Combos::class, 'idproduto', 'idprodutomaster');
+        return $this->hasMany(Combos::class, 'idprodutomaster', 'idproduto');
     }
 
 
