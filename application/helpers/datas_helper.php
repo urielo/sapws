@@ -533,3 +533,13 @@ function dataOrganize($datas)
 
     return $return;
 }
+
+function between($valor,$menor_que,$maior_que){
+    
+    
+    if($valor >= $maior_que && $valor <= $menor_que){
+        return true;
+        
+    }
+    return false;
+}

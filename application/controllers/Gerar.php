@@ -22,7 +22,15 @@ class Gerar extends REST_Controller
     protected $produto_opcionais;
     protected $ids_produto = [];
     protected $tipo_servico = '';
-    protected $produtos ;
+    protected $produtos;
+    protected $lmi = [];
+    protected $premio = 0;
+    protected $contigencia = 0;
+    protected $categoria_fipe = 0;
+    protected $valores_produtos = [];
+    protected $primeira_parcela = 0;
+    protected $parcelas = [];
+    protected $formas_pagamentos = [];
 
 
     protected $proprietario;
@@ -51,6 +59,7 @@ class Gerar extends REST_Controller
 
 
         $this->datas = $this->post();
+        $datas = $this->post();
         $this->setTipoPessoa();
 
         $this->load->library('form_validation');
@@ -67,7 +76,7 @@ class Gerar extends REST_Controller
                     'status' => 'Acesso negado',
                     'cdretorno' => '098',
                     'message' => 'API KEY invalido para o parceiro, nome: ' . $datas['nmParceiro'] . ' id: ' . $datas['idParceiro']), REST_Controller::HTTP_FORBIDDEN);
-            }$this->produto_master
+            }
 
             $this->form_validation->reset_validation();
 
@@ -131,14 +140,16 @@ class Gerar extends REST_Controller
         $this->setTipoServico('cotacao');
         $this->load->library('form_validation');
         $this->setDatas();
+        $this->setDesconto();
         $this->setParamsVeiculoValidacao();
         $this->setProdutos();
         $this->setAceitacaoSeguradora();
-        $this->setDesconto();
         $this->setComissao();
+        $this->setProdutoValores();
+        $this->setFormasPagamento();
 
 
-        $this->response([$this->desconto]);
+        $this->response($this->fipe_valor);
 
 
     }
@@ -363,8 +374,8 @@ class Gerar extends REST_Controller
     {
 
         /*begin - validações de from*/
-        $pessoa = $this->isJurida ? 'PJ':'';
-        $segurado_validacao = 'segurado'. ucfirst($this->tipo_servico) . $pessoa;
+        $pessoa = $this->isJurida ? 'PJ' : '';
+        $segurado_validacao = 'segurado' . ucfirst($this->tipo_servico) . $pessoa;
         $validacoes = [
             'proposta' => [
                 ['validacao' => 'proposta', 'cod_error' => '023', 'key' => ''],
@@ -429,7 +440,7 @@ class Gerar extends REST_Controller
         }
         /*end - validações DB*/
 
-
+        $this->contigencia = Contingencia::where('ind_idstatus_fipe', $fipe->idstatus)->first()->valor;
         $this->fipe_valor = $fipe_ano->valor;
 
 
@@ -440,9 +451,12 @@ class Gerar extends REST_Controller
 
         foreach ($this->datas['produto'] as $produto) {
             $this->ids_produto[] = $produto['idProduto'];
+            if (isset($produto['valorLmiProduto'])) {
+                $this->lmi[$produto['idProduto']] = $produto['valorLmiProduto'];
+            }
         }
 
-        $produtos = Produtos::with('precoproduto','combos')->whereIn('idproduto', $this->ids_produto)->where('tipoproduto', 'master')->get();
+        $produtos = Produtos::with('precoproduto', 'combos')->whereIn('idproduto', $this->ids_produto)->where('tipoproduto', 'master')->get();
 
 
         if ($produtos->count() > 1) {
@@ -466,7 +480,7 @@ class Gerar extends REST_Controller
 
         $this->produto_master = $produtos->first();
 
-        if($this->produto_master->codstatus == 2){
+        if ($this->produto_master->codstatus == 2) {
             $this->response(array(
                 'status' => 'Atenção',
                 'cdretorno' => '009',
@@ -474,8 +488,10 @@ class Gerar extends REST_Controller
             ), REST_Controller::HTTP_BAD_REQUEST);
         }
 
-        $this->produtos[] = $this->produto_master;
-        $opcionais_aceito = $this->produto_master->combos->where('tipo_veiculo_id',$this->tipo_veiculo)->pluck('idprodutomaster','idprodutoopcional');
+        $this->produto_master->desconto = $this->desconto;
+        $this->produtos[$this->produto_master->idproduto] = $this->produto_master;
+        $opcionais_aceito = $this->produto_master->combos->where('tipo_veiculo_id', $this->tipo_veiculo)->pluck('idprodutomaster', 'idprodutoopcional');
+        $this->valores_produtos = array_merge($this->valores_produtos, $this->produto_master->precoproduto->toArray());
 
 
         foreach ($this->ids_produto as $key => $id) {
@@ -484,11 +500,11 @@ class Gerar extends REST_Controller
             }
         }
 
-        $this->produto_opcionais = Produtos::with('precoproduto')->whereIn('idproduto', $this->ids_produto)->where('tipoproduto','!=' ,'master')->get();
+        $this->produto_opcionais = Produtos::with('precoproduto')->whereIn('idproduto', $this->ids_produto)->where('tipoproduto', '!=', 'master')->get();
 
-        foreach ($this->produto_opcionais as $produto){
+        foreach ($this->produto_opcionais as $produto) {
 
-            if($produto->codstatus == 2){
+            if ($produto->codstatus == 2) {
                 $this->response(array(
                     'status' => 'Atenção',
                     'cdretorno' => '009',
@@ -496,7 +512,19 @@ class Gerar extends REST_Controller
                 ), REST_Controller::HTTP_BAD_REQUEST);
             }
 
-            $this->produtos[]=$produto;
+            $this->valores_lmi_aceitacao = array_merge($this->valores_lmi_aceitacao, $produto->precoproduto->where('lmiproduto', '>', 0)->pluck('lmiproduto')->toArray());
+
+            if (isset($this->lmi[$produto->idproduto]) && !in_array($this->lmi[$produto->idproduto], $this->valores_lmi_aceitacao)) {
+                $this->response(array(
+                    'status' => 'Error',
+                    'cdretorno' => '009',
+                    'message' => "O Produto {$produto->idproduto} - {$produto->nomeproduto} só aceita lmi 50000, 100000 ou 200000",
+                ), REST_Controller::HTTP_BAD_REQUEST);
+            }
+            $produto->desconto = 0;
+
+            $this->produtos[$produto->idproduto] = $produto;
+            $this->valores_produtos = array_merge($this->valores_produtos, $produto->precoproduto->toArray());
 
         }
 
@@ -564,7 +592,7 @@ class Gerar extends REST_Controller
 
     protected function setComissao($comissao = NULL)
     {
-        if($comissao != NULL){
+        if ($comissao != NULL) {
             $this->comissao = $comissao;
         }
 
@@ -574,16 +602,92 @@ class Gerar extends REST_Controller
 
     protected function setDesconto()
     {
-        if($this->datas[$this->tipo_servico]['renova'] == 1){
+        if ($this->datas[$this->tipo_servico]['renova'] == 1) {
             $this->desconto = Descontos::where('tipo', 'renova')->first()->valor;
         }
 
     }
 
-    protected function setTipoServico($servico){
+    protected function setTipoServico($servico)
+    {
         $this->tipo_servico = $servico;
     }
 
+    protected function setProdutoValores()
+    {
+        $valor_fipe = $this->fipe_valor;
+        $tipo = $this->tipo_veiculo;
+        $idade = $this->idade_veiculo;
+        $categoria = $this->categoria_fipe;
+        $comissao = $this->comissao;
+        $contigencia = $this->contigencia;
+
+
+        foreach ($this->valores_produtos as $key => $valor) {
+            $lmi = $this->lmi[$valor['idproduto']];
+
+            if (!$valor['idcategoria'] == $categoria) {
+                $lmi = 0;
+                $valor['lmiproduto'] = 0;
+                $categoria = null;
+            }
+
+//            $this->response($tipo);
+
+
+            if (between($valor_fipe, $valor['vlrfipemaximo'], $valor['vlrfipeminimo']) && $valor['idtipoveiculo'] == $tipo && $idade < $valor['idadeaceitamax'] && $valor['idcategoria'] == $categoria && $valor['lmiproduto'] == $lmi) {
+
+                if ($valor['idproduto'] == 1) {
+                    $valor['premioliquidoproduto'] += $contigencia;
+                }
+
+                $valor['premioliquidoproduto'] -= $this->produtos[$valor['idproduto']]->desconto;
+                $this->valores_produtos[$key]['premioliquidoproduto'] = aplicaComissao($valor['premioliquidoproduto'], $comissao);
+                $this->premio += $this->valores_produtos[$key]['premioliquidoproduto'];
+                $this->primeira_parcela += $this->valores_produtos[$key]['vlrminprimparc'];
+                $this->produtos[$valor['idproduto']]->valor = (object)$this->valores_produtos[$key];
+
+            } else if ($valor['vlrfipeminimo'] == $tipo && $valor['vlrfipemaximo'] == null && $valor['vlrfipeminimo'] == null && $idade < $valor['idadeaceitamax']) {
+                $this->valores_produtos[$key]['premioliquidoproduto'] = aplicaComissao($valor[$key]['premioliquidoproduto'], $comissao);
+                $this->premio += $this->valores_produtos[$key]['premioliquidoproduto'];
+                $this->primeira_parcela += $this->valores_produtos[$key]['vlrminprimparc'];
+                $this->produtos[$valor['idproduto']]->valor = (object)$this->valores_produtos[$key];
+
+            }
+
+        }
+
+    }
+
+    protected function setFormasPagamento()
+    {
+        $this->formas_pagamentos = FormaPagamento::all();
+    }
+
+    protected function setParcelas()
+    {
+        $primeira = $this->primeira_parcela;
+        $parcelas = [];
+        if($this->premio == 0){
+            $this->response(array(
+                'status' => 'Error',
+                'cdretorno' => '005',
+                'message' => 'Produtos não encontrado',
+            ),REST_Controller::HTTP_BAD_REQUEST);
+        }
+        foreach ($this->formas_pagamentos as $forma) {
+            $c = 0;
+            for($i=1;$i<=$forma->numparcsemjuros;$i++){
+             
+                $c++;
+            }
+            for($i=$forma->numparcsemjuros+1;$i<=$forma->nummaxparc;$i++){
+
+                $c++;
+            }
+        }
+
+    }
 
 
     protected function getProdutoParcPremio($datas, $tipo)
