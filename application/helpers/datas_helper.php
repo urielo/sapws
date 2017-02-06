@@ -141,7 +141,6 @@ function dataOrganizeProposta($datas)
     $return['proposta']['renova'] = isset($datas['renova']) ? $datas['renova'] : 0;
 
 
-
     return $return;
 }
 
@@ -310,7 +309,6 @@ function dataOrganizeCotacao($datas)
     $return['proposta']['renova'] = isset($datas['renova']) ? $datas['renova'] : 0;
 
 
-
     return $return;
 }
 
@@ -425,7 +423,6 @@ function dataOrganize($datas)
     $return['perfil']['outroscarros'] = $datas['perfilSegurado']["outrosCarros"];
 
 
-
     if (isset($datas['segurado'])):
         $return['segurado']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
         $return['segurado']['clinomerazao'] = strtoupper($datas['segurado']["segNomeRazao"]);
@@ -438,7 +435,7 @@ function dataOrganize($datas)
         $return['segurado']['clinmcel'] = ($datas['segurado']["segCelNum"] != NULL ? $datas['segurado']["segCelNum"] : NULL);
         $return['segurado']['clidddfone'] = ($datas['segurado']["segFoneDdd"] != NULL ? $datas['segurado']["segFoneDdd"] : NULL);
         $return['segurado']['clinmfone'] = ($datas['segurado']["segFoneNum"] != NULL ? $datas['segurado']["segFoneNum"] : NULL);
-        $return['segurado']['clinmend'] = strtoupper( $datas['segurado']["segEnd"]);
+        $return['segurado']['clinmend'] = strtoupper($datas['segurado']["segEnd"]);
         $return['segurado']['clinumero'] = $datas['segurado']["segEndNum"];
         $return['segurado']['cliendcomplet'] = strtoupper($datas['segurado']["segEndCompl"]);
         $return['segurado']['clicep'] = $datas['segurado']["segEndCep"];
@@ -529,17 +526,29 @@ function dataOrganize($datas)
     $return['proposta']['renova'] = isset($datas['renova']) ? $datas['renova'] : 0;
 
 
-
-
     return $return;
 }
 
-function between($valor,$menor_que,$maior_que){
-    
-    
-    if($valor >= $maior_que && $valor <= $menor_que){
+function between($valor, $menor_que, $maior_que)
+{
+
+
+    if ($valor >= $maior_que && $valor <= $menor_que) {
         return true;
-        
+
     }
     return false;
+}
+
+function pullOutEmpty($dados = [])
+{
+    if (is_array($dados)) {
+
+        foreach ($dados as $key => $value) {
+            if($value == null && $value == ''){
+                unset($dados[$key]);
+            }
+        }
+    }
+    return $dados;
 }

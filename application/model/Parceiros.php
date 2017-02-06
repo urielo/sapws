@@ -33,6 +33,12 @@ class Parceiros extends Model
     }
 
 
+    public function keys()
+    {
+        return $this->hasOne(ApiKey::class,'user_id','idparceiro');
+    }
+
+
 
 
 

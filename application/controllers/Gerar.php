@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+use Illuminate\Database\Capsule\Manager as DB;
 
 require APPPATH . './libraries/REST_Controller.php';
 
@@ -31,6 +32,14 @@ class Gerar extends REST_Controller
     protected $primeira_parcela = 0;
     protected $parcelas = [];
     protected $formas_pagamentos = [];
+    protected $segurado;
+    protected $corretor;
+    protected $cotacao;
+    protected $parceiro;
+    protected $retorno;
+    protected $renova = [];
+    protected $produtos_retorno = [];
+    protected $cotacao_produtos = [];
 
 
     protected $proprietario;
@@ -38,123 +47,111 @@ class Gerar extends REST_Controller
     function __construct()
     {
         parent::__construct();
-//        $this->load->helper('my_ajust');
-//        $this->load->helper('pdfgerator');
-//        $this->load->helper('datas');
         $this->load->helper('message_error');
 
         error_reporting(E_ERROR);
 
         date_default_timezone_set('America/Sao_Paulo');
+
     }
 
 
     /**
-     * @return array
+     * @return arrayidproduto
      */
+
 
 
     function cotacao_post()
     {
 
+        DB::beginTransaction();
 
-        $this->datas = $this->post();
-        $datas = $this->post();
-        $this->setTipoPessoa();
+        try {
 
-        $this->load->library('form_validation');
+            $this->datas = $this->post();
+            $this->setTipoPessoa();
+            $this->setTipoServico('cotacao');
+            $this->load->library('form_validation');
+            $this->setDatas();
+            $this->setDesconto();
+            $this->setParamsVeiculoValidacao();
+            $this->setProdutos();
+            $this->setAceitacaoSeguradora();
+            $this->setComissao();
+            $this->setProdutoValores();
+            $this->setFormasPagamento();
+            $this->setParcelas();
+            $this->setSegurado();
+            $this->setCorretor();
 
+            $cotacao = new Cotacoes;
+            $veiculo = $this->datas['veiculo'];
+            $cotacao->validade = date('Y-m-d', strtotime('+30 days'));
+            $cotacao->premio = $this->premio;
+            $cotacao->comissao = $this->comissao;
+            $cotacao->idparceiro = $this->parceiro->idparceiro;
+            $cotacao->idcorretor = $this->corretor->idcorretor;
+            $cotacao->segurado_id = $this->segurado->id;
+            $cotacao->renova = $this->renova;
+            $cotacao->code_fipe = $veiculo['veiccodfipe'];
+            $cotacao->ano_veiculo = $veiculo['veicano'];
+            $cotacao->combustivel_id = $veiculo['veictipocombus'];
+            $cotacao->tipo_veiculo_id = $veiculo['veiccdveitipo'];
+            $cotacao->ind_veiculo_zero = $veiculo['veicautozero'];
+            $cotacao->idstatus = 9;
+            $cotacao->save();
 
-        if ($this->form_validation->run('cotacao') == false):
-            $this->response(array(
-                'cdretorno' => '023',
-                'status' => 'Error',
-                'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
-        else:
-            if (!$this->Model_key->get(['user_id' => $datas['idParceiro'], 'key' => $_SERVER['HTTP_X_API_KEY']])) {
-                $this->response(array(
-                    'status' => 'Acesso negado',
-                    'cdretorno' => '098',
-                    'message' => 'API KEY invalido para o parceiro, nome: ' . $datas['nmParceiro'] . ' id: ' . $datas['idParceiro']), REST_Controller::HTTP_FORBIDDEN);
+            foreach ($this->cotacao_produtos as $cotacao_p) {
+                $cotacao->produtos()->create($cotacao_p);
             }
+            $cotacao->save();
 
-            $this->form_validation->reset_validation();
+            $response = [
+                'cdCotacao' => $cotacao->idcotacao,
+                'idparceiro' => $cotacao->idparceiro,
+                'validade' => $cotacao->validade,
+                'premio' => $this->premio,
+                'produto' => $this->produtos_retorno,
+                'formapagamento' => $this->parcelas['formapagamento']
 
-            $this->validadb($datas);
-
-            $produto = $this->getProdutoParcPremio($datas, 'cotacao');
-
-
-            /*
-             * Tratando dados do segurado e inserindo no banco
-             */
-
-
-            if (isset($datas['segurado']) && strlen($datas['segurado']['segCpfCnpj']) > 0):
-
-                if (strlen($datas['segurado']['segCpfCnpj']) > 11):
-                    $validacao = 'CotacaoPJ';
-                else:
-                    $validacao = 'Cotacao';
-                endif;
-                $this->valida_pessoas('segurado', $validacao, $datas);
-
-            endif;
+            ];
 
 
-            $veiculo = $this->veiculo($datas, 'Cotacao');
-
-
-            /*
-             * Tratando dados do cotacao e inserindo no banco
-             */
-
-            $cotacao = $this->cotacaodb($datas, $produto, $veiculo->veicid);
-
-            /*
-             * Preparando retorno
-             */
-
-
-            $result = array_merge($cotacao, ['produto' => $produto['produto'], 'premio' => $produto['premio']], $produto['parcelamento']);
-
-
-            /*
-             *  Retorno
-             */
+            DB::commit();
 
             $this->response(array(
                 'status' => '000 - sucesso',
                 'cdretorno' => '000',
-                'retorno' => $result,
+                'retorno' => $response,
             ));
 
-        endif;
-    }
+        } catch (Exception $e) {
+            DB::rollBack();
 
-    function cotacaon_post()
-    {
-
-        $this->datas = $this->post();
-        $this->setTipoPessoa();
-        $this->setTipoServico('cotacao');
-        $this->load->library('form_validation');
-        $this->setDatas();
-        $this->setDesconto();
-        $this->setParamsVeiculoValidacao();
-        $this->setProdutos();
-        $this->setAceitacaoSeguradora();
-        $this->setComissao();
-        $this->setProdutoValores();
-        $this->setFormasPagamento();
+            $this->response(['status' => 'Error',
+                'cdretorno' => '513',
+                'message' => 'Error ao gerar a cotação, porfavor contact o administrador!', $e], REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
 
 
-        $this->response($this->fipe_valor);
+        }
 
 
     }
 
-
+    function propostan_post(){
+        try{
+            $this->datas = $this->post();
+            $this->setTipoPessoa();
+            $this->setTipoServico('proposta');
+            $this->load->library('form_validation');
+            $this->setDatas();
+            
+            
+        }catch (Exception $e){
+            
+        }
+    }
     function proposta_post()
     {
 
@@ -373,6 +370,7 @@ class Gerar extends REST_Controller
     protected function setDatas()
     {
 
+
         /*begin - validações de from*/
         $pessoa = $this->isJurida ? 'PJ' : '';
         $segurado_validacao = 'segurado' . ucfirst($this->tipo_servico) . $pessoa;
@@ -408,6 +406,7 @@ class Gerar extends REST_Controller
 
         /*begin - validações DB*/
 
+        $parceiro = Parceiros::find($this->datas['idParceiro']);
 
         $this->datas = dataOrganize($this->datas);
 
@@ -442,6 +441,7 @@ class Gerar extends REST_Controller
 
         $this->contigencia = Contingencia::where('ind_idstatus_fipe', $fipe->idstatus)->first()->valor;
         $this->fipe_valor = $fipe_ano->valor;
+        $this->parceiro = $parceiro;
 
 
     }
@@ -605,6 +605,7 @@ class Gerar extends REST_Controller
         if ($this->datas[$this->tipo_servico]['renova'] == 1) {
             $this->desconto = Descontos::where('tipo', 'renova')->first()->valor;
         }
+        $this->renova = $this->datas[$this->tipo_servico]['renova'];
 
     }
 
@@ -621,6 +622,8 @@ class Gerar extends REST_Controller
         $categoria = $this->categoria_fipe;
         $comissao = $this->comissao;
         $contigencia = $this->contigencia;
+        $produtos = [];
+        $cotacao_produto = [];
 
 
         foreach ($this->valores_produtos as $key => $valor) {
@@ -632,7 +635,7 @@ class Gerar extends REST_Controller
                 $categoria = null;
             }
 
-//            $this->response($tipo);
+            $produt_ = [];
 
 
             if (between($valor_fipe, $valor['vlrfipemaximo'], $valor['vlrfipeminimo']) && $valor['idtipoveiculo'] == $tipo && $idade < $valor['idadeaceitamax'] && $valor['idcategoria'] == $categoria && $valor['lmiproduto'] == $lmi) {
@@ -645,47 +648,176 @@ class Gerar extends REST_Controller
                 $this->valores_produtos[$key]['premioliquidoproduto'] = aplicaComissao($valor['premioliquidoproduto'], $comissao);
                 $this->premio += $this->valores_produtos[$key]['premioliquidoproduto'];
                 $this->primeira_parcela += $this->valores_produtos[$key]['vlrminprimparc'];
+                $produt_ = $this->valores_produtos[$key];
                 $this->produtos[$valor['idproduto']]->valor = (object)$this->valores_produtos[$key];
 
             } else if ($valor['vlrfipeminimo'] == $tipo && $valor['vlrfipemaximo'] == null && $valor['vlrfipeminimo'] == null && $idade < $valor['idadeaceitamax']) {
                 $this->valores_produtos[$key]['premioliquidoproduto'] = aplicaComissao($valor[$key]['premioliquidoproduto'], $comissao);
                 $this->premio += $this->valores_produtos[$key]['premioliquidoproduto'];
                 $this->primeira_parcela += $this->valores_produtos[$key]['vlrminprimparc'];
+                $produt_ = $this->valores_produtos[$key];
                 $this->produtos[$valor['idproduto']]->valor = (object)$this->valores_produtos[$key];
+
 
             }
 
+            if (count($produt_) > 0) {
+                $produtos[] = [
+                    "idproduto" => $produt_['idproduto'],
+                    "nomeproduto" => $produt_['nomeproduto'],
+                    "caractproduto" => $this->produtos[$produt_['idproduto']]->cractproduto,
+                    "porcentindenizfipe" => $produt_['porcentfipepremio'],
+                    "ind_exige_vistoria" => $this->produtos[$produt_['idproduto']]->ind_exige_vistoria,
+                    "ind_exige_rastreador" => $produt_['indobrigrastreador'],
+                    "indexigenciavistoria" => $this->produtos[$produt_['idproduto']]->ind_exige_vistoria,
+                    "indobrigrastreador" => $produt_['indobrigrastreador'],
+                    "premioliquidoproduto" => $produt_['premioliquidoproduto'],
+                ];
+
+                $cotacao_produto[] = [
+                    'idproduto' => $produt_['idproduto'],
+                    'idprecoproduto' => $produt_['idprecoproduto'],
+                    'premioliquidoproduto' => $produt_['premioliquidoproduto'],
+                    'dtcreate' => date('Y-m-d H:i:s'),
+
+                ];
+
+            }
+
+        }
+
+        if ($this->premio == 0) {
+            $this->response(array(
+                'status' => 'Error',
+                'cdretorno' => '005',
+                'message' => 'Produtos não encontrado',
+            ), REST_Controller::HTTP_BAD_REQUEST);
+        } else {
+            $this->cotacao_produtos = $cotacao_produto;
+            $this->produtos_retorno = $produtos;
         }
 
     }
 
     protected function setFormasPagamento()
     {
-        $this->formas_pagamentos = FormaPagamento::all();
+        if ($this->tipo_servico == 'cotacao') {
+            $this->formas_pagamentos = FormaPagamento::all();
+        } elseif ($this->tipo_servico == 'proposta') {
+            $this->formas_pagamentos = FormaPagamento::find($this->datas[$this->tipo_servico]['idformapg']);
+        }
+
     }
 
     protected function setParcelas()
     {
-        $primeira = $this->primeira_parcela;
         $parcelas = [];
-        if($this->premio == 0){
-            $this->response(array(
-                'status' => 'Error',
-                'cdretorno' => '005',
-                'message' => 'Produtos não encontrado',
-            ),REST_Controller::HTTP_BAD_REQUEST);
-        }
+        $premio = $this->premio;
+        $c = 0;
         foreach ($this->formas_pagamentos as $forma) {
-            $c = 0;
-            for($i=1;$i<=$forma->numparcsemjuros;$i++){
-             
+            $juros = $forma->taxamesjuros;
+            for ($i = 1; $i <= $forma->numparcsemjuros; $i++) {
+                $parcelas['formapagamento'][$c]['parcela']['tipo'] = $forma->descformapgto;
+                $parcelas['formapagamento'][$c]['parcela']['quantidade'] = $i;
+                $parcelas['formapagamento'][$c]['parcela']['primeira'] = floatN($premio / $i);
+                $parcelas['formapagamento'][$c]['parcela']['demais'] = ($i == 1) ? 0 : floatN($premio / $i);
+                $parcelas['formapagamento'][$c]['parcela']['juros'] = 0;
+                $parcelas['formapagamento'][$c]['parcela']['total'] = floatN($premio);
+
                 $c++;
             }
-            for($i=$forma->numparcsemjuros+1;$i<=$forma->nummaxparc;$i++){
+            for ($i = $forma->numparcsemjuros + 1; $i <= $forma->nummaxparc; $i++) {
+
+                $primeira = jurosComposto($premio, $juros, $i);
+                $demais = $primeira;
+                $premio_ = $primeira * $i;
+                if ($primeira < $this->primeira_parcela && $this->renova == 0 && $forma->idformapgto == 2) {
+                    $primeira = $this->primeira_parcela;
+                    $demais = ($premio_ - $primeira) / ($i - 1);
+                }
+                $parcelas['formapagamento'][$c]['parcela']['tipo'] = $forma->descformapgto;
+                $parcelas['formapagamento'][$c]['parcela']['quantidade'] = $i;
+                $parcelas['formapagamento'][$c]['parcela']['primeira'] = floatN($primeira);
+                $parcelas['formapagamento'][$c]['parcela']['demais'] = floatN($demais);
+                $parcelas['formapagamento'][$c]['parcela']['juros'] = $juros;
+                $parcelas['formapagamento'][$c]['parcela']['total'] = floatN($premio_);
 
                 $c++;
             }
         }
+        $this->parcelas = $parcelas;
+        $this->premio = floatN($this->premio);
+
+    }
+
+    protected function setParcela()
+    {
+        $quantidade = $this->datas[$this->tipo_servico]['quantparc'];
+        $forma = $this->formas_pagamentos;
+        $semjuros = $forma->numparcsemjuros;
+        $juros = $quantidade > $semjuros ? $forma->taxamesjuros : 0;
+        $premio = $this->premio;
+
+        $primeira = $quantidade > $semjuros ? jurosComposto($premio, $juros, $quantidade) : $premio / $quantidade;
+        $demais = $quantidade == 1 ? 0 : $primeira;
+        $premio_ = $primeira * $quantidade;
+
+        if ($primeira < $this->primeira_parcela && $this->renova == 0 && $forma->idformapgto == 2) {
+            $primeira = $this->primeira_parcela;
+            $demais = ($premio_ - $primeira) / ($quantidade - 1);
+        }
+        $parcelas['formapagamento']['tipo'] = $forma->descformapgto;
+        $parcelas['formapagamento']['quantidade'] = $quantidade;
+        $parcelas['formapagamento']['primeira'] = floatN($primeira);
+        $parcelas['formapagamento']['demais'] = floatN($demais);
+        $parcelas['formapagamento']['juros'] = $juros;
+        $this->premio = floatN($premio_);
+
+        $this->parcelas = $parcelas;
+        $this->premio = floatN($this->premio);
+
+
+    }
+
+    protected function setSegurado()
+    {
+        try {
+            $segurado = pullOutEmpty($this->datas['segurado']);
+            $this->segurado = Segurado::firstOrCreate(['clicpfcnpj' => $segurado['clicpfcnpj']]);
+            $this->segurado->update($segurado);
+
+        } catch (Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            $this->response(array(
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => ['Segurado' => 'Erro ao cadastrar : ' . $e->errorInfo[2]]), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+
+
+        }
+    }
+
+    protected function setCorretor()
+    {
+        try {
+            $corretor = pullOutEmpty($this->datas['corretor']);
+            $this->corretor = Corretores::firstOrCreate(['corrcpfcnpj' => $corretor['corrcpfcnpj']]);
+            $this->corretor->update($corretor);
+
+        } catch (Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            $this->response(array(
+                'status' => 'Error',
+                'cdretorno' => '013',
+                'message' => ['Corretor' => 'Erro ao cadastrar : ' . $e->errorInfo[2]]), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+
+
+        }
+    }
+
+
+    protected function setRetorno()
+    {
 
     }
 

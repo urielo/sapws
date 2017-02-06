@@ -7,7 +7,7 @@ class Segurado extends Model
 {
 
     protected $table = 'segurado';
-    protected $primaryKey = 'clicpfcnpj';
+    protected $primaryKey = 'id';
     protected $fillable = [
         "clicpfcnpj",
         "clinomerazao",

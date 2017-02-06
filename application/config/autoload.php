@@ -158,3 +158,8 @@ $autoload['model'] = array(
     'Model_certificado',
     'Model_custos_produto',
     );
+spl_autoload_register(function ($class) {
+    if (file_exists(APPPATH . 'model/' . $class . '.php')) {
+        include APPPATH . 'model/' . $class . '.php';
+    }
+});
