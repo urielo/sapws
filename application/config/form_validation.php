@@ -162,7 +162,7 @@ $config = array(
         array('field' => 'veiIndAcidentado', 'label' => 'Indicador de veiculo acidentado', 'rules' => 'trim|integer|max_length[1]|less_than[2]'),
         array('field' => 'veiIndAlienado', 'label' => 'Indicador de veiculo alienado', 'rules' => 'trim|integer|max_length[1]|less_than[2]'),
     ),
-    'seguradoPropostaPF' => array(
+    'seguradoProposta' => array(
         array('field' => 'segNomeRazao', 'label' => 'Segurado: Nome ou razão social', 'rules' => 'trim|required|max_length[50]'),
         array('field' => 'segCpfCnpj', 'label' => 'Segurado: CPF ou CNPJ', 'rules' => 'trim|required|min_length[11]|max_length[14]|numeric'),
         array('field' => 'segDtNasci', 'label' => 'Segurado: Data de nascimento', 'rules' => 'trim|required|max_length[8]|min_length[8]|integer|greater_than[19000000]|less_than[' . $anomin . ']'),

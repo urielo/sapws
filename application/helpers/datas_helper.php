@@ -394,7 +394,7 @@ function dataOrganize($datas)
     endif;
 
 
-    #$return['proposta']['idparceiro'] = $datas["idParceiro"];
+    $return['proposta']['idparceiro'] = $datas["idParceiro"];
     $return['proposta']['idcotacao'] = $datas["cdCotacao"];
     $return['proposta']['idformapg'] = $datas["cdFormaPgt"];
     $return['proposta']['quantparc'] = $datas["qtParcela"];
