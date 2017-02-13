@@ -298,13 +298,10 @@ class Gerar extends REST_Controller
                 6); // margin footer
             $this->m_pdf->pdf->SetProtection(['copy', 'print'], '', '@SAPpdf#2770');
             $this->m_pdf->pdf->WriteHTML($html);
-//            $this->m_pdf->pdf->Output('pdfteste.pdf','S');
+
 
             $b64encode = chunk_split(base64_encode($this->m_pdf->pdf->Output('pdfteste.pdf', 'S')));
-//            $html = gerarpdfb64(gerarhtml($proposta, $cotacao, $segurado, $veiculo, $corretor, $parcela, $produto, $parceiro, $proprietario));
-//
-////            header("Content-type: application/pdf");
-////            echo base64_decode($html);
+
 
 
             $this->response(array(

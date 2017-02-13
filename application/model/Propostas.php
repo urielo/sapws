@@ -24,9 +24,10 @@ class Propostas extends Model
         'primeiraparc',
         'demaisparc',
         'usuario_id',
+        'veiculo_id'
 
     ];
-    public $timestamps = FALSE;
+
 
     public function cotacao()
     {
@@ -63,6 +64,11 @@ class Propostas extends Model
     public function certificado()
     {
         return $this->hasOne(Certificados::class,'idproposta','idproposta');
+    }
+
+    public function veiculo()
+    {
+        return $this->belongsTo('App\Model\Veiculos','veiculo_id','veicid');
     }
     
     

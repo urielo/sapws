@@ -47,24 +47,24 @@ class Certificado extends REST_Controller
                     $dados = [
                         "tipo_arquivo" => 2,
                         "numero_certificado" => str_pad($certificado->id, 20, 0, STR_PAD_LEFT),
-                        "ano" => $certificado->proposta->cotacao->veiculo->veicano,
-                        "combustivel" => $certificado->proposta->cotacao->veiculo->combustivel->sigla,
+                        "ano" => $certificado->proposta->veiculo->veicano,
+                        "combustivel" => $certificado->proposta->veiculo->combustivel->sigla,
                         "numero_capitalizacao" => NULL,
                         "numero_serie_sorteio" => NULL,
-                        "chassi" => $certificado->proposta->cotacao->veiculo->veicchassi,
-                        "renavam" => $certificado->proposta->cotacao->veiculo->veicrenavam,
-                        "placa" => $certificado->proposta->cotacao->veiculo->veicplaca,
-                        "marca" => $certificado->proposta->cotacao->veiculo->fipe->marca,
-                        "modelo" => $certificado->proposta->cotacao->veiculo->fipe->modelo,
-                        "cod_fipe" => $certificado->proposta->cotacao->veiculo->fipe->codefipe,
-                        "cor" => $certificado->proposta->cotacao->veiculo->veicor,
-                        "valor" => $certificado->proposta->cotacao->veiculo->fipe
+                        "chassi" => $certificado->proposta->veiculo->veicchassi,
+                        "renavam" => $certificado->proposta->veiculo->veicrenavam,
+                        "placa" => $certificado->proposta->veiculo->veicplaca,
+                        "marca" => $certificado->proposta->veiculo->fipe->marca,
+                        "modelo" => $certificado->proposta->veiculo->fipe->modelo,
+                        "cod_fipe" => $certificado->proposta->veiculo->fipe->codefipe,
+                        "cor" => $certificado->proposta->veiculo->veicor,
+                        "valor" => $certificado->proposta->veiculo->fipe
                             ->anovalor()
-                            ->where('ano', $certificado->proposta->cotacao->veiculo->veicano)
-                            ->where('idcombustivel', $certificado->proposta->cotacao->veiculo->veictipocombus)
+                            ->where('ano', $certificado->proposta->veiculo->veicano)
+                            ->where('idcombustivel', $certificado->proposta->veiculo->veictipocombus)
                             ->first()->valor,
-                        "zero_km" => ($certificado->proposta->cotacao->veiculo->veicautozero ? 'Y' : 'N'),
-                        "dono_veiculo" => ($certificado->proposta->cotacao->veiculo->propcpfcnpj != $certificado->proposta->cotacao->veiculo->clicpfcnpj ? 'N' : 'Y'),
+                        "zero_km" => ($certificado->proposta->veiculo->veicautozero ? 'Y' : 'N'),
+                        "dono_veiculo" => ($certificado->proposta->veiculo->propcpfcnpj != $certificado->proposta->veiculo->clicpfcnpj ? 'N' : 'Y'),
                         "nome" => $certificado->proposta->cotacao->segurado->clinomerazao,
                         "cpf_cnpj" => $certificado->proposta->cotacao->segurado->clicpfcnpj,
                         "cep" => $certificado->proposta->cotacao->segurado->clicep,
@@ -78,7 +78,7 @@ class Certificado extends REST_Controller
                         "estado_civil" => $certificado->proposta->cotacao->segurado->estadocivil->sigla,
                         "valor_mensal_seguro" => $certificado->custo_mensal->sum('custo_mensal'),
 
-                        "categoria" => $certificado->proposta->cotacao->veiculo->tipo->codigo,
+                        "categoria" => $certificado->proposta->veiculo->tipo->codigo,
                         "data_venda" => $certificado->dt_inicio_virgencia,
                     ];
                     foreach ($certificado->custos as $custo) {
