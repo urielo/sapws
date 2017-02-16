@@ -85,6 +85,8 @@ class Gerar extends REST_Controller
             $this->setSegurado();
             $this->setCorretor();
 
+
+
             $cotacao = new Cotacoes;
             $veiculo = $this->datas['veiculo'];
             $cotacao->validade = date('Y-m-d', strtotime('+30 days'));
@@ -766,10 +768,12 @@ class Gerar extends REST_Controller
     protected function setSegurado()
     {
         try {
+            DB::beginTransaction();
             $segurado = pullOutEmpty($this->datas['segurado']);
-            $this->segurado = Segurado::firstOrCreate(['clicpfcnpj' => $segurado['clicpfcnpj']]);
-            $this->segurado->update($segurado);
-
+            $segurado_db = Segurado::firstOrCreate(['clicpfcnpj' => $segurado['clicpfcnpj']]);
+            $segurado_db->update($segurado);
+            $this->segurado = $segurado_db;
+            DB::commit();
         } catch (Illuminate\Database\QueryException $e) {
             DB::rollBack();
             $this->response(array(
