@@ -268,9 +268,9 @@
     <tr class="pdf-table-tr-title">
         <td><h4>DADOS DO VEÍCULO</h4></td>
     </tr>
-    <?php foreach ($proposta['cotacao']['veiculo']['fipe']['valores'] as $valor) {
-        if ($proposta['cotacao']['veiculo']['veicano'] == $valor['ano'] && $proposta['cotacao']['veiculo']['veictipocombus'] == $valor['idcombustivel']) {
-            $proposta['cotacao']['veiculo']['fipe']['valores'] = $valor;
+    <?php foreach ($proposta['veiculo']['fipe']['valores'] as $valor) {
+        if ($proposta['veiculo']['veicano'] == $valor['ano'] && $proposta['veiculo']['veictipocombus'] == $valor['idcombustivel']) {
+            $proposta['veiculo']['fipe']['valores'] = $valor;
         }
     } ?>
     <tr>
@@ -281,10 +281,10 @@
                         <table>
                             <tr>
                                 <td class="pdf-table-td-title"><b>VEICULO:</b></td>
-                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['fipe']['marca'] ?>
-                                    / <?= $proposta['cotacao']['veiculo']['fipe']['modelo'] ?></td>
+                                <td class="pdf-table-td-content"><?= $proposta['veiculo']['fipe']['marca'] ?>
+                                    / <?= $proposta['veiculo']['fipe']['modelo'] ?></td>
                                 <td class="pdf-table-td-title"><b>FIPE:</b></td>
-                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['fipe']['codefipe'] ?></td>
+                                <td class="pdf-table-td-content"><?= $proposta['veiculo']['fipe']['codefipe'] ?></td>
 
                             </tr>
                         </table>
@@ -296,13 +296,13 @@
                             <tr>
                                 <td class="pdf-table-td-title"><b>VALOR:</b></td>
                                 <td class="pdf-table-td-content">
-                                    R$ <?= real($proposta['cotacao']['veiculo']['fipe']['valores']['valor']) ?></td>
+                                    R$ <?= real($proposta['veiculo']['fipe']['valores']['valor']) ?></td>
                                 <td class="pdf-table-td-title"><b>ANO MODELO:</b></td>
-                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['fipe']['valores']['ano'] ?></td>
+                                <td class="pdf-table-td-content"><?= $proposta['veiculo']['fipe']['valores']['ano'] ?></td>
                                 <td class="pdf-table-td-title"><b>ANO FABRICAÇÃO:</b></td>
-                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['veianofab'] ?></td>
+                                <td class="pdf-table-td-content"><?= $proposta['veiculo']['veianofab'] ?></td>
                                 <td class="pdf-table-td-title"><b>ZERO KM?</b></td>
-                                <td class="pdf-table-td-content"><?= ($proposta['cotacao']['veiculo']['veicautozero'] == 1 ? 'Sim' : 'Não') ?></td>
+                                <td class="pdf-table-td-content"><?= ($proposta['veiculo']['veicautozero'] == 1 ? 'Sim' : 'Não') ?></td>
                             </tr>
                         </table>
                     </td>
@@ -312,11 +312,11 @@
                         <table>
                             <tr>
                                 <td class="pdf-table-td-title"><b>CHASSI:</b></td>
-                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['veicchassi'] ?></td>
+                                <td class="pdf-table-td-content"><?= $proposta['veiculo']['veicchassi'] ?></td>
                                 <td class="pdf-table-td-title"><b>PLACA:</b></td>
-                                <td class="pdf-table-td-content"><?= format("placa", $proposta['cotacao']['veiculo']['veicplaca']) ?></td>
+                                <td class="pdf-table-td-content"><?= format("placa", $proposta['veiculo']['veicplaca']) ?></td>
                                 <td class="pdf-table-td-title"><b>RENAVAM:</b></td>
-                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['veicrenavam'] ?></td>
+                                <td class="pdf-table-td-content"><?= $proposta['veiculo']['veicrenavam'] ?></td>
                             </tr>
                         </table>
                     </td>
@@ -326,11 +326,11 @@
                         <table>
                             <tr>
                                 <td class="pdf-table-td-title"><b>COMBUSTIVEL:</b></td>
-                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['combustivel']['nmcomb'] ?></td>
+                                <td class="pdf-table-td-content"><?= $proposta['veiculo']['combustivel']['nmcomb'] ?></td>
                                 <td class="pdf-table-td-title"><b>UTILIZAÇÃO:</b></td>
-                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['utilizacao']['descutilveiculo'] ?></td>
+                                <td class="pdf-table-td-content"><?= $proposta['veiculo']['utilizacao']['descutilveiculo'] ?></td>
                                 <td class="pdf-table-td-title"><b>COR:</b></td>
-                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['veiculo']['veicor'] ?></td>
+                                <td class="pdf-table-td-content"><?= $proposta['veiculo']['veicor'] ?></td>
                             </tr>
                         </table>
                     </td>
@@ -341,7 +341,7 @@
                         <table>
                             <tr>
                                 <td class="pdf-table-td-title"><b>PROPRIETARIO:</b></td>
-                                <td class="pdf-table-td-content"><?= ($proposta['cotacao']['veiculo']['propcpfcnpj'] == $proposta['cotacao']['segurado']['clicpfcnpj'] ? nomeCase($proposta['cotacao']['segurado']['clinomerazao']) : nomeCase($proposta['cotacao']['veiculo']['proprietario']['proprnomerazao'])) ?></td>
+                                <td class="pdf-table-td-content"><?= ($proposta['veiculo']['propcpfcnpj'] == $proposta['cotacao']['segurado']['clicpfcnpj'] ? nomeCase($proposta['cotacao']['segurado']['clinomerazao']) : nomeCase($proposta['veiculo']['proprietario']['proprnomerazao'])) ?></td>
                             </tr>
                         </table>
                     </td>
@@ -415,7 +415,7 @@
                                     <td class="pdf-table-td-content">R$ <?php
                                         $valor = aplicaComissao(
                                             ($produto['produto']['idproduto'] == 1 ?
-                                                $produto['produto']['precos']['premioliquidoproduto'] + $proposta['cotacao']['veiculo']['fipe']['contigencia']['valor'] :
+                                                $produto['produto']['precos']['premioliquidoproduto'] + $proposta['veiculo']['fipe']['contigencia']['valor'] :
                                                 $produto['produto']['precos']['premioliquidoproduto'])
                                             , $proposta['cotacao']['comissao']);
 
@@ -746,7 +746,7 @@
 
                     </tr>
                     <tr>
-                        <td>Raphael Swierczynsk <br>
+                        <td>Peter Rebrin<br>
                             CEO
                         </td>
                     </tr>

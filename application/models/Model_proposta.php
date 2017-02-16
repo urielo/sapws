@@ -13,7 +13,7 @@ class Model_proposta extends MY_Model
         $this->table = 'proposta';
         $this->primary_key = 'idproposta';
         $this->return_as = 'array';
-        #$this->before_create = array('prep_data');
+        $this->has_one['veiculo'] = ['Model_veiculo','veicid','veiculo_id'];
         $this->timestamps = FALSE;
         $this->has_one['cotacao'] = ['Model_cotacao', 'idcotacao','idcotacao'];
         $this->has_one['forma_pagamento'] = ['Model_parcela', 'idformapgto','idformapg'];

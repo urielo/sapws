@@ -7,7 +7,7 @@ class Model_cliente extends MY_Model
     public function __construct()
     {
         $this->table = 'segurado';
-        $this->primary_key = 'clicpfcnpj';
+        $this->primary_key = 'id';
         $this->return_as = 'array';
         $this->timestamps = FALSE;
 //        $this->after_get[] = 'set_sexo';

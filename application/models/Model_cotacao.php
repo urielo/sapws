@@ -10,8 +10,7 @@ class Model_cotacao extends MY_Model
         $this->primary_key = 'idcotacao';
         $this->return_as = 'array';
         $this->timestamps = FALSE;
-        $this->has_one['veiculo'] = ['Model_veiculo','veicid','veicid'];
-        $this->has_one['segurado'] = ['Model_cliente','clicpfcnpj','clicpfcnpj'];
+        $this->has_one['segurado'] = ['Model_cliente','id','segurado_id'];
         $this->has_one['corretor'] = ['Model_corretor','idcorretor','idcorretor'];
         $this->has_one['parceiro'] = ['Model_parceiro','idparceiro','idparceiro'];
         $this->has_many['produtos'] = ['Model_cotacaoproduto', 'idcotacao','idcotacao'];

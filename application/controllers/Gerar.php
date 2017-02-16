@@ -159,29 +159,29 @@ class Gerar extends REST_Controller
         try {
 
             $proposta = new Propostas();
-            $proposta->idcotacao= $this->cotacao->idcotacao;
-            $proposta->idformapg=$this->formas_pagamentos->idformapgto;
-            $proposta->quantparc=$this->datas[$this->tipo_servico]['quantparc'];
-            $proposta->dtvalidade=date('Y-m-d',strtotime('+30 days'));
-            $proposta->idstatus=10;
-            $proposta->nmbandeira=$this->datas[$this->tipo_servico]['nmbandeira'];
-            $proposta->numcartao=$this->datas[$this->tipo_servico]['numcartao'];
-            $proposta->validadecartao=$this->datas[$this->tipo_servico]['validadecartao'];
-            $proposta->premiototal=$this->premio;
-            $proposta->primeiraparc=$this->parcelas['formapagamento']['primeira'];
-            $proposta->demaisparc=$this->parcelas['formapagamento']['demais'];
-            $proposta->titularcartao=$this->datas[$this->tipo_servico]['quantparc'];
-            $proposta->veiculo_id=$this->veiculo->veicid;
+            $proposta->idcotacao = $this->cotacao->idcotacao;
+            $proposta->idformapg = $this->formas_pagamentos->idformapgto;
+            $proposta->quantparc = $this->datas[$this->tipo_servico]['quantparc'];
+            $proposta->dtvalidade = date('Y-m-d', strtotime('+30 days'));
+            $proposta->idstatus = 10;
+            $proposta->nmbandeira = $this->datas[$this->tipo_servico]['nmbandeira'];
+            $proposta->numcartao = $this->datas[$this->tipo_servico]['numcartao'];
+            $proposta->validadecartao = $this->datas[$this->tipo_servico]['validadecartao'];
+            $proposta->premiototal = $this->premio;
+            $proposta->primeiraparc = $this->parcelas['formapagamento']['primeira'];
+            $proposta->demaisparc = $this->parcelas['formapagamento']['demais'];
+            $proposta->titularcartao = $this->datas[$this->tipo_servico]['quantparc'];
+            $proposta->veiculo_id = $this->veiculo->veicid;
             $proposta->save();
 
 
             $response = [
-                'premioTotal'=>$this->premio,
-                'idproposta'=>$proposta->idproposta,
-                'idcotacao'=>$proposta->idcotacao,
-                'dtvalidade'=>$proposta->dtvalidade,
-                'idparceiro'=>$this->datas[$this->tipo_servico]['idparceiro'],
-                'produto'=>$this->produtos_retorno,
+                'premioTotal' => $this->premio,
+                'idproposta' => $proposta->idproposta,
+                'idcotacao' => $proposta->idcotacao,
+                'dtvalidade' => $proposta->dtvalidade,
+                'idparceiro' => $this->datas[$this->tipo_servico]['idparceiro'],
+                'produto' => $this->produtos_retorno,
                 'formapagamento' => $this->parcelas['formapagamento'],
             ];
 
@@ -192,7 +192,6 @@ class Gerar extends REST_Controller
                 'cdretorno' => '000',
                 'retorno' => $response,
             ));
-
 
 
         } catch (Exception $e) {
@@ -208,7 +207,6 @@ class Gerar extends REST_Controller
         }
     }
 
-    
 
     function pdf_post()
     {
@@ -218,11 +216,12 @@ class Gerar extends REST_Controller
 
         $datas = $this->post();
 
-        $this->response(array(
-            'status' => '009 - Atenção',
-            'cdretorno' => '009',
-            'message' => 'Estamos em manutenção por favor tente novamente mais tarde!!!'
-        ));
+//        $this->response(array(
+//            'status' => '009 - Atenção',
+//            'cdretorno' => '009',
+//            'message' => 'Estamos em manutenção por favor tente novamente mais tarde!!!'
+//        ));
+//        
 
         $this->load->library('form_validation');
         $this->form_validation->set_data($datas);
@@ -234,83 +233,89 @@ class Gerar extends REST_Controller
                 'message' => $this->form_validation->get_errors_as_array()), REST_Controller::HTTP_BAD_REQUEST);
         else:
 
-            if (!$this->Model_key->get(['user_id' => $datas['idParceiro'], 'key' => $_SERVER['HTTP_X_API_KEY']])) {
+            try {
+                if (!$this->Model_key->get(['user_id' => $datas['idParceiro'], 'key' => $_SERVER['HTTP_X_API_KEY']])) {
+                    $this->response(array(
+                        'status' => 'Acesso negado',
+                        'cdretorno' => '098',
+                        'message' => 'API KEY invalido para o parceiro, nome: ' . $datas['nmParceiro'] . ' id: ' . $datas['idParceiro']), REST_Controller::HTTP_FORBIDDEN);
+                }
+
+                $proposta['proposta'] = $this->Model_proposta->with_cotacao([
+                    'with' => [
+                        ['relation' => 'segurado',
+                            'with' => [
+                                ['relation' => 'uf'],
+                                ['relation' => 'rg_uf'],
+                                ['relation' => 'profissao'],
+                                ['relation' => 'ramoatividade'],
+                                ['relation' => 'estadocivl'],
+                            ]
+                        ],
+                        ['relation' => 'parceiro'],
+                        ['relation' => 'produtos',
+                            'with' =>
+                                ['relation' => 'produto',
+                                    'with' => [
+                                        ['relation' => 'precos'],
+                                        ['relation' => 'seguradoras',
+                                            'with' => ['relation' => 'seguradora']
+                                        ],
+                                    ]
+                                ],
+                        ],
+                        ['relation' => 'corretor'],
+                    ]
+
+                ])->with_veiculo([
+                    'with' => [
+                        ['relation' => 'fipe',
+                            'with' => [
+                                ['relation' => 'valores'],
+                                ['relation' => 'contigencia'],
+                            ]
+                        ],
+                        ['relation' => 'combustivel'],
+                        ['relation' => 'utilizacao'],
+                        ['relation' => 'proprietario']
+                    ]])->with_forma_pagamento()->get($datas['idProposta']);
+
+                $html = $this->load->view('pdf/proposta_view', $proposta, true);
+                error_reporting(E_ERROR);
+
+
+                $this->m_pdf->pdf->SetHTMLHeader($this->load->view('pdf/header_view', $proposta, true));
+                $this->m_pdf->pdf->SetHTMLFooter($this->load->view('pdf/footer_view', $proposta, true));
+                $this->m_pdf->pdf->AddPage('', // L - landscape, P - portrait
+                    '', '', '', '', 10, // margin_left
+                    10, // margin right
+                    25, // margin top
+                    15, // margin bottom
+                    5, // margin header
+                    6); // margin footer
+                $this->m_pdf->pdf->SetProtection(['copy', 'print'], '', '@SAPpdf#2770');
+                $this->m_pdf->pdf->WriteHTML($html);
+
+
+                $b64encode = chunk_split(base64_encode($this->m_pdf->pdf->Output('pdfteste.pdf', 'S')));
+
+
                 $this->response(array(
-                    'status' => 'Acesso negado',
-                    'cdretorno' => '098',
-                    'message' => 'API KEY invalido para o parceiro, nome: ' . $datas['nmParceiro'] . ' id: ' . $datas['idParceiro']), REST_Controller::HTTP_FORBIDDEN);
+                    'status' => '000 - sucesso',
+                    'cdretorno' => '000',
+                    'idproposta' => $proposta['proposta']['idproposta'],
+//                'idparceiro' => $parceiro['idparceiro'],
+                    'base64' => $b64encode,
+                ));
+
+
+            } catch (Exception $e) {
+                $this->response(array(
+                    'status' => 'Error',
+                    'cdretorno' => '023',
+                    'message' => $e), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
             }
 
-            $proposta['proposta'] = $this->Model_proposta->with_cotacao([
-                'with' => [
-                    ['relation' => 'segurado',
-                        'with' => [
-                            ['relation' => 'uf'],
-                            ['relation' => 'rg_uf'],
-                            ['relation' => 'profissao'],
-                            ['relation' => 'ramoatividade'],
-                            ['relation' => 'estadocivl'],
-                        ]
-                    ],
-                    ['relation' => 'parceiro'],
-                    ['relation' => 'veiculo',
-                        'with' => [
-                            ['relation' => 'fipe',
-                                'with' => [
-                                    ['relation' => 'valores'],
-                                    ['relation' => 'contigencia'],
-                                ]
-                            ],
-                            ['relation' => 'combustivel'],
-                            ['relation' => 'utilizacao'],
-                            ['relation' => 'proprietario'],
-                        ]
-
-                    ],
-                    ['relation' => 'produtos',
-                        'with' =>
-                            ['relation' => 'produto',
-                                'with' => [
-                                    ['relation' => 'precos'],
-                                    ['relation' => 'seguradoras',
-                                        'with' => ['relation' => 'seguradora']
-                                    ],
-                                ]
-                            ],
-                    ],
-                    ['relation' => 'corretor'],
-                ]
-
-            ])->with_forma_pagamento()->get($datas['idProposta']);
-
-            $html = $this->load->view('pdf/proposta_view', $proposta, true);
-            error_reporting(E_ERROR);
-
-
-            $this->m_pdf->pdf->SetHTMLHeader($this->load->view('pdf/header_view', $proposta, true));
-            $this->m_pdf->pdf->SetHTMLFooter($this->load->view('pdf/footer_view', $proposta, true));
-            $this->m_pdf->pdf->AddPage('', // L - landscape, P - portrait
-                '', '', '', '', 10, // margin_left
-                10, // margin right
-                25, // margin top
-                15, // margin bottom
-                5, // margin header
-                6); // margin footer
-            $this->m_pdf->pdf->SetProtection(['copy', 'print'], '', '@SAPpdf#2770');
-            $this->m_pdf->pdf->WriteHTML($html);
-
-
-            $b64encode = chunk_split(base64_encode($this->m_pdf->pdf->Output('pdfteste.pdf', 'S')));
-
-
-
-            $this->response(array(
-                'status' => '000 - sucesso',
-                'cdretorno' => '000',
-                'idproposta' => $proposta['proposta']['idproposta'],
-//                'idparceiro' => $parceiro['idparceiro'],
-                'base64' => $b64encode,
-            ));
 
 //            $this->response(array(
 //                $veiculo, $combustivel, $utilizacao  
@@ -793,11 +798,13 @@ class Gerar extends REST_Controller
 
         }
     }
-    protected function setProdutoProposta(){
+
+    protected function setProdutoProposta()
+    {
         $produtos = $this->cotacao->produtos;
-        $produto_ =[];
-        foreach ($produtos as $produto){
-            $preco = $produto->produto->precoproduto()->where('idprecoproduto',$produto->idprecoproduto)->first();
+        $produto_ = [];
+        foreach ($produtos as $produto) {
+            $preco = $produto->produto->precoproduto()->where('idprecoproduto', $produto->idprecoproduto)->first();
             $this->primeira_parcela += $preco->vlrminprimparc;
             $produto_[] = [
                 "idproduto" => $produto->idproduto,
@@ -885,7 +892,7 @@ class Gerar extends REST_Controller
                 $veiculo->save();
             }
 
-            $this->veiculo =$veiculo;
+            $this->veiculo = $veiculo;
 
             DB::commit();
 
