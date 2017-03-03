@@ -432,7 +432,7 @@ class Gerar extends REST_Controller
 
         foreach ($this->datas['produto'] as $produto) {
             $this->ids_produto[] = $produto['idProduto'];
-            if (isset($produto['valorLmiProduto'])) {
+            if (isset($produto['valorLmiProduto']) && $produto['valorLmiProduto'] > 0) {
                 $this->lmi[$produto['idProduto']] = $produto['valorLmiProduto'];
             }
         }
