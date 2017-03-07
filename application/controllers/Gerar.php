@@ -85,8 +85,6 @@ class Gerar extends REST_Controller
             $this->setSegurado();
             $this->setCorretor();
 
-
-
             $cotacao = new Cotacoes;
             $veiculo = $this->datas['veiculo'];
             $cotacao->validade = date('Y-m-d', strtotime('+30 days'));
@@ -218,12 +216,12 @@ class Gerar extends REST_Controller
 
         $datas = $this->post();
 
-//        $this->response(array(
-//            'status' => '009 - Atenção',
-//            'cdretorno' => '009',
-//            'message' => 'Estamos em manutenção por favor tente novamente mais tarde!!!'
-//        ));
-//        
+        //        $this->response(array(
+        //            'status' => '009 - Atenção',
+        //            'cdretorno' => '009',
+        //            'message' => 'Estamos em manutenção por favor tente novamente mais tarde!!!'
+        //        ));
+        //        
 
         $this->load->library('form_validation');
         $this->form_validation->set_data($datas);
@@ -306,7 +304,7 @@ class Gerar extends REST_Controller
                     'status' => '000 - sucesso',
                     'cdretorno' => '000',
                     'idproposta' => $proposta['proposta']['idproposta'],
-//                'idparceiro' => $parceiro['idparceiro'],
+                //                'idparceiro' => $parceiro['idparceiro'],
                     'base64' => $b64encode,
                 ));
 
@@ -319,9 +317,9 @@ class Gerar extends REST_Controller
             }
 
 
-//            $this->response(array(
-//                $veiculo, $combustivel, $utilizacao  
-//            ));
+            //            $this->response(array(
+            //                $veiculo, $combustivel, $utilizacao  
+            //            ));
 
         endif;
     }
@@ -770,9 +768,13 @@ class Gerar extends REST_Controller
         try {
             DB::beginTransaction();
             $segurado = pullOutEmpty($this->datas['segurado']);
+            $segurado_up = $segurado;
+            unset($segurado_up['clicpfcnpj']);
             $segurado_db = Segurado::firstOrCreate(['clicpfcnpj' => $segurado['clicpfcnpj']]);
-            $segurado_db->update($segurado);
-            $this->segurado = $segurado_db;
+            if(count($segurado_up)>0){
+                $segurado_db->update($segurado);
+            }
+            $this->segurado = Segurado::where('clicpfcnpj',$segurado_db->clicpfcnpj)->first();
             DB::commit();
         } catch (Illuminate\Database\QueryException $e) {
             DB::rollBack();
