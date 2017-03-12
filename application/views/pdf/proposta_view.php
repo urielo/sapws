@@ -341,7 +341,7 @@
                         <table>
                             <tr>
                                 <td class="pdf-table-td-title"><b>PROPRIETARIO:</b></td>
-                                <td class="pdf-table-td-content"><?= ($proposta['veiculo']['propcpfcnpj'] == $proposta['cotacao']['segurado']['clicpfcnpj'] ? nomeCase($proposta['cotacao']['segurado']['clinomerazao']) : nomeCase($proposta['veiculo']['proprietario']['proprnomerazao'])) ?></td>
+                                <td class="pdf-table-td-content"><?= nomeCase($proposta['veiculo']['nome_proprietario'])?></td>
                             </tr>
                         </table>
                     </td>

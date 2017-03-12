@@ -351,6 +351,7 @@ function dataOrganize($datas)
     elseif (isset($datas['veiculos'])):
         $datas['veiculo'] = $datas['veiculos'];
     endif;
+    $return['veiculo']['nome_proprietario']= '';
 
     if (!$datas['indProprietVeic']):
         $return['proprietario']['proprcpfcnpj'] = $datas['proprietario']["proprCpfCnpj"];
@@ -373,6 +374,7 @@ function dataOrganize($datas)
         $return['proprietario']['proprnmcidade'] = $datas['proprietario']["proprEndCidade"];
         $return['proprietario']['proprcduf'] = $datas['proprietario']["proprEndCdUf"];
         $return['proprietario']['idtipocliente'] = 2;
+        $return['veiculo']['nome_proprietario'] = strtoupper($datas['proprietario']["proprNomeRazao"]);        
 
         $return['veiculo']['propcpfcnpj'] = $datas['proprietario']["proprCpfCnpj"];
     else:
@@ -448,6 +450,7 @@ function dataOrganize($datas)
         $return['segurado']['clicdufemissaorg'] = isset($datas['segurado']["segCdUfRg"]) ? $datas['segurado']["segCdUfRg"] : NULL;
         $return['perfil']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
         $return['veiculo']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
+        $return['veiculo']['nome_proprietario'] = strtoupper($datas['segurado']["segNomeRazao"]);
         $return['cotacao']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
 
     else:

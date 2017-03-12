@@ -909,6 +909,7 @@ class Gerar extends REST_Controller
             $veiculo->veicleilao = $veiculo_['veicleilao'];
             $veiculo->veicalienado = $veiculo_['veicalienado'];
             $veiculo->veicacidentado = $veiculo_['veicacidentado'];
+            $veiculo->nome_proprietario = $veiculo_['nome_proprietario'];
             $veiculo->clicpfcnpj = $this->segurado->clicpfcnpj;
             $veiculo->propcpfcnpj = $veiculo_['propcpfcnpj'];
             $veiculo->idstatus = 10;

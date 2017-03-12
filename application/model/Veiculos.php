@@ -32,6 +32,7 @@ class Veiculos extends Model
         "dtcreate",
         "dtupdate",
         "veicor",
+        "nome_proprietario",
         "veianofab",
     ];
     public $timestamps = FALSE;
