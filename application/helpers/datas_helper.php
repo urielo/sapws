@@ -489,11 +489,11 @@ function dataOrganize($datas)
     $return['veiculo']['veicacidentado'] = $datas['veiculo']["veiIndAcidentado"];
     $return['veiculo']['veianofab'] = $datas['veiculo']["veiAnoFab"];
     $return['veiculo']['veicor'] = strtoupper($datas['veiculo']["veiCor"]);
-    $return['veiculo']['veiccdutilizaco'] = $datas['veiculo']["veiCdUtiliz"];
+    $return['veiculo']['veiccdutilizaco'] = $datas['veiculo']["veiCdTipo"] == 8 ? 3 : $datas['veiculo']["veiCdUtiliz"];
     $return['veiculo']['veiccodfipe'] = $datas['veiculo']["veiCodFipe"];
     $return['veiculo']['veicano'] = $datas['veiculo']["veiAno"];
     $return['veiculo']['veicautozero'] = $datas['veiculo']["veiIndZero"] == 0 ? 0 : 1;
-    $return['veiculo']['veiccdveitipo'] = $datas['veiculo']["veiCdTipo"];
+    $return['veiculo']['veiccdveitipo'] = $datas['veiculo']["veiCdTipo"] == 8 ? 1 : $datas['veiculo']["veiCdTipo"];
     $return['veiculo']['veictipocombus'] = $datas['veiculo']["veiCdCombust"];
 
     $return['cotacao']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
