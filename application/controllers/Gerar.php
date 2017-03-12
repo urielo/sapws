@@ -1339,25 +1339,25 @@ class Gerar extends REST_Controller
         $validacao == 'Cotacao' ? $datas = dataOrganizeCotacao($datas) : $datas = dataOrganizeProposta($datas);
         $veiculo = $datas['veiculo'];
 
-//        if ($veiculo['veicchassiremar']):
-//            return $this->response(array(
-//                'status' => 'Error',
-//                'cdretorno' => '019',
-//                'message' => array('veiculo' => 'Não há aceitação pra veiculo com chassi remarcado')
-//            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
-//        elseif ($veiculo['veicleilao']):
-//            return $this->response(array(
-//                'status' => 'Error',
-//                'cdretorno' => '019',
-//                'message' => array('veiculo' => 'Não há aceitação pra veiculo oriundo de leilão')
-//            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
-//        elseif ($veiculo['veicacidentado']):
-//            return $this->response(array(
-//                'status' => 'Error',
-//                'cdretorno' => '019',
-//                'message' => array('veiculo' => 'Não há aceitação pra veiculo acidentado')
-//            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
-//        endif;
+        //        if ($veiculo['veicchassiremar']):
+        //            return $this->response(array(
+        //                'status' => 'Error',
+        //                'cdretorno' => '019',
+        //                'message' => array('veiculo' => 'Não há aceitação pra veiculo com chassi remarcado')
+        //            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+        //        elseif ($veiculo['veicleilao']):
+        //            return $this->response(array(
+        //                'status' => 'Error',
+        //                'cdretorno' => '019',
+        //                'message' => array('veiculo' => 'Não há aceitação pra veiculo oriundo de leilão')
+        //            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+        //        elseif ($veiculo['veicacidentado']):
+        //            return $this->response(array(
+        //                'status' => 'Error',
+        //                'cdretorno' => '019',
+        //                'message' => array('veiculo' => 'Não há aceitação pra veiculo acidentado')
+        //            ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+        //        endif;
 
 
         if ($this->form_validation->run('veiculo' . ucfirst($validacao)) == false):
@@ -1557,7 +1557,7 @@ class Gerar extends REST_Controller
             ]])->with_veiculo()->get(['idcotacao' => $datas["cdCotacao"]]);
 
 
-//        $this->veiculodb($datas, 'proposta');
+        //        $this->veiculodb($datas, 'proposta');
 
 
         $datas = dataOrganizeProposta($datas);
@@ -2023,7 +2023,7 @@ class Gerar extends REST_Controller
                         'status' => 'Error',
                         'cdretorno' => '013',
                         'message' => [$pessoa_msg => 'Erro ao cadastrar : ' . $e->errorInfo[2]]), REST_Controller::HTTP_BAD_REQUEST);
-//                    return $e;
+        //                    return $e;
                 }
                 break;
             case 'proprietario':
@@ -2241,7 +2241,7 @@ class Gerar extends REST_Controller
                                 }
 
                             } else {
-//                                return $this->response(['status 3'=>$cotacao->veiculo]);
+        //                                return $this->response(['status 3'=>$cotacao->veiculo]);
 
                                 try {
                                     $cotacao->veiculo->update($veiculo);
@@ -2289,7 +2289,7 @@ class Gerar extends REST_Controller
 
             } else {
 
-//                return $this->response(['status 6'=>$veiculo]);
+        //                return $this->response(['status 6'=>$veiculo]);
 
 
                 try {
