@@ -488,7 +488,7 @@ function dataOrganize($datas)
     $return['veiculo']['veicalienado'] = $datas['veiculo']["veiIndAlienado"];
     $return['veiculo']['veicacidentado'] = $datas['veiculo']["veiIndAcidentado"];
     $return['veiculo']['veianofab'] = $datas['veiculo']["veiAnoFab"];
-    $return['veiculo']['veicor'] = $datas['veiculo']["veiCor"];
+    $return['veiculo']['veicor'] = strtoupper($datas['veiculo']["veiCor"]);
     $return['veiculo']['veiccdutilizaco'] = $datas['veiculo']["veiCdUtiliz"];
     $return['veiculo']['veiccodfipe'] = $datas['veiculo']["veiCodFipe"];
     $return['veiculo']['veicano'] = $datas['veiculo']["veiAno"];

@@ -7,7 +7,8 @@ class ApiKey extends Model
 {
 
     protected $table = 'keys';
-    protected $fillable = ['user_id',
+    protected $fillable = [
+        'user_id',
         'key',
         'level',
         'ignore_limits',

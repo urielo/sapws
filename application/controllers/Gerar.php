@@ -9,7 +9,6 @@ class Gerar extends REST_Controller
     protected $datas = [];
 
     protected $isJurida = false;
-
     protected $fipe_valor = 0;
     protected $max_valor_aceitacao = 0;
     protected $min_valor_aceitacao = 0;
@@ -41,6 +40,7 @@ class Gerar extends REST_Controller
     protected $produtos_retorno = [];
     protected $cotacao_produtos = [];
     protected $veiculo;
+    protected $apiKey;
 
 
     protected $proprietario;
@@ -68,8 +68,9 @@ class Gerar extends REST_Controller
         DB::beginTransaction();
 
         try {
-
+            $this->apiKey = $_SERVER['HTTP_X_API_KEY'];
             $this->datas = $this->post();
+            $this->validaParceiro();            
             $this->setTipoPessoa();
             $this->setTipoServico('cotacao');
             $this->load->library('form_validation');
@@ -142,7 +143,9 @@ class Gerar extends REST_Controller
     function proposta_post()
     {
 
+        $this->apiKey = $_SERVER['HTTP_X_API_KEY'];
         $this->datas = $this->post();
+        $this->validaParceiro();
         $this->setTipoPessoa();
         $this->setTipoServico('proposta');
         $this->load->library('form_validation');
@@ -152,12 +155,13 @@ class Gerar extends REST_Controller
         $this->premio = $this->cotacao->premio;
         $this->renova = $this->cotacao->renova;
         $this->setParcela();
-        $this->setVeiculo();
         $this->setSegurado();
+        $this->setVeiculo();
 
         DB::beginTransaction();
         try {
-
+            $this->cotacao->segurado_id = $this->segurado->id;
+            $this->cotacao->save();
             $proposta = new Propostas();
             $proposta->idcotacao = $this->cotacao->idcotacao;
             $proposta->idformapg = $this->formas_pagamentos->idformapgto;
@@ -170,7 +174,7 @@ class Gerar extends REST_Controller
             $proposta->premiototal = $this->premio;
             $proposta->primeiraparc = $this->parcelas['formapagamento']['primeira'];
             $proposta->demaisparc = $this->parcelas['formapagamento']['demais'];
-            $proposta->titularcartao = $this->datas[$this->tipo_servico]['quantparc'];
+            $proposta->titularcartao = $this->datas[$this->tipo_servico]['titularcartao'];
             $proposta->veiculo_id = $this->veiculo->veicid;
             $proposta->save();
 
@@ -324,12 +328,29 @@ class Gerar extends REST_Controller
         endif;
     }
 
-
+    protected function validaParceiro(){
+        $parceiro = Parceiros::with('keys')->find($this->datas['idParceiro']);
+        
+        if(!$parceiro){
+            $this->response(array(
+                    'cdretorno' => '045',
+                    'status' => 'Error',
+                    'message' => 'idParceiro inválido!'), REST_Controller::HTTP_BAD_REQUEST);
+        } else if($parceiro->keys->key != $this->apiKey){
+            $this->response(array(
+                    'cdretorno' => '045',
+                    'status' => 'Error',
+                    'message' => 'API-KEY inválida para este idParceiro!'), REST_Controller::HTTP_BAD_REQUEST);
+        }
+        $this->parceiro = $parceiro;
+        
+    }
     protected function setDatas()
     {
 
-
+        
         /*begin - validações de from*/
+        
         $pessoa = $this->isJurida ? 'PJ' : '';
         $segurado_validacao = 'segurado' . ucfirst($this->tipo_servico) . $pessoa;
         $validacoes = [
@@ -364,7 +385,7 @@ class Gerar extends REST_Controller
 
         /*begin - validações DB*/
 
-        $parceiro = Parceiros::find($this->datas['idParceiro']);
+        $parceiro = $this->parceiro;
 
         $this->datas = dataOrganize($this->datas);
 
@@ -392,6 +413,8 @@ class Gerar extends REST_Controller
             ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '013', 'verifica' => $fipe, 'message' => 'Veiculo: Fipe invalido'],
             ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '010', 'verifica' => ($fipe->idstatus != 29), 'message' => 'Veiculo: Não tem aceitação para esse veiculo'],
             ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '013', 'verifica' => $fipe_ano, 'message' => 'Veiculo: Combustivel invalido para esse Fipe/Ano'],
+            ['validacao' => 'veiculo', 'tipo' => 'proposta', 'cod_error' => '013', 'verifica' => TipoUtilizacaoVeic::find($this->datas['veiculo']['veiccdutilizaco']), 'message' => 'Veiculo: Tipo de utilização inválida!'],
+            ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '013', 'verifica' => TipoVeiculos::find($this->datas['veiculo']['veiccdveitipo']), 'message' => 'Veiculo: Tipo de veículo inválida!'],
             ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '013',
                 'verifica' => FipeAnoValor::where('codefipe', $this->datas['veiculo']['veiccodfipe'])->where('ano', $this->datas['veiculo']['veicano'])->first(),
                 'message' => 'Veiculo: Ano Veiculo invalido'],
@@ -833,11 +856,32 @@ class Gerar extends REST_Controller
         $veiculo_ = $this->datas['veiculo'];
         $cotacao = $this->cotacao;
 
-        $veiculo = Veiculos::where('veicplaca', $veiculo_['veicplaca'])
-            ->where('veicrenavam', $veiculo_['veicrenavam'])
-            ->where('veicchassi', $veiculo_['veicchassi'])
-            ->first();
+        
 
+        $veiculo = Veiculos::where('veicplaca', $veiculo_['veicplaca'])
+            ->orWhere('veicrenavam', $veiculo_['veicrenavam'])
+            ->orWhere('veicchassi', $veiculo_['veicchassi'])
+            ->get();
+            
+        if($veiculo->count() > 1 ){
+            $msg = [];
+            foreach ($veiculo as $veic ){
+                if($veic->veicplaca == $veiculo_['veicplaca']){
+                    $msg[]='Placa: ' .$veiculo_['veicplaca'] .' cadastrada em veículo diferente';
+                } elseif($veic->veicrenavam == $veiculo_['veicrenavam']){
+                    $msg[]='Renavam: ' .$veiculo_['veicrenavam'] .' cadastrado em veículo diferente';
+                    
+                } elseif($veic->veicchassi == $veiculo_['veicchassi']){
+                    $msg[]='Chassi: ' .$veiculo_['veicchassi'] .' cadastrado em veículo diferente';
+                }                
+            }
+            $message = 'Veículo - '. implode(', ',$msg).'!'; 
+
+        }elseif($veiculo->count() == 1) {
+            $veiculo = $veiculo->first();
+        } else {
+            $veiculo = new Veiculos();            
+        }
 
         if ($veiculo && $veiculo->idstatus == 10) {
             $this->response(array(
@@ -848,60 +892,31 @@ class Gerar extends REST_Controller
         }
         DB::beginTransaction();
         try {
-            if ($veiculo) {
-                $veiculo->veiccodfipe = $cotacao->code_fipe;
-                $veiculo->veicano = $cotacao->ano_veiculo;
-                $veiculo->veicautozero = $cotacao->ind_veiculo_zero;
-                $veiculo->veiccdveitipo = $cotacao->tipo_veiculo_id;
-                $veiculo->veictipocombus = $cotacao->combustivel_id;
-                $veiculo->veiccdutilizaco = $veiculo_['veiccdutilizaco'];
-                $veiculo->veicplaca = $veiculo_['veicplaca'];
-                $veiculo->veicmunicplaca = $veiculo_['veicmunicplaca'];
-                $veiculo->veiccdufplaca = $veiculo_['veiccdufplaca'];
-                $veiculo->veicrenavam = $veiculo_['veicrenavam'];
-                $veiculo->veicanorenavam = $veiculo_['veicanorenavam'];
-                $veiculo->veicchassi = $veiculo_['veicchassi'];
-                $veiculo->veicchassiremar = $veiculo_['veicchassiremar'];
-                $veiculo->veicleilao = $veiculo_['veicleilao'];
-                $veiculo->veicalienado = $veiculo_['veicalienado'];
-                $veiculo->veicacidentado = $veiculo_['veicacidentado'];
-                $veiculo->clicpfcnpj = $veiculo_['clicpfcnpj'];
-                $veiculo->propcpfcnpj = $veiculo_['propcpfcnpj'];
-                $veiculo->idstatus = 10;
-                $veiculo->veianofab = $veiculo_['veianofab'];
-                $veiculo->veicor = $veiculo_['veicor'];
-                $veiculo->save();
 
-            } else {
-                $veiculo = new Veiculos();
-                $veiculo->veiccodfipe = $cotacao->code_fipe;
-                $veiculo->veicano = $cotacao->ano_veiculo;
-                $veiculo->veicautozero = $cotacao->ind_veiculo_zero;
-                $veiculo->veiccdveitipo = $cotacao->tipo_veiculo_id;
-                $veiculo->veictipocombus = $cotacao->combustivel_id;
-                $veiculo->veiccdutilizaco = $veiculo_['veiccdutilizaco'];
-                $veiculo->veicplaca = $veiculo_['veicplaca'];
-                $veiculo->veicmunicplaca = $veiculo_['veicmunicplaca'];
-                $veiculo->veiccdufplaca = $veiculo_['veiccdufplaca'];
-                $veiculo->veicrenavam = $veiculo_['veicrenavam'];
-                $veiculo->veicanorenavam = $veiculo_['veicanorenavam'];
-                $veiculo->veicchassi = $veiculo_['veicchassi'];
-                $veiculo->veicchassiremar = $veiculo_['veicchassiremar'];
-                $veiculo->veicleilao = $veiculo_['veicleilao'];
-                $veiculo->veicalienado = $veiculo_['veicalienado'];
-                $veiculo->veicacidentado = $veiculo_['veicacidentado'];
-                $veiculo->clicpfcnpj = $veiculo_['clicpfcnpj'];
-                $veiculo->propcpfcnpj = $veiculo_['propcpfcnpj'];
-                $veiculo->idstatus = 10;
-                $veiculo->veianofab = $veiculo_['veianofab'];
-                $veiculo->veicor = $veiculo_['veicor'];
-                $veiculo->save();
-            }
-
+            $veiculo->veiccodfipe = $cotacao->code_fipe;
+            $veiculo->veicano = $cotacao->ano_veiculo;
+            $veiculo->veicautozero = $cotacao->ind_veiculo_zero;
+            $veiculo->veiccdveitipo = $cotacao->tipo_veiculo_id;
+            $veiculo->veictipocombus = $cotacao->combustivel_id;
+            $veiculo->veiccdutilizaco = $veiculo_['veiccdutilizaco'];
+            $veiculo->veicplaca = $veiculo_['veicplaca'];
+            $veiculo->veicmunicplaca = $veiculo_['veicmunicplaca'];
+            $veiculo->veiccdufplaca = $veiculo_['veiccdufplaca'];
+            $veiculo->veicrenavam = $veiculo_['veicrenavam'];
+            $veiculo->veicanorenavam = $veiculo_['veicanorenavam'];
+            $veiculo->veicchassi = $veiculo_['veicchassi'];
+            $veiculo->veicchassiremar = $veiculo_['veicchassiremar'];
+            $veiculo->veicleilao = $veiculo_['veicleilao'];
+            $veiculo->veicalienado = $veiculo_['veicalienado'];
+            $veiculo->veicacidentado = $veiculo_['veicacidentado'];
+            $veiculo->clicpfcnpj = $this->segurado->clicpfcnpj;
+            $veiculo->propcpfcnpj = $veiculo_['propcpfcnpj'];
+            $veiculo->idstatus = 10;
+            $veiculo->veianofab = $veiculo_['veianofab'];
+            $veiculo->veicor = $veiculo_['veicor'];
+            $veiculo->save();
             $this->veiculo = $veiculo;
-
             DB::commit();
-
 
         } catch (Exception $e) {
             DB::rollBack();
@@ -937,14 +952,14 @@ class Gerar extends REST_Controller
                 unset($prodcheck[$key]);
                 $master = true;
                 $produto[$key]['master'] = true;
-//                return $check['opcionais'];
+                //return $check['opcionais'];
                 foreach ($check['opcionais'] as $opcional) {
                     $opcionais[] = $opcional['idprodutoopcional'];
                 }
 
             } elseif ($check['tipoproduto'] == 'master' && $master == true) {
                 unset($produto[$key]);
-//                unset($prodcheck[$key]);
+                //unset($prodcheck[$key]);
             }
         }
         $menorparcela = 0;
@@ -1051,12 +1066,12 @@ class Gerar extends REST_Controller
                     'message' => "O Produto {$idproduto} - {$produtodb['nomeproduto']}  é inválido",
                 ), REST_Controller::HTTP_BAD_REQUEST);
 
-//            elseif ($produtodb['idtipoveiculo'] != $veiculo['veiccdveitipo']):
-//                return $this->response(array(
-//                    'status' => 'Error',
-//                    'cdretorno' => '009',
-//                    'message' => "O Tipo de veículo {$veiculo['veiccdveitipo']} é inválido para o produto {$idproduto} - {$produtodb['nomeproduto']}",
-//                ), REST_Controller::HTTP_BAD_REQUEST);
+        //            elseif ($produtodb['idtipoveiculo'] != $veiculo['veiccdveitipo']):
+        //                return $this->response(array(
+        //                    'status' => 'Error',
+        //                    'cdretorno' => '009',
+        //                    'message' => "O Tipo de veículo {$veiculo['veiccdveitipo']} é inválido para o produto {$idproduto} - {$produtodb['nomeproduto']}",
+        //                ), REST_Controller::HTTP_BAD_REQUEST);
 
 
             elseif ($produtodb['codstatus'] == 2):
@@ -1179,12 +1194,12 @@ class Gerar extends REST_Controller
             $parcela = $this->Model_parcela->get($proposta['idformapg']);
             $parcelaj = $proposta['quantparc'] > $parcela['numparcsemjuros'] ? jurosComposto($premio, $parcela['taxamesjuros'], $proposta['quantparc']) : floatN($premio / $proposta['quantparc']);
 
-//            $premio = $proposta['quantparc'] > $parcela['numparcsemjuros'] ? floatN($premio + ($premio * ($parcela['taxamesjuros'] / 100))) : $premio;
+        //            $premio = $proposta['quantparc'] > $parcela['numparcsemjuros'] ? floatN($premio + ($premio * ($parcela['taxamesjuros'] / 100))) : $premio;
             $parcela['taxamesjuros'] = $proposta['quantparc'] > $parcela['numparcsemjuros'] ? $parcela['taxamesjuros'] : 0;
             unset($produtos['premio']);
 
             if ($menorparcela > $parcelaj && $proposta['idformapg'] == 2 && $renova == 0):
-//               
+        //               
                 $valor_juros_total = $parcelaj * $proposta['quantparc'];
                 $parcelaj = ($valor_juros_total - $menorparcela) / ($proposta['quantparc'] - 1);
                 $produtos['premioTotal'] = $valor_juros_total;
