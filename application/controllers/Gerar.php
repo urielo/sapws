@@ -175,6 +175,7 @@ class Gerar extends REST_Controller
             $proposta->primeiraparc = $this->parcelas['formapagamento']['primeira'];
             $proposta->demaisparc = $this->parcelas['formapagamento']['demais'];
             $proposta->titularcartao = $this->datas[$this->tipo_servico]['titularcartao'];
+            $proposta->cvvcartao = $this->datas[$this->tipo_servico]['cvvcartao'];
             $proposta->veiculo_id = $this->veiculo->veicid;
             $proposta->save();
 
@@ -412,13 +413,15 @@ class Gerar extends REST_Controller
 
             ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '013', 'verifica' => $fipe, 'message' => 'Veiculo: Fipe invalido'],
             ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '010', 'verifica' => ($fipe->idstatus != 29), 'message' => 'Veiculo: Não tem aceitação para esse veiculo'],
+            ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '010', 'verifica' => ($fipe->tipoveiculo_id == $this->datas['veiculo']['veiccdveitipo']), 'message' => 'Veiculo: Essa fipe não é para esse tipo de veículo!'],
             ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '013', 'verifica' => $fipe_ano, 'message' => 'Veiculo: Combustivel invalido para esse Fipe/Ano'],
             ['validacao' => 'veiculo', 'tipo' => 'proposta', 'cod_error' => '013', 'verifica' => TipoUtilizacaoVeic::find($this->datas['veiculo']['veiccdutilizaco']), 'message' => 'Veiculo: Tipo de utilização inválida!'],
             ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '013', 'verifica' => TipoVeiculos::find($this->datas['veiculo']['veiccdveitipo']), 'message' => 'Veiculo: Tipo de veículo inválida!'],
             ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '013',
                 'verifica' => FipeAnoValor::where('codefipe', $this->datas['veiculo']['veiccodfipe'])->where('ano', $this->datas['veiculo']['veicano'])->first(),
                 'message' => 'Veiculo: Ano Veiculo invalido'],
-            ['validacao' => 'cotacao', 'tipo' => 'proposta', 'cod_error' => '015', 'verifica' => $cotacao, 'message' => 'Cotacao Nº: ' . $id_cotacao . ' Inválido!']
+            ['validacao' => 'cotacao', 'tipo' => 'proposta', 'cod_error' => '015', 'verifica' => $cotacao, 'message' => 'Cotacao Nº: ' . $id_cotacao . ' Inválido!'],
+            ['validacao' => 'cotacao', 'tipo' => 'proposta', 'cod_error' => '015', 'verifica' => $cotacao->idstatus == 9, 'message' => 'Já existe uma proposta para essa cotação']
 
 
         ];

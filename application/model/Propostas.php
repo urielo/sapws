@@ -20,10 +20,12 @@ class Propostas extends Model
         'numcartao',
         'validadecartao',
         'idmotivo',
+        'cvvcartao',
         'premiototal',
         'primeiraparc',
         'demaisparc',
         'usuario_id',
+        'titularcartao',
         'veiculo_id'
 
     ];

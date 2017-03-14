@@ -404,6 +404,7 @@ function dataOrganize($datas)
     $return['proposta']['numcartao'] = $datas["numCartao"];
     $return['proposta']['validadecartao'] = $datas["validadeCartao"];
     $return['proposta']['titularcartao'] = strtoupper($datas["titularCartao"]);
+    $return['proposta']['cvvcartao'] = $datas["cvvcartao"];
     $return['proposta']['dtvalidade'] = date('Y-m-d 00:00:00', strtotime('+ 30 days'));
 
 
