@@ -26,7 +26,8 @@ class Propostas extends Model
         'demaisparc',
         'usuario_id',
         'titularcartao',
-        'veiculo_id'
+        'veiculo_id',
+        'segurado_id'
 
     ];
 
