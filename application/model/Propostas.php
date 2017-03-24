@@ -71,7 +71,7 @@ class Propostas extends Model
 
     public function veiculo()
     {
-        return $this->belongsTo('App\Model\Veiculos','veiculo_id','veicid');
+        return $this->belongsTo(Veiculos::class,'veiculo_id','veicid');
     }
     
     
