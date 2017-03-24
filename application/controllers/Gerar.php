@@ -83,7 +83,7 @@ class Gerar extends REST_Controller
             $this->setProdutoValores();
             $this->setFormasPagamento();
             $this->setParcelas();
-            $this->setSegurado();
+            // $this->setSegurado();
             $this->setCorretor();
 
             $cotacao = new Cotacoes;
@@ -93,7 +93,7 @@ class Gerar extends REST_Controller
             $cotacao->comissao = $this->comissao;
             $cotacao->idparceiro = $this->parceiro->idparceiro;
             $cotacao->idcorretor = $this->corretor->idcorretor;
-            $cotacao->segurado_id = $this->segurado->id;
+            // $cotacao->segurado_id = $this->segurado->id;
             $cotacao->renova = $this->renova;
             $cotacao->code_fipe = $veiculo['veiccodfipe'];
             $cotacao->ano_veiculo = $veiculo['veicano'];
@@ -102,9 +102,25 @@ class Gerar extends REST_Controller
             $cotacao->ind_veiculo_zero = $veiculo['veicautozero'];
             $cotacao->idstatus = 9;
             $cotacao->save();
+            
 
             foreach ($this->cotacao_produtos as $cotacao_p) {
                 $cotacao->produtos()->create($cotacao_p);
+            }
+
+             if(isset($this->datas['prospect']) && isset($this->datas['prospect']['cpfcnpj'])){
+                $prospect = new Prospect;
+                $prospect->cpfcnpj = $this->datas['prospect']['cpfcnpj'] ;
+                $prospect->nome_razao = $this->datas['prospect']['nome_razao'] ;
+                $prospect->email = $this->datas['prospect']['email'] ;
+                $prospect->ddd_fone = $this->datas['prospect']['ddd_fone'] ;
+                $prospect->num_fone = $this->datas['prospect']['num_fone'] ;
+                $prospect->ddd_cel = $this->datas['prospect']['ddd_cel'] ;
+                $prospect->num_cel = $this->datas['prospect']['ddd_cel'] ;
+                $prospect->cep = $this->datas['prospect']['cep'] ;
+                $prospect->numero = $this->datas['prospect']['numero'] ;
+                $cotacao->prospect()->save($prospect);
+                         
             }
             $cotacao->save();
 
@@ -119,7 +135,7 @@ class Gerar extends REST_Controller
             ];
 
 
-            DB::commit();
+            DB::commit();           
 
             $this->response(array(
                 'status' => '000 - sucesso',

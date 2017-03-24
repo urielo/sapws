@@ -454,6 +454,16 @@ function dataOrganize($datas)
         $return['veiculo']['nome_proprietario'] = strtoupper($datas['segurado']["segNomeRazao"]);
         $return['cotacao']['clicpfcnpj'] = $datas['segurado']["segCpfCnpj"];
 
+        $return['prospect']['cpfcnpj'] = $datas['segurado']["segCpfCnpj"];
+        $return['prospect']['nome_razao'] = strtoupper($datas['segurado']["segNomeRazao"]);
+        $return['prospect']['email'] = strtolower($datas['segurado']["segEmail"]);
+        $return['prospect']['ddd_fone'] = ($datas['segurado']["segFoneDdd"] != NULL ? $datas['segurado']["segFoneDdd"] : NULL);
+        $return['prospect']['num_fone'] = ($datas['segurado']["segFoneNum"] != NULL ? $datas['segurado']["segFoneNum"] : NULL);
+        $return['prospect']['ddd_cel'] = ($datas['segurado']["segCelDdd"] != NULL ? $datas['segurado']["segCelDdd"] : NULL);
+        $return['prospect']['num_cel'] = ($datas['segurado']["segCelNum"] != NULL ? $datas['segurado']["segCelNum"] : NULL);
+        $return['prospect']['cep'] = $datas['segurado']["segEndCep"];
+        $return['prospect']['numero'] = $datas['segurado']["segEndNum"];
+        
     else:
         $return['perfil']['clicpfcnpj'] = NULL;
         $return['veiculo']['clicpfcnpj'] = NULL;

@@ -35,6 +35,10 @@ class Cotacoes extends Model
     {
         return $this->belongsTo(Corretores::class,'idcorretor','idcorretor');
     }
+    public function prospect()
+    {
+        return $this->hasOne(Prospect::class,'id_cotacao','idcotacao');
+    }
     public function segurado()
     {
         return $this->belongsTo(Segurado::class,'segurado_id','id');
