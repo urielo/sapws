@@ -194,6 +194,8 @@ class Gerar extends REST_Controller
             $proposta->cvvcartao = $this->datas[$this->tipo_servico]['cvvcartao'];
             $proposta->veiculo_id = $this->veiculo->veicid;
             $proposta->segurado_id = $this->segurado->id;          
+            $proposta->cotacao->segurado_id = $this->segurado->id;          
+            $proposta->cotacao->save();          
             $proposta->save();
 
 
