@@ -298,7 +298,7 @@
                                 <td class="pdf-table-td-content">
                                     R$ <?= real($proposta['veiculo']['fipe']['valores']['valor']) ?></td>
                                 <td class="pdf-table-td-title"><b>ANO MODELO:</b></td>
-                                <td class="pdf-table-td-content"><?= $proposta['veiculo']['fipe']['valores']['ano'] ?></td>
+                                <td class="pdf-table-td-content"><?= $proposta['veiculo']['fipe']['valores']['ano'] == 0  ? '0 KM' : $proposta['veiculo']['fipe']['valores']['ano']  ?></td>
                                 <td class="pdf-table-td-title"><b>ANO FABRICAÇÃO:</b></td>
                                 <td class="pdf-table-td-content"><?= $proposta['veiculo']['veianofab'] ?></td>
                                 <td class="pdf-table-td-title"><b>ZERO KM?</b></td>
