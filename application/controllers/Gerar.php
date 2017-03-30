@@ -193,9 +193,7 @@ class Gerar extends REST_Controller
             $proposta->titularcartao = $this->datas[$this->tipo_servico]['titularcartao'];
             $proposta->cvvcartao = $this->datas[$this->tipo_servico]['cvvcartao'];
             $proposta->veiculo_id = $this->veiculo->veicid;
-            $proposta->segurado_id = $this->segurado->id;          
-            $proposta->cotacao->segurado_id = $this->segurado->id;          
-            $proposta->cotacao->save();          
+            $proposta->segurado_id = $this->segurado->id;        
             $proposta->save();
 
 
@@ -219,7 +217,8 @@ class Gerar extends REST_Controller
 
 
         } catch (Exception $e) {
-            DB::rollBack();
+        
+            DB::rollBack();   
             $this->response(array(
                 'status' => 'Error',
                 'cdretorno' => '013',
@@ -813,14 +812,11 @@ class Gerar extends REST_Controller
         try {
             DB::beginTransaction();
             $segurado = pullOutEmpty($this->datas['segurado']);
-            $segurado_up = $segurado;
-            unset($segurado_up['clicpfcnpj']);
-            $segurado_db = Segurado::firstOrCreate(['clicpfcnpj' => $segurado['clicpfcnpj']]);
-            if(count($segurado_up)>0){
-                $segurado_db->update($segurado);
-            }
-            $this->segurado = Segurado::where('clicpfcnpj',$segurado_db->clicpfcnpj)->first();
-            DB::commit();
+            Segurado::updateOrCreate(['clicpfcnpj' => $segurado['clicpfcnpj']],$segurado);            
+            DB::commit();            
+            
+            $this->segurado = Segurado::where(['clicpfcnpj' => $segurado['clicpfcnpj']])->first();
+            // DB::commit();
         } catch (Illuminate\Database\QueryException $e) {
             DB::rollBack();
             $this->response(array(
@@ -934,7 +930,7 @@ class Gerar extends REST_Controller
             $veiculo->nome_proprietario = $veiculo_['nome_proprietario'];
             $veiculo->clicpfcnpj = $this->segurado->clicpfcnpj;
             $veiculo->propcpfcnpj = $veiculo_['propcpfcnpj'];
-            $veiculo->idstatus = 10;
+            $veiculo->idstatus = 9;
             $veiculo->veianofab = $veiculo_['veianofab'];
             $veiculo->veicor = $veiculo_['veicor'];
             $veiculo->save();
