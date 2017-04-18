@@ -432,9 +432,9 @@ class Gerar extends REST_Controller
         $validacoes_db = [
 
             ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '013', 'verifica' => $fipe, 'message' => 'Veiculo: Fipe invalido'],
+            ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '013', 'verifica' => $fipe_ano, 'message' => 'Veiculo: O ano para essa fipe está invalido!'],
             ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '010', 'verifica' => ($fipe->idstatus != 29), 'message' => 'Veiculo: Não tem aceitação para esse veiculo'],
             ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '010', 'verifica' => ($fipe->tipoveiculo_id == $this->datas['veiculo']['veiccdveitipo']), 'message' => 'Veiculo: Essa fipe não é para esse tipo de veículo!'],
-            ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '013', 'verifica' => $fipe_ano, 'message' => 'Veiculo: Combustivel invalido para esse Fipe/Ano'],
             ['validacao' => 'veiculo', 'tipo' => 'proposta', 'cod_error' => '013', 'verifica' => TipoUtilizacaoVeic::find($this->datas['veiculo']['veiccdutilizaco']), 'message' => 'Veiculo: Tipo de utilização inválida!'],
             ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '013', 'verifica' => TipoVeiculos::find($this->datas['veiculo']['veiccdveitipo']), 'message' => 'Veiculo: Tipo de veículo inválida!'],
             ['validacao' => 'veiculo', 'tipo' => 'todos', 'cod_error' => '013',
