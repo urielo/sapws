@@ -19,6 +19,8 @@ class Propostas extends Model
         'nmbandeira',
         'numcartao',
         'validadecartao',
+	'boleto_data_primeira',
+	'boleto_dia_demais',
         'idmotivo',
         'cvvcartao',
         'premiototal',
