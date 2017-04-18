@@ -186,6 +186,8 @@ class Gerar extends REST_Controller
             $proposta->idstatus = 10;
             $proposta->nmbandeira = $this->datas[$this->tipo_servico]['nmbandeira'];
             $proposta->numcartao = $this->datas[$this->tipo_servico]['numcartao'];
+            $proposta->boleto_data_primeira = $this->datas[$this->tipo_servico]['data_primeiro_boleto'];
+            $proposta->boleto_dia_demais = $this->datas[$this->tipo_servico]['dias_demais_boleto'];
             $proposta->validadecartao = $this->datas[$this->tipo_servico]['validadecartao'];
             $proposta->premiototal = $this->premio;
             $proposta->primeiraparc = $this->parcelas['formapagamento']['primeira'];

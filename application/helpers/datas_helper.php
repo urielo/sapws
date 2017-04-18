@@ -353,33 +353,7 @@ function dataOrganize($datas)
     endif;
     $return['veiculo']['nome_proprietario']= '';
 
-    if (!$datas['indProprietVeic']):
-        $return['proprietario']['proprcpfcnpj'] = $datas['proprietario']["proprCpfCnpj"];
-        $return['proprietario']['proprnomerazao'] = $datas['proprietario']["proprNomeRazao"];
-        $return['proprietario']['proprdtnasc'] = $datas['proprietario']["proprDtNasci"];
-        $return['proprietario']['proprcdsexo'] = $datas['proprietario']["proprCdSexo"];
-        $return['proprietario']['proprcdestadocivil'] = $datas['proprietario']["proprCdEstCivl"];
-        $return['proprietario']['proprcdprofiramoatividade'] = $datas['proprietario']["proprPrfoRamoAtivi"];
-        $return['proprietario']['propremail'] = strtolower($datas['proprietario']["proprEmail"]);
-        $return['proprietario']['proprdddcel'] = $datas['proprietario']["proprCelDdd"];
-        $return['proprietario']['proprnmcel'] = $datas['proprietario']["proprCelNum"];
-        $return['proprietario']['proprdddfone'] = $datas['proprietario']["proprFoneDdd"];
-        $return['proprietario']['proprnmfone'] = $datas['proprietario']["proprFoneNum"];
-        $return['proprietario']['proprnmend'] = $datas['proprietario']["proprEnd"];
-        $return['proprietario']['proprnumero'] = $datas['proprietario']["proprEndNum"];
-        $return['proprietario']['cdreldepsegurado'] = (isset($datas['proprietario']["proprCdRelDepSegurado"]) ? $datas['proprietario']["proprCdRelDepSegurado"] : null);
-        $return['proprietario']['descreldepsegurado'] = (isset($datas['proprietario']["proprdescRelDepSegurado"]) ? $datas['proprietario']["proprdescRelDepSegurado"] : null);
-        $return['proprietario']['proprendcomplet'] = $datas['proprietario']["proprEndCompl"];
-        $return['proprietario']['proprcep'] = $datas['proprietario']["proprEndCep"];
-        $return['proprietario']['proprnmcidade'] = $datas['proprietario']["proprEndCidade"];
-        $return['proprietario']['proprcduf'] = $datas['proprietario']["proprEndCdUf"];
-        $return['proprietario']['idtipocliente'] = 2;
-        $return['veiculo']['nome_proprietario'] = strtoupper($datas['proprietario']["proprNomeRazao"]);        
-
-        $return['veiculo']['propcpfcnpj'] = $datas['proprietario']["proprCpfCnpj"];
-    else:
-        $return['veiculo']['propcpfcnpj'] = $datas['segurado']["segCpfCnpj"];
-    endif;
+    
 
     if (!$datas['indCondutorVeic']):
         $return['condutor']['condcpfcnpj'] = $datas['condutor']["condutCpfCnpj"];
@@ -402,6 +376,8 @@ function dataOrganize($datas)
     $return['proposta']['quantparc'] = $datas["qtParcela"];
     $return['proposta']['nmbandeira'] = $datas["nmBandeira"];
     $return['proposta']['numcartao'] = $datas["numCartao"];
+    $return['proposta']['data_primeiro_boleto'] = $datas["dataPrimeiroBoleto"];
+    $return['proposta']['dias_demais_boleto'] = $datas["diaDemaisBoleto"];
     $return['proposta']['validadecartao'] = $datas["validadeCartao"];
     $return['proposta']['titularcartao'] = strtoupper($datas["titularCartao"]);
     $return['proposta']['cvvcartao'] = $datas["cvvcartao"];
@@ -464,12 +440,34 @@ function dataOrganize($datas)
         $return['prospect']['cep'] = $datas['segurado']["segEndCep"];
         $return['prospect']['numero'] = $datas['segurado']["segEndNum"];
         
+    endif;
+
+    if (!$datas['indProprietVeic']):
+        $return['proprietario']['proprcpfcnpj'] = $datas['proprietario']["proprCpfCnpj"];
+        $return['proprietario']['proprnomerazao'] = $datas['proprietario']["proprNomeRazao"];
+        $return['proprietario']['proprdtnasc'] = $datas['proprietario']["proprDtNasci"];
+        $return['proprietario']['proprcdsexo'] = $datas['proprietario']["proprCdSexo"];
+        $return['proprietario']['proprcdestadocivil'] = $datas['proprietario']["proprCdEstCivl"];
+        $return['proprietario']['proprcdprofiramoatividade'] = $datas['proprietario']["proprPrfoRamoAtivi"];
+        $return['proprietario']['propremail'] = strtolower($datas['proprietario']["proprEmail"]);
+        $return['proprietario']['proprdddcel'] = $datas['proprietario']["proprCelDdd"];
+        $return['proprietario']['proprnmcel'] = $datas['proprietario']["proprCelNum"];
+        $return['proprietario']['proprdddfone'] = $datas['proprietario']["proprFoneDdd"];
+        $return['proprietario']['proprnmfone'] = $datas['proprietario']["proprFoneNum"];
+        $return['proprietario']['proprnmend'] = $datas['proprietario']["proprEnd"];
+        $return['proprietario']['proprnumero'] = $datas['proprietario']["proprEndNum"];
+        $return['proprietario']['cdreldepsegurado'] = (isset($datas['proprietario']["proprCdRelDepSegurado"]) ? $datas['proprietario']["proprCdRelDepSegurado"] : null);
+        $return['proprietario']['descreldepsegurado'] = (isset($datas['proprietario']["proprdescRelDepSegurado"]) ? $datas['proprietario']["proprdescRelDepSegurado"] : null);
+        $return['proprietario']['proprendcomplet'] = $datas['proprietario']["proprEndCompl"];
+        $return['proprietario']['proprcep'] = $datas['proprietario']["proprEndCep"];
+        $return['proprietario']['proprnmcidade'] = $datas['proprietario']["proprEndCidade"];
+        $return['proprietario']['proprcduf'] = $datas['proprietario']["proprEndCdUf"];
+        $return['proprietario']['idtipocliente'] = 2;
+        $return['veiculo']['nome_proprietario'] = strtoupper($datas['proprietario']["proprNomeRazao"]);        
+
+        $return['veiculo']['propcpfcnpj'] = $datas['proprietario']["proprCpfCnpj"];
     else:
-        $return['perfil']['clicpfcnpj'] = NULL;
-        $return['veiculo']['clicpfcnpj'] = NULL;
-        $return['cotacao']['clicpfcnpj'] = NULL;
-        $datas['indProprietVeic'] ? $return['veiculo']['condcpfcnpj'] = NULL : $return['veiculo']['condcpfcnpj'] = $datas['condutor']["condutCpfCnpj"];
-        $datas['indCondutorVeic'] ? $return['veiculo']['propcpfcnpj'] = NULL : $return['veiculo']['propcpfcnpj'] = $datas['proprietario']["proprCpfCnpj"];
+        $return['veiculo']['propcpfcnpj'] = $datas['segurado']["segCpfCnpj"];
     endif;
 
     if (isset($datas['perfilSegurado'])):
