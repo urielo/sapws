@@ -205,6 +205,8 @@
                             <tr>
                                 <td class="pdf-table-td-title"><b>ENDEREÇO:</b></td>
                                 <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['clinmend'] ?></td>
+                                <td class="pdf-table-td-title"><b>BAIRRO:</b></td>
+                                <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['bairro'] ?></td>
                                 <td class="pdf-table-td-title"><b>CIDADE:</b></td>
                                 <td class="pdf-table-td-content"><?= $proposta['cotacao']['segurado']['clinmcidade'] ?></td>
                                 <td class="pdf-table-td-title"><b>UF:</b></td>

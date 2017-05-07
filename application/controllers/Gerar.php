@@ -651,10 +651,10 @@ class Gerar extends REST_Controller
         $produtos = [];
         $cotacao_produto = [];
 
+        
 
         foreach ($this->valores_produtos as $key => $valor) {
             $lmi = $this->lmi[$valor['idproduto']];
-
             if (!$valor['idcategoria'] == $categoria) {
                 $lmi = 0;
                 $valor['lmiproduto'] = 0;
@@ -664,7 +664,7 @@ class Gerar extends REST_Controller
             $produt_ = [];
 
 
-            if (between($valor_fipe, $valor['vlrfipemaximo'], $valor['vlrfipeminimo']) && $valor['idtipoveiculo'] == $tipo && $idade < $valor['idadeaceitamax'] && $valor['idcategoria'] == $categoria && $valor['lmiproduto'] == $lmi) {
+            if (between($valor_fipe, $valor['vlrfipemaximo'], $valor['vlrfipeminimo']) && $valor['idtipoveiculo'] == $tipo && $idade <= $valor['idadeaceitamax'] && $valor['idcategoria'] == $categoria && $valor['lmiproduto'] == $lmi) {
 
                 if ($valor['idproduto'] == 1) {
                     $valor['premioliquidoproduto'] += $contigencia;
@@ -677,7 +677,7 @@ class Gerar extends REST_Controller
                 $produt_ = $this->valores_produtos[$key];
                 $this->produtos[$valor['idproduto']]->valor = (object)$this->valores_produtos[$key];
 
-            } else if ($valor['vlrfipeminimo'] == $tipo && $valor['vlrfipemaximo'] == null && $valor['vlrfipeminimo'] == null && $idade < $valor['idadeaceitamax']) {
+            } else if ($valor['vlrfipeminimo'] == $tipo && $valor['vlrfipemaximo'] == null && $valor['vlrfipeminimo'] == null && $idade <= $valor['idadeaceitamax']) {
                 $this->valores_produtos[$key]['premioliquidoproduto'] = aplicaComissao($valor[$key]['premioliquidoproduto'], $comissao);
                 $this->premio += $this->valores_produtos[$key]['premioliquidoproduto'];
                 $this->primeira_parcela += $this->valores_produtos[$key]['vlrminprimparc'];
@@ -711,6 +711,9 @@ class Gerar extends REST_Controller
             }
 
         }
+
+        // 
+        
 
         if ($this->premio == 0) {
             $this->response(array(
@@ -904,10 +907,26 @@ class Gerar extends REST_Controller
         }
 
         if ($veiculo && $veiculo->idstatus == 10) {
+            $msg = [];
+            $chassi = $veiculo->pluck('veicchassi');
+            $renavam = $veiculo->pluck('veicrenavami');
+            $placa = $veiculo->pluck('veicplaca');
+
+            if(in_array($veiculo_['veicchassi'],$chassi)){
+                $msg[]='CHASSI';
+            }
+            if(in_array($veiculo_['veicrenavami'],$renavam)){
+                $msg[]='RENAVAM';
+            }
+            if(in_array($veiculo_['veicplaca'],$placa)){
+                $msg[]='PLACA';
+            }
+
+            
             $this->response(array(
                 'status' => 'Error',
                 'cdretorno' => '013',
-                'message' => ['veiculo' => 'Existe uma proposta em aberto pra esse veiculo']
+                'message' => ['veiculo' => 'Existe uma proposta em aberto pra um veiculo com: '. implode(', ',$msg) .'!' ]
             ), REST_Controller::HTTP_BAD_REQUEST);
         }
         DB::beginTransaction();
